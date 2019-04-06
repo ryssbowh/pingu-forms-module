@@ -1,0 +1,28 @@
+{
+    "name": "eskimo/forms-module",
+    "description": "Forms module for eskimo",
+    "authors": [
+        {
+            "name": "Boris Blondin",
+            "email": "blondin.boris@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Forms\\Providers\\FormsServiceProvider"
+            ],
+            "aliases": {
+                "FormBuilder": "Modules\\Forms\\Components\\FormBuilder"
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Forms\\": ""
+        }
+    },
+    "require": {
+        "laravelcollective/html":"^5.4.0"
+    }
+}
