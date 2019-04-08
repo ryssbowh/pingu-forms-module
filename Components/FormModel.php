@@ -48,7 +48,7 @@ class FormModel extends Form
             $this->edit = false;
             $this->model = new $model();
         }
-        $this->fieldDefinitions = $this->model->fieldDefinitions();
+        $this->fieldDefinitions = $this->model::fieldDefinitions();
         if(is_null($fields)){
             if($this->edit) $fields = $this->model->editFormFields();
             else $fields = $this->model->addFormFields();
@@ -79,12 +79,9 @@ class FormModel extends Form
      */
     public function addModelField(string $field)
     {
-        if(!isset($this->fieldDefinitions[$field]) or !isset($this->fieldDefinitions[$field]['type'])) {
-            throw new FieldMissingAttributeException("Model ".$this->model::friendlyName()." doesn't define a type attribute for the field ".$field);
-        }
-        $fieldDef = $this->fieldDefinitions[$field];
-        $default = $this->model->$field ?? $fieldDef['default'] ?? null;
-        $this->addField($fieldDef['type'], $field, $fieldDef['label']??null, $default, $fieldDef['attributes']??[], $fieldDef['view']??null, $fieldDef['options']??[]);
+        $options = $this->fieldDefinitions[$field];
+        if($this->edit) $options['default'] = $this->model->$field;
+        $this->addField($field, $options);
     }
 
     public function addFields(array $fields)

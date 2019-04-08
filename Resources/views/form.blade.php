@@ -8,9 +8,9 @@
     </div>
 @endif
 
-{{ $form->printStart() }}
+{{ $form->renderStart() }}
 <div class="fields">
-	{{ $form->printLayout() }}
+	{{ $form->renderLayout() }}
 </div>
-{{ $form->printSubmit() }}
-{{ $form->printEnd() }}
+{{ $form->renderSubmit() }}
+{{ $form->renderEnd() }}

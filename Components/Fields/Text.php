@@ -17,7 +17,7 @@ class Text extends Field
 		return FormFacade::text($this->name, $this->options['default'], $this->options['attributes']);
 	}
 
-	public static function queryFilterApi(Builder $query, string $name, $value)
+	public static function fieldQueryModifier(Builder $query, string $name, $value)
 	{
 		$query->where($name, 'like', '%'.$value.'%');
 	}

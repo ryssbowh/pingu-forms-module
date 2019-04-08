@@ -24,8 +24,8 @@ class FormsServiceProvider extends ServiceProvider
     {
         $this->registerTranslations();
         $this->registerConfig();
-        $this->registerViews();
         $this->registerFactories();
+        $this->loadViewsFrom(base_path('Modules/Forms/Resources/views'), 'forms');
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 
@@ -59,22 +59,40 @@ class FormsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerViews()
-    {
-        $themePaths = $this->app->make('view.finder')->getThemesPublishPaths('forms');
+    // public function registerViews()
+    // {
+        // $themePaths = $this->app->make('view.finder')->getThemesPublishPaths('forms');
 
-        $sourcePath = __DIR__.'/../Resources/views';
+        // dump($themePaths);
 
-        foreach($themePaths as $path => $namespace){
-            $this->publishes([
-                $sourcePath => $path
-            ],$namespace);
-        }
+        // foreach($themePaths as $path => $namespace){
+        //     $this->publishes([
+        //         $sourcePath => $path
+        //     ],$namespace);
+        // }
 
-        $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return $path . '/modules/forms';
-        }, \Config::get('view.paths')), [$sourcePath]), 'forms');
-    }
+    //     $this->loadViewsFrom(base_path('/Modules/Forms/Resources/views'), 'forms');
+    // }
+
+    /**
+     * Register views.
+     *
+     * @return void
+     */
+    // public function registerViews()
+    // {
+    //     $viewPath = resource_path('views/modules/forms');
+
+    //     $sourcePath = __DIR__.'/../Resources/views';
+
+    //     $this->publishes([
+    //         $sourcePath => $viewPath
+    //     ],'views');
+
+    //     $this->loadViewsFrom(array_merge(array_map(function ($path) {
+    //         return $path . '/modules/forms';
+    //     }, \Config::get('view.paths')), [$sourcePath]), 'forms');
+    // }
 
     /**
      * Register translations.

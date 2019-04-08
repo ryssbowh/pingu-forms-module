@@ -3,12 +3,13 @@
     "alias": "forms",
     "description": "",
     "keywords": [],
-    "active": 0,
+    "active": 1,
     "order": 1,
     "providers": [
         "Modules\\Forms\\Providers\\FormsServiceProvider"
     ],
-    "aliases": [],
+    "aliases": {
+    },
     "files": [
         "start.php"
     ],

@@ -18,6 +18,7 @@
 namespace Modules\Forms\Components;
 
 use FormFacade;
+use Modules\Forms\Components\Fields\Text;
 use Modules\Forms\Events\FormBuilt;
 use Modules\Forms\Exceptions\FieldMissingAttributeException;
 use Modules\Forms\Exceptions\FormNotBuiltException;
@@ -252,17 +253,16 @@ class Form
     }
 
     /**
-     * Add a field to this form
+     * Add a field to this form, default to Text if type not present
      * 
      * @param string $name
-     * @param string $type
-     * @param string $label
      * @param array  $options
      * @return  Form
      */
-    public function addField(string $type, string $name, string $label, $defaultValue, array $attributes, ?string $view, array $options):Form
+    public function addField(string $name, array $options):Form
     {   
-        $this->fields[$name] = new $type($name, $label, $defaultValue, $attributes, $view, $options);
+        if(!isset($options['type'])) $options['type'] = Text::class;
+        $this->fields[$name] = new $options['type']($name, $options);
         return $this;
     }
 
@@ -273,7 +273,7 @@ class Form
      */
     public function addFields(array $fields){
         foreach($fields as $name => $options){
-            $this->addField($options['type'], $name, $options['label']??null, $options['default']??null, $options['attributes']??[], $options['view']??null, $options['options']??[]);
+            $this->addField($name, $options);
         }
     }
 
@@ -297,7 +297,7 @@ class Form
      * @throws FormNotBuiltException
      * @return void
      */
-    public function printStart()
+    public function renderStart()
     {
         echo FormFacade::open($this->attributes);
         echo FormFacade::hidden('_name', $this->name);
@@ -309,7 +309,7 @@ class Form
      * @see  https://laravelcollective.com/docs/5.4/html
      * @return void
      */
-    public function printEnd()
+    public function renderEnd()
     {
         echo FormFacade::close();
     }
@@ -319,7 +319,7 @@ class Form
      * 
      * @return string
      */
-    public function printSubmit()
+    public function renderSubmit()
     {   
         if(isset($this->options['submit'])){
             echo FormFacade::submit($this->options['submit']);
@@ -332,11 +332,11 @@ class Form
      * @throws FormNotBuiltException
      * @return void
      */
-    public function printLayout()
+    public function renderLayout()
     {   
         if($this->options['layout']){
             foreach($this->options['layout'] as $name){
-                $this->printElement($name);
+                $this->renderElement($name);
             }
         }
     }
@@ -346,10 +346,10 @@ class Form
      * 
      * @param  string $name
      */
-    public function printElement($name)
+    public function renderElement($name)
     {
-        if($this->isGroup($name)) $this->printGroup($name);
-        else $this->printField($name);
+        if($this->isGroup($name)) $this->renderGroup($name);
+        else $this->renderField($name);
     }
 
     /**
@@ -357,10 +357,10 @@ class Form
      * 
      * @param  array  $names  
      */
-    public function printElements(array $names)
+    public function renderElements(array $names)
     {
         foreach($names as $name){
-            $this->printElement($name);
+            $this->renderElement($name);
         }
     }
 
@@ -370,7 +370,7 @@ class Form
      * @param  string $name
      * @return string
      */
-    public function printGroup($name)
+    public function renderGroup($name)
     {
         echo view($this->options['groupView'], ['name' => $name, 'fields' => $this->options['groups'][$name], 'form' => $this])->render();
     }
@@ -383,7 +383,7 @@ class Form
      * @throws FormNotBuiltException
      * @return void
      */
-    public function printField(string $field)
+    public function renderField(string $field)
     {
         $this->fields[$field]->render();
     }

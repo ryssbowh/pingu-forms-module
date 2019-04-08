@@ -2,10 +2,12 @@
 namespace Modules\Forms\Traits;
 
 use Collective\Html\Eloquent\FormAccessible;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
-use Modules\Forms\Events\FormMakingValidator;
-use Validator;
 use Modules\Forms\Components\Fields\{Text, Model};
+use Modules\Forms\Events\FormMakingValidator;
+use Modules\Forms\Exceptions\UnfillableFieldException;
+use Validator;
 
 trait Formable {
 
@@ -72,15 +74,36 @@ trait Formable {
 		return $validator;
     }
 
+    public function saveRelationships(array $values)
+    {
+        $fields = $this::fieldDefinitions();
+        $return = true;
+        foreach($values as $name => $value){
+            if(!in_array($name, $this->fillable)) continue;
+
+            if(method_exists($this, $name)){
+                $relation = $this->$name();
+                if(get_class($relation) == BelongsToMany::class){
+                    $return = ($return and $fields[$name]['type']::saveRelationships($this, $name, $value));
+                }
+            }
+        }
+        
+        return $return;
+    }
+
     /**
      * Populates this with values coming from a form submit
      * @param  array $values
      */
     public function formFill(array $values){
-        $fields = $this->fieldDefinitions();
+        $fields = $this::fieldDefinitions();
         foreach($values as $name => $value){
-            $fields[$name]['type']::setModelValue($this, $name, $value);
+            if(in_array($name, $this->fillable)){
+                $fields[$name]['type']::setModelValue($this, $name, $value);   
+            }
         }
+        return $this;
     }
 
 }
