@@ -12,7 +12,7 @@ class Checkbox extends Radio
 		foreach($this->options['items'] as $key => $item){
 			$attributes = $this->options['attributes'];
 			$attributes['id'] = $this->options['name'].$key;
-			$this->options['checkboxes'][$key] = FormFacade::checkbox($name, $key, in_array($key, array_keys($this->options['default'])), $attributes);
+			$this->options['checkboxes'][$key] = FormFacade::checkbox($name, $key, in_array($key, $this->options['default']), $attributes);
 		}
 	}
 }
