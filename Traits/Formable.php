@@ -62,21 +62,31 @@ trait Formable {
     }
 
     /**
-     * Makes a validator for this model
+     * Makes a validator for this model, 
+     * will only take the validation rules for the fields present in the request
      * @param  Request $request
      * @return Validator
      */
     public function makeValidator(Request $request)
     {
-    	$rules = $this->validationRules();
+    	$rules = array_intersect_key($this->validationRules(), $request->all());
 		$messages = $this->validationMessages();
 		$validator = Validator::make($request->all(), $rules, $messages, ['request' => $request]);
 		event(new FormMakingValidator($validator, $this));
 		return $validator;
     }
 
+    /**
+     * Saves the relationships for a model
+     * must be called after the model is saved, so we have and id.
+     * @param  array  $values [description]
+     * @return [type]         [description]
+     */
     public function saveRelationships(array $values)
     {
+        if(!$this->id){
+            throw new ModelNotSaved('Can\'t save '.$this->friendlyName().'\'s relationships : '.$this->friendlyName().' is not saved');
+        }
         $fields = $this::fieldDefinitions();
         $return = false;
         foreach($values as $name => $value){

@@ -38,7 +38,7 @@ class FormModel extends Form
      * @param BaseModel|null $model
      * @param array|null  $fields
      */
-    public function __construct(array $attributes, ?array $options = [], $model = null, ?array $fields = null )
+    public function __construct(array $attributes, ?array $options = [], $model = null, ?array $fields = null, $name = null)
     {   
         $this->attributes = $attributes;
         $this->options = array_merge( $this->defaults, $options);
@@ -56,15 +56,21 @@ class FormModel extends Form
         $this->addFields($fields);
         $this->options['layout'] = $fields;
 
-        $this->setName();
+        if(is_null($name)){
+            $name = $this->generateName();
+        }
+
+        $this->name = $name;
+        $this->attributes['class'] = isset($this->attributes['class']) ? $this->attributes['class'].= ' form form-'.$this->name : 'form form-'.$this->name;
+
 
         if(!isset($this->options['layout'])) $this->options['layout'] = $fields;
     }
 
-    protected function setName()
+    protected function generateName()
     {
-        $this->name = ($this->edit ? 'edit-' : 'add-') . $this->model::friendlyName();
-        $this->attributes['class'] = isset($this->attributes['class']) ? $this->attributes['class'].= ' form form-'.$this->name : 'form form-'.$this->name;
+        return ($this->edit ? 'edit-' : 'add-') . $this->model::friendlyName();
+        
     }
 
     public function getModel()
