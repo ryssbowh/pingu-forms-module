@@ -94,7 +94,9 @@ abstract class Field
 	 */
 	public static function fieldQueryModifier(Builder $query, string $name, $value)
 	{
-		$query->where($name, '=', $value);
+		if($value){
+			$query->where($name, '=', $value);
+		}
 	}
 
 	/**
