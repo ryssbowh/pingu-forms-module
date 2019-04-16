@@ -15,7 +15,7 @@
  * @see  https://laravelcollective.com/docs/5.4/html
  */
 
-namespace Modules\Forms\Components;
+namespace Modules\Forms;
 
 use FormFacade;
 use Modules\Core\Entities\BaseModel;

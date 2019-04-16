@@ -15,7 +15,7 @@
  * @see  https://laravelcollective.com/docs/5.4/html
  */
 
-namespace Modules\Forms\Components;
+namespace Modules\Forms;
 
 use FormFacade;
 use Modules\Forms\Components\Fields\Text;
@@ -262,7 +262,11 @@ class Form
     public function addField(string $name, array $options):Form
     {   
         if(!isset($options['type'])) $options['type'] = Text::class;
-        $this->fields[$name] = new $options['type']($name, $options);
+        $field = new $options['type']($name, $options);
+        if(isset($options['default'])){
+            $field->setDefault($options['default']);
+        }
+        $this->fields[$name] = $field;
         return $this;
     }
 

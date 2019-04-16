@@ -1,5 +1,5 @@
 <?php
-namespace Modules\Forms\Components\Fields;
+namespace Modules\Forms\Fields;
 
 use FormFacade;
 use Illuminate\Database\Eloquent\Builder;
@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Collection;
 use Modules\Core\Entities\BaseModel;
 use Modules\Forms\Exceptions\FieldMissingAttributeException;
 
-class Model extends Select
+class Model extends Serie
 {
 
 	public function __construct(string $name, array $options = [])
 	{
 		$options['separator'] = $options['separator'] ?? ' - ';
+		if(isset($options['allowNoValue'])){
+			$options['noValueLabel'] = $options['noValueLabel'] ?? config('forms.noValueLabel');
+		}
 
 		if(!isset($options['model'])){
 			throw new FieldMissingAttributeException('Field '.$name.' is missing a \'model\' option');
@@ -25,28 +28,22 @@ class Model extends Select
 		$this->options['items'] = $this->buildItems();
 	}
 
+	public function setDefault($model)
+	{
+		$this->options['default'] = $model->id;
+	}
+
 	protected function buildItems()
 	{
 		$models = $this->options['model']::all();
         $values = [];
         if($this->options['allowNoValue']){
-        	$values[] = [
-        		'id' => '',
-        		'label' => $this->options['noValueLabel']
-        	];
+        	$values[0] = $this->options['noValueLabel'];
         }
         foreach($models as $model){
-            $values[] = [
-            	'id' => $model->id, 
-            	'label' => implode($this->options['separator'], $model->only($this->options['textField']))
-            ];
+            $values[$model->id] = implode($this->options['separator'], $model->only($this->options['textField']));
         }
         return $values;
-	}
-
-	public function renderInput()
-	{
-		return FormFacade::select($this->name, array_column($this->options['items'],'label','id'), $this->options['default'], $this->options['attributes']);
 	}
 
 	public static function fieldQueryModifier(Builder $query, string $name, $value)

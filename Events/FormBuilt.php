@@ -3,7 +3,7 @@
 namespace Modules\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
-use Modules\Forms\Components\Form;
+use Modules\Forms\Form;
 
 class FormBuilt
 {

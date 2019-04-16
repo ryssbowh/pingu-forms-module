@@ -1,5 +1,5 @@
 <?php
-namespace Modules\Forms\Components\Fields;
+namespace Modules\Forms\Fields;
 
 use FormFacade;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,28 +11,26 @@ abstract class Field
 	protected $type;
 	protected $name;
 	protected $options;
+	protected $renderer;
 
 	public function __construct(string $name, array $options = [])
 	{
 		$this->name = $name;
 		$this->type = strtolower(classname($this));
+
 		$options['name'] = $name;
 		$options['type'] = $this->type;
-		$options['label'] = $options['label'] ?? ucfirst($name);
-		$options['attributes'] = $options['attributes'] ?? [];
-		$options['attributes']['class'] = $options['attributes']['class'] ?? config('forms.input-classes.'.$this->type) ?? '';
-		$options['default'] = $options['default'] ?? null;
-		$options['view'] = $options['view'] ?? 'forms::fields.'.$this->type;
+		
 		$this->options = $options;
 	}
 
 	/**
-	 * Returns the html for this field's label
-	 * @return string
+	 * Set default value for that field
+	 * @param mixed $value
 	 */
-	public function label()
+	public function setDefault($value)
 	{
-		return FormFacade::label($this->name, $this->options['label']);
+		$this->options['default'] = $value;
 	}
 
 	/**
@@ -58,10 +56,13 @@ abstract class Field
 	 * @return string
 	 */
 	public function render()
-	{	
-		$vars = $this->options;
-		$vars['input'] = $this->renderInput();
-		echo view($vars['view'], $vars)->render();
+	{
+		(new $this->options['renderer']($this->options))->render();
+	}
+
+	public function __toString()
+	{
+		$this->render();
 	}
 
 	/**
@@ -106,10 +107,4 @@ abstract class Field
 	public static function saveRelationships(BaseModel $model, string $name, $value){
 		return true;
 	}
-
-	/**
-	 * Renders the input for this type of field
-	 * @return string
-	 */
-	abstract public function renderInput();
 }

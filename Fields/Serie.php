@@ -1,22 +1,17 @@
 <?php
-namespace Modules\Forms\Components\Fields;
+namespace Modules\Forms\Fields;
 
-use FormFacade;
+use Modules\Forms\Renderers\Select;
 
-class Select extends Field
+class Serie extends Field
 {
 	public function __construct(string $name, array $options = [])
 	{
+		$options['renderer'] = $options['renderer'] ?? Select::class;
 		$options['allowNoValue'] = $options['allowNoValue'] ?? true;
 		$options['noValueLabel'] = $options['noValueLabel'] ?? 'Select';
 		$options['multiple'] = $options['multiple'] ?? false;
 		$options['items'] = $options['items'] ?? [];
 		parent::__construct($name, $options);
-		$this->options['attributes']['multiple'] = $options['multiple'];
-	}
-
-	public function renderInput()
-	{
-		return FormFacade::select($this->name.'[]', $this->options['items'], $this->options['default'], $this->options['attributes']);
 	}
 }

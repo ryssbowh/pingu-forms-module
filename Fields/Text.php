@@ -1,20 +1,16 @@
 <?php
-namespace Modules\Forms\Components\Fields;
+namespace Modules\Forms\Fields;
 
-use FormFacade;
 use Illuminate\Database\Eloquent\Builder;
+use Modules\Forms\Renderers\Text as TextRenderer;
 
 class Text extends Field
 {
 
 	public function __construct(string $name, array $options = [])
 	{
+		$options['renderer'] = $options['renderer'] ?? TextRenderer::class;
 		parent::__construct($name, $options);
-	}
-
-	public function renderInput()
-	{
-		return FormFacade::text($this->name, $this->options['default'], $this->options['attributes']);
 	}
 
 	public static function fieldQueryModifier(Builder $query, string $name, $value)

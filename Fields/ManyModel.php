@@ -1,5 +1,5 @@
 <?php
-namespace Modules\Forms\Components\Fields;
+namespace Modules\Forms\Fields;
 
 use FormFacade;
 use Illuminate\Database\Eloquent\Builder;
@@ -7,8 +7,22 @@ use Illuminate\Database\Eloquent\Collection;
 use Modules\Core\Entities\BaseModel;
 use Modules\Forms\Exceptions\FieldMissingAttributeException;
 
-class ForeignModel extends Model
+class ManyModel extends Model
 {
+	public function __construct(string $name, array $options = [])
+	{
+		$options['multiple'] = true;
+		parent::__construct($name, $options);
+	}
+
+	public function setDefault($models)
+	{
+		$default = [];
+		foreach($models as $item){
+			$default[] = (string)$item->id;
+		}
+		$this->options['default'] = $default;
+	}
 
 	public static function fieldQueryModifier(Builder $query, string $name, $value)
 	{
@@ -20,11 +34,6 @@ class ForeignModel extends Model
         });
 	}
 
-	public function renderInput()
-	{
-		return FormFacade::select($this->name.'[]', array_column($this->options['items'],'label','id'), $this->options['default'], $this->options['attributes']);
-	}
-
 	public static function setModelValue(BaseModel $model, string $name, $value)
 	{
 		return true;
@@ -32,10 +41,25 @@ class ForeignModel extends Model
 
 	public static function saveRelationships(BaseModel $model, string $name, $value){
 		$value = is_array($value) ? $value : [$value];
-		$model->$name()->detach();
+		$return = false;
+
+		$previouslyAttached = $model->$name->map(function($foreign){
+			return $foreign->id;
+		})->toArray();
+
 		foreach($value as $foreignId){
-			$model->$name()->attach($foreignId);
+			if(!$model->$name->contains($foreignId)){
+				$return = true;
+				$model->$name()->attach($foreignId);
+			}
 		}
-		return true;
+
+		$toDetach = array_diff($previouslyAttached, $value);
+		foreach($toDetach as $id){
+			$model->$name()->detach($id);
+			$return = true;
+		}
+
+		return $return;
 	}
 }

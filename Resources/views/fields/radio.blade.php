@@ -3,10 +3,10 @@
 		<div class="label col-md-4">{{ $label }}</div>
 	@endif
 	<div class="col-md-8">
-		@foreach( $checkboxes as $key => $checkbox)
+		@foreach( $radios as $key => $radio)
 			<div class="form-check form-check-inline">
-				{{ $checkbox }} 
-				<label class="form-check-label" for="{{ $name.$key}}">{{ $items[$key] }}</label>
+				{{ $radio }} 
+				<label class="form-check-label" for="{{ $name.$items[$key]['id'] }}">{{ $items[$key]['label'] }}</label>
 			</div>
 		@endforeach
 	</div>
