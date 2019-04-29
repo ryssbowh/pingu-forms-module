@@ -1,6 +1,6 @@
 {
-    "name": "eskimo/forms-module",
-    "description": "Forms module for eskimo",
+    "name": "pingu/forms-module",
+    "description": "Forms module for pingu",
     "type" : "asgard-module",
     "authors": [
         {
