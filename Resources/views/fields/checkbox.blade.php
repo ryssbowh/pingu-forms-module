@@ -1,4 +1,4 @@
-<div class="form-group row field-{{ $type }}{{ $errors->has($name) ? ' is-invalid' : '' }}">
+<div class="form-group row field-{{ $type }}@isset($errors) @if($errors->has($name)) is-invalid @endif @endisset">
 	@if($label)
 		<div class="label col-md-4">{{ $label }}</div>
 	@endif

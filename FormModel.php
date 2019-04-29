@@ -69,7 +69,7 @@ class FormModel extends Form
 
     protected function generateName()
     {
-        return ($this->edit ? 'edit-' : 'add-') . $this->model::friendlyName();
+        return ($this->edit ? 'edit-' : 'add-') . kebab_case($this->model::friendlyName());
         
     }
 

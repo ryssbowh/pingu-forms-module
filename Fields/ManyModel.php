@@ -18,8 +18,10 @@ class ManyModel extends Model
 	public function setDefault($models)
 	{
 		$default = [];
-		foreach($models as $item){
-			$default[] = (string)$item->id;
+		if(!is_null($models)){
+			foreach($models as $item){
+				$default[] = (string)$item->id;
+			}
 		}
 		$this->options['default'] = $default;
 	}

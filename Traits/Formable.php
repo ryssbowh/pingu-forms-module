@@ -61,15 +61,22 @@ trait Formable {
         return [];
     }
 
+    public function validateForm(Request $request, array $fields)
+    {
+        $validator = $this->makeValidator($request, $fields);
+        $validator->validate();
+        return $validator->validated();
+    }
+
     /**
      * Makes a validator for this model, 
      * will only take the validation rules for the fields present in the request
      * @param  Request $request
      * @return Validator
      */
-    public function makeValidator(Request $request)
+    public function makeValidator(Request $request, array $fields)
     {
-    	$rules = array_intersect_key($this->validationRules(), $request->all());
+    	$rules = array_intersect_key($this->validationRules(), array_flip($fields));
 		$messages = $this->validationMessages();
 		$validator = Validator::make($request->all(), $rules, $messages, ['request' => $request]);
 		event(new FormMakingValidator($validator, $this));

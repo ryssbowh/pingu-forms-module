@@ -9,6 +9,7 @@ return [
     	'password' => 'form-control',
     	'datetime' => 'form-control js-datepicker',
     	'email' => 'form-control',
+        'textarea' => 'form-control',
     	'checkbox' => 'form-check form-check-inline',
     	'radio' => 'form-check form-check-inline'
     ]

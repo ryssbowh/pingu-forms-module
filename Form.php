@@ -31,9 +31,10 @@ class Form
     protected $fields = [];
     protected $isBuilt = false;
     protected $defaults = [
-        'submit' => 'Submit',
+        'submit' => ['Submit'],
         'view' => 'forms::form',
         'groupView' => 'forms::formGroup',
+        'isAdmin' => false,
         'groups' => []
     ];
 
@@ -130,6 +131,17 @@ class Form
     public function getName():string
     {
         return $this->name;
+    }
+
+    /**
+     * Get a form option
+     *
+     * @param  string $name
+     * @return mixed
+     */
+    public function getOption(string $name)
+    {
+        return $this->options[$name] ?? null;
     }
 
     /**
@@ -263,10 +275,9 @@ class Form
     {   
         if(!isset($options['type'])) $options['type'] = Text::class;
         $field = new $options['type']($name, $options);
-        if(isset($options['default'])){
-            $field->setDefault($options['default']);
-        }
+        $field->setDefault($options['default'] ?? null);
         $this->fields[$name] = $field;
+        $this->options['layout'][] = $name;
         return $this;
     }
 
@@ -305,6 +316,7 @@ class Form
     {
         echo FormFacade::open($this->attributes);
         echo FormFacade::hidden('_name', $this->name);
+        echo FormFacade::hidden('_isAdmin', $this->options['isAdmin']);
     }
 
     /**
@@ -325,8 +337,8 @@ class Form
      */
     public function renderSubmit()
     {   
-        if(isset($this->options['submit'])){
-            echo FormFacade::submit($this->options['submit']);
+        if(isset($this->options['submit']) and $this->options['submit']){
+            echo FormFacade::submit(...$this->options['submit']);
         }
     }
 
@@ -401,6 +413,16 @@ class Form
     {
         $this->checkIfBuilt();
         echo view($this->options['view'], ['form' => $this])->render();
+    }
+
+    /**
+     * Renders the form and returns as string
+     * @return string
+     */
+    public function renderAsString()
+    {
+        $this->checkIfBuilt();
+        return view($this->options['view'], ['form' => $this])->render();
     }
 
 }
