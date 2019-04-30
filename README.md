@@ -1,7 +1,7 @@
 # Forms Module
 
 ## TODO
-[ ] test all sorts of relations
+- [ ] test all sorts of relations
 
 ## v1.0.3 wrote readme
 
@@ -35,6 +35,8 @@ For field that define relations, `saveRelationships(BaseModel $model, string $na
 
 Each field must implement `setModelValue(BaseModel $model, string $name, $value)` which populates the model with a value (called by `Formable`)
 
+When your models and their fields defines all those, they can safely be used with the Core ModelController
+
 ### Renderers
 Renderers define how a field is rendered in html. They take for argument an array of options defined by the field.
 
@@ -46,4 +48,4 @@ You can define and use new renderers as long as they extend FieldRenderer or Inp
 Defines the default css classes for renderers
 
 ### Views
-Provides defualt views for renderers
+Provides default views for renderers
