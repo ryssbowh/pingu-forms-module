@@ -55,46 +55,6 @@ class FormsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register views.
-     *
-     * @return void
-     */
-    // public function registerViews()
-    // {
-        // $themePaths = $this->app->make('view.finder')->getThemesPublishPaths('forms');
-
-        // dump($themePaths);
-
-        // foreach($themePaths as $path => $namespace){
-        //     $this->publishes([
-        //         $sourcePath => $path
-        //     ],$namespace);
-        // }
-
-    //     $this->loadViewsFrom(base_path('/Modules/Forms/Resources/views'), 'forms');
-    // }
-
-    /**
-     * Register views.
-     *
-     * @return void
-     */
-    // public function registerViews()
-    // {
-    //     $viewPath = resource_path('views/modules/forms');
-
-    //     $sourcePath = __DIR__.'/../Resources/views';
-
-    //     $this->publishes([
-    //         $sourcePath => $viewPath
-    //     ],'views');
-
-    //     $this->loadViewsFrom(array_merge(array_map(function ($path) {
-    //         return $path . '/modules/forms';
-    //     }, \Config::get('view.paths')), [$sourcePath]), 'forms');
-    // }
-
-    /**
      * Register translations.
      *
      * @return void
