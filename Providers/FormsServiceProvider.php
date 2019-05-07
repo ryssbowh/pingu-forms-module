@@ -25,7 +25,7 @@ class FormsServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerFactories();
-        $this->loadViewsFrom(base_path('Pingu/Forms/Resources/views'), 'forms');
+        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'forms');
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 
