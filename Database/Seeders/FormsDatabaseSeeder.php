@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Forms\Database\Seeders;
+namespace Pingu\Forms\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;

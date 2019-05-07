@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\Forms\Events;
+namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
-use Modules\Core\Entities\BaseModel;
+use Pingu\Core\Entities\BaseModel;
 use Illuminate\Validation\Validator;
 
 class FormMakingValidator

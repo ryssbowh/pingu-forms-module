@@ -1,5 +1,5 @@
 <?php
-namespace Modules\Forms\Renderers;
+namespace Pingu\Forms\Renderers;
 
 use FormFacade;
 

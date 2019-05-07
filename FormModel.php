@@ -15,13 +15,13 @@
  * @see  https://laravelcollective.com/docs/5.4/html
  */
 
-namespace Modules\Forms;
+namespace Pingu\Forms;
 
 use FormFacade;
-use Modules\Core\Entities\BaseModel;
-use Modules\Forms\Events\FormBuilt;
-use Modules\Forms\Exceptions\FieldMissingAttributeException;
-use Modules\Forms\Exceptions\FormNotBuiltException;
+use Pingu\Core\Entities\BaseModel;
+use Pingu\Forms\Events\FormBuilt;
+use Pingu\Forms\Exceptions\FieldMissingAttributeException;
+use Pingu\Forms\Exceptions\FormNotBuiltException;
 
 class FormModel extends Form
 {

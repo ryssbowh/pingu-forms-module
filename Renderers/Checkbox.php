@@ -1,8 +1,8 @@
 <?php
-namespace Modules\Forms\Renderers;
+namespace Pingu\Forms\Renderers;
 
 use Collective\Html\FormFacade;
-use Modules\Forms\Renderers\Radio;
+use Pingu\Forms\Renderers\Radio;
 
 class Checkbox extends Radio
 {

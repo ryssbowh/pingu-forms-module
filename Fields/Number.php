@@ -1,7 +1,7 @@
 <?php
-namespace Modules\Forms\Fields;
+namespace Pingu\Forms\Fields;
 
-use Modules\Forms\Renderers\Number as NumberRenderer;
+use Pingu\Forms\Renderers\Number as NumberRenderer;
 
 class Number extends Field
 {

@@ -11,16 +11,16 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Modules\\Forms\\Providers\\FormsServiceProvider"
+                "Pingu\\Forms\\Providers\\FormsServiceProvider"
             ],
             "aliases": {
-                "FormBuilder": "Modules\\Forms\\Components\\FormBuilder"
+                "FormBuilder": "Pingu\\Forms\\Components\\FormBuilder"
             }
         }
     },
     "autoload": {
         "psr-4": {
-            "Modules\\Forms\\": ""
+            "Pingu\\Forms\\": ""
         }
     },
     "require": {

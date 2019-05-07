@@ -1,9 +1,9 @@
 <?php
-namespace Modules\Forms\Fields;
+namespace Pingu\Forms\Fields;
 
 use Hash;
-use Modules\Core\Entities\BaseModel;
-use Modules\Forms\Renderers\Password as PasswordRenderer;
+use Pingu\Core\Entities\BaseModel;
+use Pingu\Forms\Renderers\Password as PasswordRenderer;
 
 class Password extends Field
 {

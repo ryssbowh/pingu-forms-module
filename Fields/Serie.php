@@ -1,7 +1,7 @@
 <?php
-namespace Modules\Forms\Fields;
+namespace Pingu\Forms\Fields;
 
-use Modules\Forms\Renderers\Select;
+use Pingu\Forms\Renderers\Select;
 
 class Serie extends Field
 {

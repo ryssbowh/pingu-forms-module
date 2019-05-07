@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Forms\Providers;
+namespace Pingu\Forms\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
@@ -25,7 +25,7 @@ class FormsServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerFactories();
-        $this->loadViewsFrom(base_path('Modules/Forms/Resources/views'), 'forms');
+        $this->loadViewsFrom(base_path('Pingu/Forms/Resources/views'), 'forms');
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 

@@ -1,13 +1,13 @@
 <?php 
-namespace Modules\Forms\Traits;
+namespace Pingu\Forms\Traits;
 
 use Collective\Html\Eloquent\FormAccessible;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
-use Modules\Forms\Components\Fields\{Text, Model};
-use Modules\Forms\Events\FormMakingValidator;
-use Modules\Forms\Exceptions\ModelNotSaved;
-use Modules\Forms\Exceptions\ModelRelationsNotSaved;
+use Pingu\Forms\Components\Fields\{Text, Model};
+use Pingu\Forms\Events\FormMakingValidator;
+use Pingu\Forms\Exceptions\ModelNotSaved;
+use Pingu\Forms\Exceptions\ModelRelationsNotSaved;
 use Validator;
 
 trait Formable {

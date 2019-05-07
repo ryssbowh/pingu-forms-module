@@ -1,10 +1,10 @@
 <?php
-namespace Modules\Forms\Fields;
+namespace Pingu\Forms\Fields;
 
 use FormFacade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Modules\Core\Entities\BaseModel;
+use Pingu\Core\Entities\BaseModel;
 
 abstract class Field
 {

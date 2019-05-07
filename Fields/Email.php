@@ -1,7 +1,7 @@
 <?php
-namespace Modules\Forms\Fields;
+namespace Pingu\Forms\Fields;
 
-use Modules\Forms\Renderers\Email as EmailRenderer;
+use Pingu\Forms\Renderers\Email as EmailRenderer;
 
 class Email extends Text
 {

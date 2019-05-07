@@ -1,7 +1,7 @@
 <?php
-namespace Modules\Forms\Renderers;
+namespace Pingu\Forms\Renderers;
 
-use Modules\Forms\Renderers\FieldRenderer;
+use Pingu\Forms\Renderers\FieldRenderer;
 
 abstract class InputFieldRenderer extends FieldRenderer
 {

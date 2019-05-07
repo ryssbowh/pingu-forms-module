@@ -1,4 +1,4 @@
 <?php
-namespace Modules\Forms\Exceptions;
+namespace Pingu\Forms\Exceptions;
 
 class FieldMissingAttributeException extends \Exception{}

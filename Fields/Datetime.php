@@ -1,7 +1,7 @@
 <?php
-namespace Modules\Forms\Fields;
+namespace Pingu\Forms\Fields;
 
-use Modules\Forms\Renderers\Date;
+use Pingu\Forms\Renderers\Date;
 
 class Datetime extends Text
 {

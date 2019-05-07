@@ -1,8 +1,8 @@
 <?php
-namespace Modules\Forms\Fields;
+namespace Pingu\Forms\Fields;
 
 use Illuminate\Database\Eloquent\Builder;
-use Modules\Forms\Renderers\Text as TextRenderer;
+use Pingu\Forms\Renderers\Text as TextRenderer;
 
 class Text extends Field
 {

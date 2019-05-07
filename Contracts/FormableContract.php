@@ -1,5 +1,5 @@
 <?php 
-namespace Modules\Forms\Contracts;
+namespace Pingu\Forms\Contracts;
 
 use Illuminate\Http\Request;
 

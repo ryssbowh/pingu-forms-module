@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\Forms\Events;
+namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
-use Modules\Forms\Form;
+use Pingu\Forms\Form;
 
 class FormBuilt
 {

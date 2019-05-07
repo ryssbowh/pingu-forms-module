@@ -1,11 +1,11 @@
 <?php
-namespace Modules\Forms\Fields;
+namespace Pingu\Forms\Fields;
 
 use FormFacade;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Modules\Core\Entities\BaseModel;
-use Modules\Forms\Exceptions\FieldMissingAttributeException;
+use Pingu\Core\Entities\BaseModel;
+use Pingu\Forms\Exceptions\FieldMissingAttributeException;
 
 class Model extends Serie
 {
