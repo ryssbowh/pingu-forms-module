@@ -38,7 +38,7 @@ class FormModel extends Form
      * @param BaseModel|null $model
      * @param array|null  $fields
      */
-    public function __construct(array $attributes, ?array $options = [], $model = null, ?array $fields = null, $name = null)
+    public function __construct(array $attributes, ?array $options = [], $model, ?array $fields = null, $name = null)
     {   
         $this->attributes = $attributes;
         $this->options = array_merge( $this->defaults, $options);

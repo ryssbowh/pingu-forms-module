@@ -10,7 +10,7 @@ use Pingu\Forms\Exceptions\ModelNotSaved;
 use Pingu\Forms\Exceptions\ModelRelationsNotSaved;
 use Validator;
 
-trait Formable {
+trait FormableModel {
 
     use FormAccessible;
 
@@ -61,6 +61,12 @@ trait Formable {
         return [];
     }
 
+    /**
+     * Validates a request and return validated data
+     * @param  Request $request
+     * @param  array   $fields
+     * @return array
+     */
     public function validateForm(Request $request, array $fields)
     {
         $validator = $this->makeValidator($request, $fields);
@@ -70,8 +76,8 @@ trait Formable {
 
     /**
      * Makes a validator for this model, 
-     * will only take the validation rules for the fields present in the request
      * @param  Request $request
+     * @param  array $fields
      * @return Validator
      */
     public function makeValidator(Request $request, array $fields)

@@ -3,7 +3,7 @@ namespace Pingu\Forms\Contracts;
 
 use Illuminate\Http\Request;
 
-interface FormableContract {
+interface FormableModel {
 
     /**
      * List of fields to be edited by default when adding a model through a form

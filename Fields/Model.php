@@ -30,7 +30,7 @@ class Model extends Serie
 
 	public function setDefault($model)
 	{
-		$this->options['default'] = $model->id;
+		$this->options['default'] = $model ? $model->id : null;
 	}
 
 	protected function buildItems()

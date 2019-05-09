@@ -277,7 +277,7 @@ class Form
         $field = new $options['type']($name, $options);
         $field->setDefault($options['default'] ?? null);
         $this->fields[$name] = $field;
-        $this->options['layout'][] = $name;
+        if(!$this->options['groups']) $this->options['layout'][] = $name;
         return $this;
     }
 
