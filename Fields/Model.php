@@ -25,27 +25,35 @@ class Model extends Serie
 		}
 
 		parent::__construct($name, $options);
-		$this->options['items'] = $this->buildItems();
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	public function buildItems()
+	{
+		$models = $this->options['model']::all();
+        $values = [];
+        if($this->options['allowNoValue']){
+        	$values[''] = $this->options['noValueLabel'];
+        }
+        foreach($models as $model){
+            $values[''.$model->id] = implode($this->options['separator'], $model->only($this->options['textField']));
+        }
+        return $values;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function setDefault($model)
 	{
 		$this->options['default'] = $model ? $model->id : null;
 	}
 
-	protected function buildItems()
-	{
-		$models = $this->options['model']::all();
-        $values = [];
-        if($this->options['allowNoValue']){
-        	$values[0] = $this->options['noValueLabel'];
-        }
-        foreach($models as $model){
-            $values[$model->id] = implode($this->options['separator'], $model->only($this->options['textField']));
-        }
-        return $values;
-	}
-
+	/**
+	 * @inheritDoc
+	 */
 	public static function fieldQueryModifier(Builder $query, string $name, $value)
 	{
 		if(!$value) return;
@@ -54,9 +62,17 @@ class Model extends Serie
 		$query->where(str_singular($model->getTable()).'_id', '=', $value);
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public static function setModelValue(BaseModel $model, string $name, $value)
 	{
-		$modelValue = $model->fieldDefinitions()[$name]['model']::findOrFail($value);
-        $model->$name()->associate($modelValue);
+		if(is_null($value)){
+			$model->$name()->dissociate();
+		}
+		else{
+			$modelValue = $model->fieldDefinitions()[$name]['model']::findOrFail($value);
+        	$model->$name()->associate($modelValue);
+        }
 	}
 }

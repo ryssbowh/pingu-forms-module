@@ -9,14 +9,23 @@ use Pingu\Forms\Exceptions\FieldMissingAttributeException;
 
 class ManyModel extends Model
 {
+	protected $models;
+
 	public function __construct(string $name, array $options = [])
 	{
+		$this->models = collect();
 		$options['multiple'] = true;
 		parent::__construct($name, $options);
 	}
 
+	public function getModels()
+	{
+		return $this->models;
+	}
+
 	public function setDefault($models)
 	{
+		$this->models = $models;
 		$default = [];
 		if(!is_null($models)){
 			foreach($models as $item){
@@ -42,26 +51,8 @@ class ManyModel extends Model
 	}
 
 	public static function saveRelationships(BaseModel $model, string $name, $value){
-		$value = is_array($value) ? $value : [$value];
-		$return = false;
-
-		$previouslyAttached = $model->$name->map(function($foreign){
-			return $foreign->id;
-		})->toArray();
-
-		foreach($value as $foreignId){
-			if(!$model->$name->contains($foreignId)){
-				$return = true;
-				$model->$name()->attach($foreignId);
-			}
-		}
-
-		$toDetach = array_diff($previouslyAttached, $value);
-		foreach($toDetach as $id){
-			$model->$name()->detach($id);
-			$return = true;
-		}
-
-		return $return;
+		$model->$name()->sync($value);
+		$model->load($name);
+		return true;
 	}
 }

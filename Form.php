@@ -3,11 +3,11 @@
  * Form provides with helpers to build a form and print it with the help of the laravel collective Form Facade.
  * Example of use :
  * 
- * $form = new Form('test', ['route' => 'my.route'], ['submit' => 'Go!'], MyModel::class, 2);
+ * $form = new Form('test', ['route' => 'my.route'], ['submit' => ['Go!']], ['field1', 'field2']);
  * $form->end();
  *
  * In your template :
- * $form->printAll();
+ * $form->render();
  *
  * @package Forms
  * @author  Boris Blondin
@@ -34,7 +34,6 @@ class Form
         'submit' => ['Submit'],
         'view' => 'forms::form',
         'groupView' => 'forms::formGroup',
-        'isAdmin' => false,
         'groups' => []
     ];
 
@@ -50,12 +49,25 @@ class Form
     {   
         $this->attributes = $attributes;
         $this->name = $name;
-        $this->options = array_merge( $this->defaults, $options);
+        $this->options = array_merge($this->defaults, $options);
+
+        if(!isset($this->options['submit'][1]['class'])){
+            $this->options['submit'][1]['class'] = theme_config('forms.submit-default-classes');
+        }
 
         if($fields) $this->addFields($fields);
 
         if(!isset($this->options['layout'])) $this->options['layout'] = array_keys($fields);
-        $this->attributes['class'] = isset($this->attributes['class']) ? $this->attributes['class'].= ' form form-'.$name : 'form form-'.$name;
+
+        $this->attributes['class'] = $this->getClasses();
+    }
+
+    public function getClasses(){
+        $classes = $this->attributes['class'] ?? theme_config('forms.form-default-classes').' form-'.$this->name;
+        if($themeClass = theme_config('forms.classes.'.$this->name)){
+            $classes .= ' '.$themeClass;
+        }
+        return $classes;
     }
 
     /**
@@ -201,6 +213,16 @@ class Form
     }
 
     /**
+     * Returns a field by its name
+     * 
+     * @return Field
+     */
+    public function getField(string $name)
+    {
+        return $this->fields[$name] ?? null;
+    }
+
+    /**
      * Remove a field from this form
      * 
      * @param  string $name
@@ -219,9 +241,9 @@ class Form
      * @param  string $attributeName
      * @return boolean
      */
-    public function fieldHasAttribute(string $name, string $attributeName):bool
+    public function fieldHasOption(string $name, string $attributeName):bool
     {
-        return ($this->hasField($name) and isset($this->fields[$name]['attributes'][$attributeName]));
+        return ($this->hasField($name) and $this->fields[$name]->hasOption($attributeName));
     }
 
     /**
@@ -232,9 +254,9 @@ class Form
      * @param mixed $value
      * @return  Form
      */
-    public function addFieldAttribute(string $name, string $attributeName, $value):Form
+    public function setFieldOption(string $name, string $attributeName, $value):Form
     {
-        $this->fields[$name]['attributes'][$attributeName] = $value;
+        $this->fields[$name]->setOption($attributeName, $value);
         return $this;
     }
 
@@ -245,9 +267,23 @@ class Form
      * @param  string $attributeName
      * @return Form
      */
-    public function removeFieldAttribute(string $name, string $attributeName):Form
+    public function removeFieldOption(string $name, string $attributeName):Form
     {
-        if($this->fieldHasAttribute($name, $attributeName)) unset($this->fields[$name]['attributes'][$attributeName]);
+        $this->fields[$name]->removeOption($attributeName);
+        return $this;
+    }
+
+    /**
+     * Sets a field's value
+     * @param string $name
+     * @param $value
+     * @return  Form
+     */
+    public function setFieldValue(string $name, $value)
+    {
+        if($field = $this->getField($name)){
+            $field->setDefault($value);
+        }
         return $this;
     }
 
@@ -316,7 +352,6 @@ class Form
     {
         echo FormFacade::open($this->attributes);
         echo FormFacade::hidden('_name', $this->name);
-        echo FormFacade::hidden('_isAdmin', $this->options['isAdmin']);
     }
 
     /**
@@ -424,5 +459,24 @@ class Form
         $this->checkIfBuilt();
         return view($this->options['view'], ['form' => $this])->render();
     }
+
+    public function __toString()
+    {
+        return $this->renderAsString();
+    }
+
+    // public function serialize()
+    // {
+    //     $data = [
+    //         'name' => $this->name,
+    //         'options' => $this->options,
+    //         'attributes' => $this->attributes,
+    //         'fields' => []
+    //     ];
+    //     foreach($this->fields as $field){
+    //         $data['fields'][] = $field->serialize();
+    //     }
+    //     return $data;
+    // }
 
 }

@@ -3,9 +3,17 @@ namespace Pingu\Forms\Traits;
 
 use Collective\Html\Eloquent\FormAccessible;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Validator as ValidatorContract;
 use Pingu\Forms\Components\Fields\{Text, Model};
-use Pingu\Forms\Events\FormMakingValidator;
+use Pingu\Forms\Events\AddFields;
+use Pingu\Forms\Events\EditFields;
+use Pingu\Forms\Events\ModelFieldDefinitions;
+use Pingu\Forms\Events\ModelValidationMessages;
+use Pingu\Forms\Events\ModelValidationRules;
+use Pingu\Forms\Events\ModelValidator;
+use Pingu\Forms\Exceptions\FieldNotDefined;
 use Pingu\Forms\Exceptions\ModelNotSaved;
 use Pingu\Forms\Exceptions\ModelRelationsNotSaved;
 use Validator;
@@ -15,21 +23,25 @@ trait FormableModel {
     use FormAccessible;
 
     /**
-     * List of fields to be edited by default when adding a model through a form
+     * List of fields to be edited when adding a model through a form
      * @return array
      */
-    public function addFormFields()
+    public static function addFormFields()
     {
-        return $this->fillable;
+        $fields = static::$addFields ?? [];
+        event(new AddFields($fields, static::class));
+        return $fields;
     }
 
     /**
-     * List of fields to be edited by default when editing this model through a form
+     * List of fields to be edited when editing this model through a form
      * @return array
      */
-    public function editFormFields()
+    public static function editFormFields()
     {
-        return $this->fillable;
+        $fields = static::$editFields ?? [];
+        event(new EditFields($fields, static::class));
+        return $fields;
     }
 
 	/**
@@ -38,7 +50,9 @@ trait FormableModel {
 	 */
 	public static function fieldDefinitions()
 	{
-		return [];
+        $definitions = static::$fieldDefinitions ?? [];
+        event(new ModelFieldDefinitions($definitions, static::class));
+		return $definitions;
 	}
 
 	/**
@@ -48,7 +62,9 @@ trait FormableModel {
 	 */
     public function validationRules()
     {
-        return [];
+        $rules = static::$validationRules ?? [];
+        event(new ModelValidationRules($rules, static::class));
+        return $this->replaceRulesTokens($rules);
     }
 
     /**
@@ -56,9 +72,31 @@ trait FormableModel {
      * @see https://laravel.com/docs/5.7/validation
      * @return array
      */
-    public function validationMessages()
+    public static function validationMessages()
     {
-        return [];
+        $messages = static::$validationMessages ?? [];
+        event(new ModelValidationMessages($messages, static::class));
+        return $messages;
+    }
+
+    /**
+     * Replace tokens within rules with fields from the object
+     * example rule : 'required|email|unique:users,email,{id}'
+     * @param  array  $rules
+     * @return array
+     */
+    public function replaceRulesTokens(array $rules)
+    {
+        foreach($rules as $key => $rule){
+            preg_match('/^.*\{([a-zA-Z]+)\}.*$/', $rule, $matches);
+            if($matches){
+                foreach($matches as $match){
+                    $rule = str_replace('{'.$match.'}', $this->$match, $rule);
+                }
+                $rules[$key] = $rule;
+            }
+        }
+        return $rules;
     }
 
     /**
@@ -67,9 +105,9 @@ trait FormableModel {
      * @param  array   $fields
      * @return array
      */
-    public function validateForm(Request $request, array $fields)
+    public function validateForm(array $values, array $fields)
     {
-        $validator = $this->makeValidator($request, $fields);
+        $validator = $this->makeValidator($values, $fields);
         $validator->validate();
         return $validator->validated();
     }
@@ -80,20 +118,28 @@ trait FormableModel {
      * @param  array $fields
      * @return Validator
      */
-    public function makeValidator(Request $request, array $fields)
-    {
+    public function makeValidator(array $values, array $fields)
+    {   
     	$rules = array_intersect_key($this->validationRules(), array_flip($fields));
 		$messages = $this->validationMessages();
-		$validator = Validator::make($request->all(), $rules, $messages, ['request' => $request]);
-		event(new FormMakingValidator($validator, $this));
+		$validator = Validator::make($values, $rules, $messages);
+        $this->modifyValidator($validator, $values, $fields);
+		event(new ModelValidator($validator, $this));
 		return $validator;
     }
 
     /**
+     * Hook to add rules to the validator
+     * @param  ValidatorContract $validator
+     */
+    protected function modifyValidator(ValidatorContract $validator, array $values, array $fields){}
+
+    /**
      * Saves the relationships for a model
      * must be called after the model is saved, so we have and id.
-     * @param  array  $values [description]
-     * @return [type]         [description]
+     * Return a bool wether of not relationships were changed.
+     * @param  array  $values
+     * @return bool
      */
     public function saveRelationships(array $values)
     {
@@ -107,7 +153,7 @@ trait FormableModel {
 
             if(method_exists($this, $name)){
                 $relation = $this->$name();
-                if(get_class($relation) == BelongsToMany::class){
+                if($relation instanceof Relation){
                     $res = $fields[$name]['type']::saveRelationships($this, $name, $value);
                     $return = ($return or $res);
                 }
@@ -118,19 +164,56 @@ trait FormableModel {
     }
 
     /**
+     * Destroys relationships for this model
+     * @return bool
+     */
+    public function destroyRelationships()
+    {
+        $fields = $this::fieldDefinitions();
+        $return = true;
+        foreach($fields as $name => $data){
+            if(method_exists($this, $name)){
+                $res = $data['type']::destroyRelationships($this, $name);
+                $return = ($return and $res);
+            }
+        }
+        return $return;
+    }
+
+    /**
      * Populates this with values coming from a form submit
      * @param  array $values
+     * @return  FormableModel
      */
     public function formFill(array $values){
         $fields = $this::fieldDefinitions();
-        foreach($values as $name => $value){
-            if(in_array($name, $this->fillable)){
+        foreach($this->getFillableFields($values) as $name => $value){
+            if(!isset($fields[$name])){
+                throw new FieldNotDefined('field '.$name.' is not defined in '.get_class($this));
+            }
+            if($this->isFillable($name)){
                 $fields[$name]['type']::setModelValue($this, $name, $value);   
             }
         }
         return $this;
     }
 
+    /**
+     * Filters an array of [field => value] to remove fields starting with _
+     * @param  array  $fields
+     * @return array
+     */
+    public function getFillableFields(array $fields){
+        return array_filter($fields, function($field){
+            return substr($field, 0, 1) != '_';
+        }, ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * Saves a model and its relationships with values coming from a form.
+     * @param  array  $validated
+     * @return bool
+     */
     public function saveWithRelations(array $validated)
     {
         $this->formFill($validated);

@@ -9,13 +9,13 @@ interface FormableModel {
      * List of fields to be edited by default when adding a model through a form
      * @return array
      */
-    public function addFormFields();
+    public static function addFormFields();
 
     /**
      * List of fields to be edited by default when editing this model through a form
      * @return array
      */
-    public function editFormFields();
+    public static function editFormFields();
 
 	/**
 	 * Return field definitions for that model
@@ -35,6 +35,6 @@ interface FormableModel {
      * @see https://laravel.com/docs/5.7/validation
      * @return array
      */
-    public function validationMessages();
+    public static function validationMessages();
 
 }

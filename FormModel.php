@@ -1,19 +1,4 @@
 <?php
-/**
- * Form provides with helpers to build a form and print it with the help of the laravel collective Form Facade.
- * Example of use :
- * 
- * $form = new Form('test', ['route' => 'my.route'], ['submit' => 'Go!'], MyModel::class, 2);
- * $form->end();
- *
- * In your template :
- * $form->printAll();
- *
- * @package Forms
- * @author  Boris Blondin
- * @version 1.0
- * @see  https://laravelcollective.com/docs/5.4/html
- */
 
 namespace Pingu\Forms;
 
@@ -40,9 +25,6 @@ class FormModel extends Form
      */
     public function __construct(array $attributes, ?array $options = [], $model, ?array $fields = null, $name = null)
     {   
-        $this->attributes = $attributes;
-        $this->options = array_merge( $this->defaults, $options);
-
         $this->model = $model;
         if(!is_object($model)){
             $this->edit = false;
@@ -53,26 +35,28 @@ class FormModel extends Form
             if($this->edit) $fields = $this->model->editFormFields();
             else $fields = $this->model->addFormFields();
         }
-        $this->addFields($fields);
-        $this->options['layout'] = $fields;
 
         if(is_null($name)){
             $name = $this->generateName();
         }
 
-        $this->name = $name;
-        $this->attributes['class'] = isset($this->attributes['class']) ? $this->attributes['class'].= ' form form-'.$this->name : 'form form-'.$this->name;
-
-
-        if(!isset($this->options['layout'])) $this->options['layout'] = $fields;
+        parent::__construct($name, $attributes, $options, $fields);
     }
 
+    /**
+     * Generates a name for this form
+     * @return string
+     */
     protected function generateName()
     {
         return ($this->edit ? 'edit-' : 'add-') . kebab_case($this->model::friendlyName());
         
     }
 
+    /**
+     * Get the model associated with this form
+     * @return BaseModel
+     */
     public function getModel()
     {
         return $this->model;

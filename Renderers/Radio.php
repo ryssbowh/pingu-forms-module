@@ -1,22 +1,19 @@
 <?php
 namespace Pingu\Forms\Renderers;
 
-use FormFacade;
-
-class Radio extends FieldRenderer
+class Radio extends Select
 {
-	public function __construct(array $options)
-	{
-		parent::__construct($options);
-		$this->buildItems();
-	}
-
 	public function buildItems()
 	{
-		foreach($this->options['items'] as $key => $item){
-			$attributes = $this->options['attributes'];
+		$items = $this->field->buildItems();
+		foreach($items as $key => $item){
+			$attributes = $this->options['rendererAttributes'];
 			$attributes['id'] = $this->options['name'].$key;
-			$this->options['radios'][$key] = FormFacade::radio($this->options['name'], $key, $this->options['default'] == $key, $attributes);
+			$this->options['radios'][$key] = [
+				'checked' => ($this->options['default'] == $key),
+				'attributes' => $attributes,
+				'label' => $item
+			];
 		}
 	}
 }

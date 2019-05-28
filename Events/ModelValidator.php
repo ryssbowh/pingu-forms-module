@@ -6,7 +6,7 @@ use Illuminate\Queue\SerializesModels;
 use Pingu\Core\Entities\BaseModel;
 use Illuminate\Validation\Validator;
 
-class FormMakingValidator
+class ModelValidator
 {
     use SerializesModels;
 

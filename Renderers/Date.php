@@ -1,12 +1,6 @@
 <?php
 namespace Pingu\Forms\Renderers;
 
-use FormFacade;
-
-class Date extends InputFieldRenderer
+class Date extends FieldRenderer
 {
-	public function renderInput()
-	{
-		return FormFacade::date($this->options['name'], $this->options['attributes']);
-	}
 }

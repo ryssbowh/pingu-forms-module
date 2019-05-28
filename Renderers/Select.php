@@ -1,18 +1,22 @@
 <?php
 namespace Pingu\Forms\Renderers;
 
-use FormFacade;
+use Pingu\Forms\Fields\Serie;
 
-class Select extends InputFieldRenderer
+class Select extends FieldRenderer
 {
-	public function renderInput()
+	public function __construct(Serie $field)
 	{
-		$name = $this->options['name'];
-		$this->options['attributes']['id'] = $this->options['name'];
-		if($this->options['multiple']){
-			$name = $this->options['name'].'[]';
-			$this->options['attributes']['multiple'] = true;
-		}
-		return FormFacade::select($name, $this->options['items'], $this->options['default'] ?? null, $this->options['attributes']);
+		parent::__construct($field);
+		$this->buildItems();
 	}
+
+	public function buildItems(){
+		$this->options['items'] = $this->field->buildItems();
+		$this->options['rendererAttributes']['id'] = $this->options['name'];
+		if($this->options['multiple']){
+			$this->options['name'] .= '[]';
+			$this->options['rendererAttributes']['multiple'] = true;
+		}
+	}	
 }

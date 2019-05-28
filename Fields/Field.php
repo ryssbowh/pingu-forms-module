@@ -16,7 +16,7 @@ abstract class Field
 	public function __construct(string $name, array $options = [])
 	{
 		$this->name = $name;
-		$this->type = strtolower(classname($this));
+		$this->type = strtolower(class_basename($this));
 
 		$options['name'] = $name;
 		$options['type'] = $this->type;
@@ -57,7 +57,7 @@ abstract class Field
 	 */
 	public function render()
 	{
-		(new $this->options['renderer']($this->options))->render();
+		(new $this->options['renderer']($this))->render();
 	}
 
 	public function __toString()
@@ -107,6 +107,44 @@ abstract class Field
 	 * @return bool          
 	 */
 	public static function saveRelationships(BaseModel $model, string $name, $value){
+		return false;
+	}
+
+	/**
+	 * Destroys a relationships for this type of field
+	 * @param  BaseModel $model
+	 * @param  string    $name
+	 * @param  $value $[name] [<description>]
+	 * @return bool
+	 */
+	public static function destroyRelationships(BaseModel $model, string $name){
 		return true;
 	}
+
+	public function hasOption($name)
+	{
+		return isset($this->options[$name]);
+	}
+
+	public function removeOption(string $name)
+	{
+		if($this->hasOption($name)) unset($this->option[$name]);
+		return $this;
+	}
+
+	public function setOption(string $name, $value)
+	{
+		$this->options[$name] = $value;
+		return $this;
+	}
+
+	// public function serialize()
+	// {
+	// 	$data = [
+	// 		'class' => classname($this),
+	// 		'name' => $this->name,
+	// 		'options' => $this->options
+	// 	];
+	// 	return $data;
+	// }
 }

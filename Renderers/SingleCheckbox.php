@@ -1,6 +1,6 @@
 <?php
 namespace Pingu\Forms\Renderers;
 
-class Email extends FieldRenderer
+class SingleCheckbox extends FieldRenderer
 {
 }

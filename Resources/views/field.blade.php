@@ -1,6 +1,8 @@
-<div class="form-group row field-{{ $type }}{{ $errors->has($name) ? ' is-invalid' : '' }}">
+<div class="{{ $fieldClasses }} field-{{ $type }}{{ isset($errors) and $errors->has($name) ? ' is-invalid' : '' }}">
 	@if($label)
-		<div class="label col-md-4">{{ $label }}</div>
+		<div class="{{ $labelClasses }}">{{ $label }}</div>
 	@endif
-	@yield('field-inner')
+	<div class="{{ $fieldInnerClasses }}">
+		@yield('inner')
+	</div>
 </div>

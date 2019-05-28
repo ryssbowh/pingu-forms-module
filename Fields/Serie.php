@@ -3,7 +3,7 @@ namespace Pingu\Forms\Fields;
 
 use Pingu\Forms\Renderers\Select;
 
-class Serie extends Field
+abstract class Serie extends Field
 {
 	public function __construct(string $name, array $options = [])
 	{
@@ -13,5 +13,14 @@ class Serie extends Field
 		$options['multiple'] = $options['multiple'] ?? false;
 		$options['items'] = $options['items'] ?? [];
 		parent::__construct($name, $options);
+	}
+
+	public function buildItems()
+	{
+		$items = $this->options['items'];
+        if($this->options['allowNoValue']){
+        	array_unshift([0 => $this->options['noValueLabel']], $items);
+        }
+		return $items;
 	}
 }

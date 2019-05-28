@@ -2,6 +2,20 @@
 
 ## TODO
 - [ ] test all sorts of relations
+- [ ] finish js->populateFormWithModel()
+- [ ] make fields define extra validations rules
+- 
+
+## v1.1.1
+- Refactored FormableModel and FormableController to throw events at each step of the process
+- fixed field templates
+- add js function to populate form with json
+- refactored Renderers
+- added Route folder and Route service provider
+- removed the ability to print a form through api (doesn't make sense)
+- added Url field
+- added Boolean field
+- added default classes for all parts of a form
 
 ## v1.0.3 wrote readme
 
@@ -37,15 +51,19 @@ Each field must implement `setModelValue(BaseModel $model, string $name, $value)
 
 When your models and their fields defines all those, they can safely be used with the Core ModelController
 
+### Define fields that are not in the model table
+
+Sometimes for validation purposes you need to create fields and validate them but not populate the model with them (\_repeat_password for example), in that case, prefix them with a \_.
+
 ### Renderers
 Renderers define how a field is rendered in html. They take for argument an array of options defined by the field.
 
 The Renderers written here use [laravel Collective](https://github.com/LaravelCollective/docs/blob/5.6/html.md) to render elements.
 
-You can define and use new renderers as long as they extend FieldRenderer or InputFieldRenderer. The only method you need to override is `render` which will be called by Form.
+You can define and use new renderers as long as they extend FieldRenderer.
 
 ### Config
-Defines the default css classes for renderers
+Defines the default css classes for fields and renderers.
 
 ### Views
-Provides default views for renderers
+Provides default views for form, fields and renderers

@@ -10,8 +10,6 @@
     ],
     "aliases": {
     },
-    "files": [
-        "start.php"
-    ],
+    "files": [],
     "requires": []
 }
