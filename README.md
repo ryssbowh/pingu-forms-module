@@ -2,20 +2,19 @@
 
 ## TODO
 - [ ] test all sorts of relations
-- [ ] finish js->populateFormWithModel()
 - [ ] make fields define extra validations rules
-- 
 
 ## v1.1.1
 - Refactored FormableModel and FormableController to throw events at each step of the process
 - fixed field templates
-- add js function to populate form with json
 - refactored Renderers
 - added Route folder and Route service provider
 - removed the ability to print a form through api (doesn't make sense)
 - added Url field
 - added Boolean field
+- added singleCheckbox Renderer
 - added default classes for all parts of a form
+- ignore fields starting with _ in formFill
 
 ## v1.0.3 wrote readme
 
