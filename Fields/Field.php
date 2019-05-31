@@ -92,7 +92,7 @@ abstract class Field
 	 * @param  mixed  $value
 	 * @return void
 	 */
-	public static function fieldQueryModifier(Builder $query, string $name, $value)
+	public static function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if($value){
 			$query->where($name, '=', $value);

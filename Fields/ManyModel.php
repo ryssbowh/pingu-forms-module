@@ -35,7 +35,7 @@ class ManyModel extends Model
 		$this->options['default'] = $default;
 	}
 
-	public static function fieldQueryModifier(Builder $query, string $name, $value)
+	public static function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if(!$value) return;
 		$model = $query->getModel()::fieldDefinitions()[$name]['model'];

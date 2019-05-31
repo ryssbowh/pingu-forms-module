@@ -13,7 +13,7 @@ class Text extends Field
 		parent::__construct($name, $options);
 	}
 
-	public static function fieldQueryModifier(Builder $query, string $name, $value)
+	public static function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		$query->where($name, 'like', '%'.$value.'%');
 	}

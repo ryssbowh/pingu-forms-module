@@ -32,7 +32,14 @@ class Model extends Serie
 	 */
 	public function buildItems()
 	{
-		$models = $this->options['model']::all();
+		$callback = isset($this->options['queryCallback']) ? $this->options['queryCallback'] : false;
+
+		if($callback and method_exists($callback[0], $callback[1])){
+			$models = call_user_func($callback, $this);
+		}
+		else{
+			$models = $this->options['model']::all();
+		}
         $values = [];
         if($this->options['allowNoValue']){
         	$values[''] = $this->options['noValueLabel'];
@@ -54,7 +61,7 @@ class Model extends Serie
 	/**
 	 * @inheritDoc
 	 */
-	public static function fieldQueryModifier(Builder $query, string $name, $value)
+	public static function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if(!$value) return;
 		$model = $query->getModel()::fieldDefinitions()[$name]['model'];

@@ -4,12 +4,17 @@
 - [ ] test all sorts of relations
 - [ ] make fields define extra validations rules
 
+## v1.1.3
+- renamed fieldQueryModifier in filterQueryModifier in Field
+
+## v1.1.2
+- Model fields can define a queryCallback
+
 ## v1.1.1
 - Refactored FormableModel and FormableController to throw events at each step of the process
 - fixed field templates
 - refactored Renderers
 - added Route folder and Route service provider
-- removed the ability to print a form through api (doesn't make sense)
 - added Url field
 - added Boolean field
 - added singleCheckbox Renderer
@@ -42,13 +47,15 @@ Fields define how a field is saved in database and how it can be filtered/access
 
 You can define new Fields by extending `Field`, `Serie`, `Model` or `ManyModel`.
 
-Each field must define `fieldQueryModifier(Builder $query, string $name, $value)` which is used when a call filters by this type of field (api call for example). the Builder is of type `Illuminate\Database\Eloquent\Builder` and is basically the query used to get the models that you can change at will in this method.
+Each field must define `filterQueryModifier(Builder $query, string $name, $value)` which is used when a call filters by this type of field (api/ajax call for example). the Builder is of type `Illuminate\Database\Eloquent\Builder` and is basically the query used to get the models that you can change at will in this method.
 
-For field that define relations, `saveRelationships(BaseModel $model, string $name, $value)` saves the relations (it is called by `Formable`).
+For field that define relations, `saveRelationships(BaseModel $model, string $name, $value)` saves the relations (it is called by `FormableModel`).
 
-Each field must implement `setModelValue(BaseModel $model, string $name, $value)` which populates the model with a value (called by `Formable`)
+Each field must implement `setModelValue(BaseModel $model, string $name, $value)` which populates the model with a value (called by `FormableModel`)
 
-When your models and their fields defines all those, they can safely be used with the Core ModelController
+When your models and their fields defines all those, they can safely be used with the Core ModelController.
+
+Model fields can define a queryCallback ['object', 'method'], which will be called when retrieving all models from db. The method should be static and will receive the Field as argument.
 
 ### Define fields that are not in the model table
 
