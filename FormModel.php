@@ -30,10 +30,10 @@ class FormModel extends Form
             $this->edit = false;
             $this->model = new $model();
         }
-        $this->fieldDefinitions = $this->model::fieldDefinitions();
+
         if(is_null($fields)){
-            if($this->edit) $fields = $this->model->editFormFields();
-            else $fields = $this->model->addFormFields();
+            if($this->edit) $fields = $this->model->getEditFormFields();
+            else $fields = $this->model->getAddFormFields();
         }
 
         if(is_null($name)){
@@ -67,18 +67,26 @@ class FormModel extends Form
      * 
      * @param $fields
      */
-    public function addModelField(string $field)
+    public function addModelField(string $field, $model = null)
     {
-        $options = $this->fieldDefinitions[$field];
-        if($this->edit) $options['default'] = $this->model->$field;
+        if(is_null($model)){
+            $model = $this->model;
+        }
+        if(is_string($model)){
+            $model = new $model;
+        }
+        $options = $model->getFieldDefinitions()[$field];
+        if($this->edit) $options['default'] = $model->$field;
         $this->addField($field, $options);
+        return $this;
     }
 
-    public function addFields(array $fields)
+    public function addFields(array $fields, $model = null)
     {
         foreach($fields as $name){
-            $this->addModelField($name);
+            $this->addModelField($name, $model);
         }
+        return $this;
     }
 
     /**
@@ -91,7 +99,6 @@ class FormModel extends Form
     public function printStart()
     {
         echo FormFacade::model($this->model, $this->attributes);
-        echo FormFacade::hidden('_name', $this->name);
     }
 
 }

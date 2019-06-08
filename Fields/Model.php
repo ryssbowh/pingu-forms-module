@@ -64,7 +64,7 @@ class Model extends Serie
 	public static function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if(!$value) return;
-		$model = $query->getModel()::fieldDefinitions()[$name]['model'];
+		$model = $query->getModel()->getFieldDefinitions()[$name]['model'];
 		$model = new $model;
 		$query->where(str_singular($model->getTable()).'_id', '=', $value);
 	}
@@ -74,11 +74,11 @@ class Model extends Serie
 	 */
 	public static function setModelValue(BaseModel $model, string $name, $value)
 	{
-		if(is_null($value)){
+		if(!$value){
 			$model->$name()->dissociate();
 		}
 		else{
-			$modelValue = $model->fieldDefinitions()[$name]['model']::findOrFail($value);
+			$modelValue = $model->getFieldDefinitions()[$name]['model']::findOrFail($value);
         	$model->$name()->associate($modelValue);
         }
 	}

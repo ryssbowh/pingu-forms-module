@@ -27,6 +27,17 @@ class FormsServiceProvider extends ServiceProvider
         $this->registerFactories();
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'forms');
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+
+        /**
+         * Extends validator with an url rule that check if the url is an internal get url
+         * if not starting with http. route names are also supported
+         */
+        \Validator::extend('valid_url', function ($attribute, $value, $parameters, $validator) {
+            if($value and substr($value, 0, 4) != 'http' and !route_exists($value)) return false;
+            return true;
+        });
+
+        \Asset::container('modules')->add('forms-js', 'modules/Forms/js/Forms.js');
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
+use Pingu\Core\Entities\BaseModel;
 
 class ModelValidationMessages
 {
@@ -15,7 +16,7 @@ class ModelValidationMessages
      *
      * @return void
      */
-    public function __construct(array &$messages, string $model)
+    public function __construct(array &$messages, BaseModel $model)
     {
         $this->messages = $messages;
         $this->model = $model;

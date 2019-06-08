@@ -1,5 +1,5 @@
 @extends('forms::field')
 
 @section('inner')
-{{ FormFacade::date($name, $default ?? null, $rendererAttributes) }}
+{{ FormFacade::text($name, $default ?? null, $rendererAttributes) }}
 @overwrite

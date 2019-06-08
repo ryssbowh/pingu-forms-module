@@ -3,6 +3,12 @@
 ## TODO
 - [ ] test all sorts of relations
 - [ ] make fields define extra validations rules
+- [ ] make file field
+
+## v1.1.4
+- added js for dashify fields
+- added new validation rule `valid_url` 
+- added functions to move a field up in his layout or group
 
 ## v1.1.3
 - renamed fieldQueryModifier in filterQueryModifier in Field
@@ -29,16 +35,10 @@
 
 If you build a form manually you will need to call the `end` method or an Exception will be thrown.
 
-Those forms will send events when :
-- They are built
-- The validator for it is built
-
-By catching those events you can add/remove fields, change the layout, or add validation rules.
-
 ### Formable Models
 To make a model compatible with Form it'll need to implement the `FormableContract` and use the trait `Formable` that implements the basic methods. It can then override some methods of it.
 
-Formable provides with methods to define validations for each fields and create a validator with those rules. It can also fill a model with values coming from a form (`formFill`). For models that define `BelongsToMany` relations, `saveWithRelations` can be used to save the model and then save those relations (those relations force us to save the model before syncng the relations).
+Formable provides with methods to define validations for each fields and create a validator with those rules. It can also fill a model with values coming from a form (`formFill`). For models that define `BelongsToMany` relations, `saveWithRelations` can be used to save the model and then save those relations (those relations force us to save the model before syncing the relations).
 
 see [Laravel validation](https://laravel.com/docs/5.7/validation)
 
@@ -73,3 +73,15 @@ Defines the default css classes for fields and renderers.
 
 ### Views
 Provides default views for form, fields and renderers
+
+### Events
+- `AddFormFields` thrown every time a model add form fields are retrieved
+- `EditFormFields` thrown every time a model edit form fields are retrieved
+- `FormBuilt` thrown every time a form is finished building (`end` method is called)
+- `ModelFieldDefinitions` thrown every time a model field's definition are retrieved
+- `ModelFieldValidationMessages` thrown every time a model field's validation messages are retrieved
+- `ModelFieldValidationRules` thrown every time a model field's validation rules are retrieved
+- `ModelValidator` thrown every time a model's validator is created
+
+### Validation
+`valid_url` checks if a field's value is valid url (if the values doesn't start with http), the value can be a route uri or route name (GET routes only).

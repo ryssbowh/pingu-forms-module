@@ -3,7 +3,7 @@ namespace Pingu\Forms\Fields;
 
 use Pingu\Forms\Renderers\Select;
 
-abstract class Serie extends Field
+class Serie extends Field
 {
 	public function __construct(string $name, array $options = [])
 	{

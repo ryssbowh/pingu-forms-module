@@ -3,6 +3,7 @@
 namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
+use Pingu\Core\Entities\BaseModel;
 
 class ModelFieldDefinitions
 {
@@ -15,7 +16,7 @@ class ModelFieldDefinitions
      *
      * @return void
      */
-    public function __construct(array &$definitions, string $model)
+    public function __construct(array &$definitions, BaseModel $model)
     {
         $this->definitions = $definitions;
         $this->model = $model;

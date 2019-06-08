@@ -22,6 +22,7 @@ use Pingu\Forms\Components\Fields\Text;
 use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Exceptions\FieldMissingAttributeException;
 use Pingu\Forms\Exceptions\FormNotBuiltException;
+use Pingu\Forms\Exceptions\GroupNotDefined;
 
 class Form
 {
@@ -326,6 +327,89 @@ class Form
         foreach($fields as $name => $options){
             $this->addField($name, $options);
         }
+        return $this;
+    }
+
+    /**
+     * Move a field at the top of the layout, or at the top of the group if given
+     * @param  string $name
+     * @param  ?string $group
+     * @return Form
+     */
+    public function moveFieldDown(string $name, $group = null)
+    {
+        if($group){
+            $this->moveFieldDownInGroup($name, $group);
+        }
+        else{
+            $index = array_search($name, $this->options['layout']);
+            unset($this->options['layout'][$index]);
+            $this->options['layout'][] = $name;
+        }
+        return $this;
+    }
+
+    /**
+     * Move a field at the bottom of a group
+     * @param  string $name
+     * @param  string $group
+     * @throws GroupNotDefined
+     * @throws FieldNotInGroup
+     * @return Form
+     */
+    public function moveFieldDownInGroup(string $name, string $group)
+    {
+        if(!$this->isGroup($group)){
+            throw new GroupNotDefined($group);
+        }
+        if(!in_array($name, $this->options['groups'][$group])){
+            throw new FieldNotInGroup($name, $group);
+        }
+        $index = array_search($name, $this->options['groups'][$group]);
+        unset($this->options['groups'][$group][$index]);
+        $this->options['groups'][$group][] = $name;
+        return $this;
+    }
+
+    /**
+     * Move a field at the top of the layout, or at the top of the group if given
+     * @param  string $name
+     * @param  ?string $group
+     * @return Form
+     */
+    public function moveFieldUp(string $name, $group = null)
+    {
+        if($group){
+            $this->moveFieldUpInGroup($name, $group);
+        }
+        else{
+            $index = array_search($name, $this->options['layout']);
+            unset($this->options['layout'][$index]);
+            array_unshift($this->options['layout'], $name);
+        }
+        return $this;
+    }
+
+    /**
+     * Move a field at the top of a group
+     * @param  string $name
+     * @param  string $group
+     * @throws GroupNotDefined
+     * @throws FieldNotInGroup
+     * @return Form
+     */
+    public function moveFieldUpInGroup(string $name, string $group)
+    {
+        if(!$this->isGroup($group)){
+            throw new GroupNotDefined($group);
+        }
+        if(!in_array($name, $this->options['groups'][$group])){
+            throw new FieldNotInGroup($name, $group);
+        }
+        $index = array_search($name, $this->options['groups'][$group]);
+        unset($this->options['groups'][$group][$index]);
+        array_unshift($this->options['groups'][$group], $name);
+        return $this;
     }
 
     /**
@@ -351,7 +435,6 @@ class Form
     public function renderStart()
     {
         echo FormFacade::open($this->attributes);
-        echo FormFacade::hidden('_name', $this->name);
     }
 
     /**
@@ -464,19 +547,5 @@ class Form
     {
         return $this->renderAsString();
     }
-
-    // public function serialize()
-    // {
-    //     $data = [
-    //         'name' => $this->name,
-    //         'options' => $this->options,
-    //         'attributes' => $this->attributes,
-    //         'fields' => []
-    //     ];
-    //     foreach($this->fields as $field){
-    //         $data['fields'][] = $field->serialize();
-    //     }
-    //     return $data;
-    // }
 
 }

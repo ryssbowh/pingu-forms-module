@@ -38,7 +38,7 @@ class ManyModel extends Model
 	public static function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if(!$value) return;
-		$model = $query->getModel()::fieldDefinitions()[$name]['model'];
+		$model = $query->getModel()->getFieldDefinitions()[$name]['model'];
 		$model = new $model;
 		$query->whereHas($name, function($query) use ($model, $value){
             $query->where(str_singular($model->getTable()).'_id', '=', $value);

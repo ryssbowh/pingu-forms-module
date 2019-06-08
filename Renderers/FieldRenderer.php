@@ -16,6 +16,7 @@ abstract class FieldRenderer
 		$this->view = $options['view'] ?? 'forms::fields.'.$options['type'];
 		$options['label'] = $options['label'] ?? ucfirst($options['name']);
 		$options['rendererAttributes']['class'] = $this->getRendererClasses($options);
+		$options['rendererAttributes']['required'] = $options['required'] ?? false;
 		$options['fieldClasses'] = $this->getFieldClasses($options);
 		$options['fieldInnerClasses'] = $this->getInnerFieldClasses($options);
 		$options['labelClasses'] = $this->getLabelClasses($options);
@@ -24,22 +25,26 @@ abstract class FieldRenderer
 
 	protected function getLabelClasses(array $options)
 	{	
-		return $options['labelClasses'] ?? theme_config('forms.label-classes.'.$options['type']) ?? theme_config('forms.label-default-classes') ?? '';
+		$classes = theme_config('forms.label-classes.'.$options['type']) ?? theme_config('forms.label-default-classes') ?? '';
+		return isset($options['labelClasses']) ? $classes.' '.$options['labelClasses'] : $classes;
 	}
 
 	protected function getFieldClasses(array $options)
 	{	
-		return $options['fieldClasses'] ?? theme_config('forms.field-classes.'.$options['type']) ?? theme_config('forms.field-default-classes') ?? '';
+		$classes = theme_config('forms.field-classes.'.$options['type']) ?? theme_config('forms.field-default-classes') ?? '';
+		return isset($options['fieldClasses']) ? $classes.' '.$options['fieldClasses'] : $classes;
 	}
 
 	protected function getInnerFieldClasses(array $options)
 	{	
-		return $options['fieldInnerClasses'] ?? theme_config('forms.field-inner-classes.'.$options['type']) ?? theme_config('forms.field-inner-default-classes') ?? '';
+		$classes = theme_config('forms.field-inner-classes.'.$options['type']) ?? theme_config('forms.field-inner-default-classes') ?? '';
+		return isset($options['fieldInnerClasses']) ? $classes.' '.$options['fieldInnerClasses'] : $classes;
 	}
 
 	protected function getRendererClasses(array $options)
 	{	
-		return $options['rendererAttributes']['class'] ?? theme_config('forms.renderer-classes.'.$options['type'])  ?? theme_config('forms.renderer-default-classes') ?? '';
+		$classes = theme_config('forms.renderer-classes.'.$options['type']) ?? theme_config('forms.renderer-default-classes') ?? '';
+		return isset($options['rendererAttributes']['class']) ? $classes.' '.$options['rendererAttributes']['class'] : $classes;
 	}
 
 	/**
