@@ -9,6 +9,7 @@
 - added js for dashify fields
 - added new validation rule `valid_url` 
 - added functions to move a field up in his layout or group
+- added docs
 
 ## v1.1.3
 - renamed fieldQueryModifier in filterQueryModifier in Field
