@@ -9,9 +9,8 @@
 @endif
 
 {{ $form->renderStart() }}
-
 <div class="fields">
-	{{ $form->renderLayout() }}
+	{{ $form->renderGroups() }}
 </div>
-{{ $form->renderSubmit() }}
+{{ $form->renderActions() }}
 {{ $form->renderEnd() }}

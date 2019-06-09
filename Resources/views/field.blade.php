@@ -1,8 +1,8 @@
-<div class="{{ $fieldClasses }} field-{{ $type }}{{ isset($errors) and $errors->has($name) ? ' is-invalid' : '' }}">
-	@if($label)
-		<div class="{{ $labelClasses }}">{{ $label }}@if(isset($required) and $required) *@endif</div>
+<div class="{{ $field->classes->toString() }} {{ isset($errors) and $errors->has($field->getName()) ? ' is-invalid' : '' }}">
+	@if($field->label)
+		<div class="{{ $field->labelClasses->toString() }}">{{ $field->label }}@if(isset($field->required) and $field->required) *@endif</div>
 	@endif
-	<div class="{{ $fieldInnerClasses }}">
+	<div class="{{ $field->innerClasses->toString() }}">
 		@yield('inner')
 	</div>
 </div>

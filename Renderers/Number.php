@@ -1,13 +1,14 @@
 <?php
 namespace Pingu\Forms\Renderers;
 
-use Pingu\Forms\Fields\Field;
+use Pingu\Forms\Contracts\FieldContract;
+use Pingu\Forms\Renderers\FieldRenderer;
 
 class Number extends FieldRenderer
 {
-	public function __construct(Field $field)
+	public function __construct(FieldContract $field)
 	{
 		parent::__construct($field);
-		$this->options['rendererAttributes']['step'] = $this->option['precision'] ?? 'any';
+		$this->field->attributes->add('step', $field->precision ?? 'any');
 	}
 }

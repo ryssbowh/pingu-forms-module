@@ -2,8 +2,9 @@
 
 namespace Pingu\Forms\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\ServiceProvider;
+use Pingu\Forms\Console\MakeFormCommand;
 use Themes;
 
 class FormsServiceProvider extends ServiceProvider
@@ -25,6 +26,7 @@ class FormsServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerFactories();
+        $this->registerCommands();
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'forms');
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
@@ -90,6 +92,18 @@ class FormsServiceProvider extends ServiceProvider
     {
         if (! app()->environment('production')) {
             app(Factory::class)->load(__DIR__ . '/../Database/factories');
+        }
+    }
+
+    /**
+     * Registers console commands
+     */
+    public function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MakeFormCommand::class,
+            ]);
         }
     }
 

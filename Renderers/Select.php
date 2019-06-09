@@ -1,11 +1,12 @@
 <?php
 namespace Pingu\Forms\Renderers;
 
-use Pingu\Forms\Fields\Serie;
+use Pingu\Forms\Contracts\FormContract;
+use Pingu\Forms\Renderers\FieldRenderer;
 
 class Select extends FieldRenderer
 {
-	public function __construct(Serie $field)
+	public function __construct(FormContract $field)
 	{
 		parent::__construct($field);
 		$this->buildItems();
