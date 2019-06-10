@@ -72,7 +72,8 @@ class ClassBag
 
 	public function addFromString(string $classes)
 	{
-		foreach(explode(' ', trim($classes)) as $class){
+		$classes = trim(preg_replace('!\s+!', ' ', $classes));
+		foreach(explode(' ', $classes) as $class){
 			$this->add($class);
 		}
 		return $this;

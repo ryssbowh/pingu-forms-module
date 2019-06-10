@@ -1,29 +1,47 @@
 <?php
-
 namespace Pingu\Forms\Traits;
 
-use Pingu\Forms\Contracts\Models\FormableContract;
-use Pingu\Forms\Exceptions\FormFieldModelException;
+use Illuminate\Database\Eloquent\Builder;
+use Pingu\Core\Entities\BaseModel;
 
 trait HasModelFields
 {
-	use HasFields;
+	protected function _addModelFields(array $fields, FormableContract $model)
+    {
+        foreach($fields as $name){
+            $this->_addModelField($name, $model);
+        }
+        return $this;
+    }
 
-	public function addModelFields(array $fields, FormableContract $model)
+    protected function _addModelField(string $name, FormableContract $model)
+    {
+        $definitions = $model->getFieldDefinitions();
+        if(!isset($definitions[$name])){
+            throw FormFieldModelException::notDefined($name, $model);
+        }
+        $field = $this->_addField($name, $definitions[$name]);
+        $field->setValue($model->$name);
+        return $field;
+    }
+
+	public function addModelFields(array $fields, FormableContract $model, $group = 'default')
 	{
         foreach($fields as $name){
-            $this->addModelField($name, $model);
+            $this->addModelField($name, $model, $group);
         }
         return $this;
 	}
 
-    public function addModelField(string $name, FormableContract $model)
+    public function addModelField(string $name, FormableContract $model, $group = 'default')
     {
     	$definitions = $model->getFieldDefinitions();
     	if(!isset($definitions[$name])){
     		throw FormFieldModelException::notDefined($name, $model);
     	}
-        return $this->addField($name, $definitions[$name]);
+        $field = $this->addField($name, $definitions[$name], $group);
+        $field->setValue($model->$name);
+        return $field;
     }
 
 }

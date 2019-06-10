@@ -5,6 +5,7 @@ namespace Pingu\Forms\Providers;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
 use Pingu\Forms\Console\MakeFormCommand;
+use Pingu\Forms\Macros;
 use Themes;
 
 class FormsServiceProvider extends ServiceProvider
@@ -29,15 +30,8 @@ class FormsServiceProvider extends ServiceProvider
         $this->registerCommands();
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'forms');
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-
-        /**
-         * Extends validator with an url rule that check if the url is an internal get url
-         * if not starting with http. route names are also supported
-         */
-        \Validator::extend('valid_url', function ($attribute, $value, $parameters, $validator) {
-            if($value and substr($value, 0, 4) != 'http' and !route_exists($value)) return false;
-            return true;
-        });
+        // $this->registerFormMacros();
+        $this->registerRules();        
 
         \Asset::container('modules')->add('forms-js', 'modules/Forms/js/Forms.js');
     }
@@ -50,6 +44,32 @@ class FormsServiceProvider extends ServiceProvider
     public function register()
     {
         //
+    }
+
+    /**
+     * Register own Macros class
+     */
+    public function registerFormMacros()
+    {
+        // $this->app->singleton('form', function ($app) {
+        //     $form = new Macros($app['html'], $app['url'], $app['view'], $app['session.store']->token());
+        //     return $form->setSessionStore($app['session.store']);
+        // });
+    }
+
+    /**
+     * Extends validator with custom rules
+     */
+    public function registerRules()
+    {
+        /**
+         * url rule that check if the url is an internal get url
+         * if not starting with http. route names are also supported
+         */
+        \Validator::extend('valid_url', function ($attribute, $value, $parameters, $validator) {
+            if($value and substr($value, 0, 4) != 'http' and !route_exists($value)) return false;
+            return true;
+        });
     }
 
     /**

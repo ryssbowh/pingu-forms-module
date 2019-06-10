@@ -10,7 +10,6 @@
 
 {{ $form->renderStart() }}
 <div class="fields">
-	{{ $form->renderGroups() }}
+	{{ $form->renderFields() }}
 </div>
-{{ $form->renderActions() }}
 {{ $form->renderEnd() }}

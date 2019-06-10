@@ -2,53 +2,32 @@
 
 namespace Pingu\Forms\Traits;
 
-use Pingu\Forms\Contracts\FormFieldContract;
-use Pingu\Forms\Contracts\FormGroupContract;
+use Pingu\Forms\Exceptions\FormFieldException;
 use Pingu\Forms\Exceptions\GroupException;
 
 trait HasGroups
 {
 	protected $groups;
 
-	protected function makeGroups(array $fields, $groups = null)
+	private function makeGroups(array $groups)
 	{
-		if($groups){
-			$this->groups = collect($groups);
+		$this->groups = collect();
+		foreach ($groups as $name => $fields) {
+			$this->createGroup($name, $fields);
 		}
-		else{
-			$this->groups = collect(['default' => $fields]);
+		return $this;
+	}
+
+	private function createGroup(string $name, $fields = [])
+	{
+		foreach($fields as $field){
+			if(!$this->hasField($field)){
+				throw FormFieldException::notDefined($field);
+			}
 		}
-	}
-
-	public function getDefaultGroupName()
-	{
-		return 'default';
-	}
-
-	public function getDefaultGroup()
-	{
-		return $this->getGroup($this->getDefaultGroupName());
-	}
-
-	public function countGroups()
-	{
-		return $this->groups->count();
-	}
-
-	public function addGroup(string $name, array $fields = [])
-	{
-		if($this->hasGroup($name)){
-			throw GroupException::alreadyDefined($name);
-		}
-		$this->groups->put($name, collect($fields));
-	}
-
-	public function getGroup(string $name)
-	{
-		if(!$this->hasGroup($name)){
-			throw GroupException::notDefined($name);
-		}
-		return $this->groups->get($name);
+		$group = collect($fields);
+		$this->groups->put($name, $group);
+		return $group;
 	}
 
 	public function getGroups(?array $names = null)
@@ -64,21 +43,62 @@ trait HasGroups
 		return $this->groups->forget($name);
 	}
 
+	public function countGroups()
+	{
+		return $this->groups->count();
+	}
+
+    public function addFieldToGroup(string $field, ?string $groupName = null)
+	{
+		if(is_null($groupName)){
+			$group = $this->getDefaultGroup();
+		}
+		elseif(!$group = $this->hasGroup($groupName)){
+			$group = $this->createGroup($groupName);
+		}
+		if(!$this->groupHasField($groupName, $field)){
+			$groupFrom = $this->searchFieldGroup($field);
+			$groupFrom->forget($field);
+			$group->push($field);
+		}
+		return $this;
+	}
+
+	public function getDefaultGroup()
+	{
+		if(!$this->hasGroup('default')){
+			return $this->createGroup('default');
+		}
+		return $this->group->get('default');
+	}
+
+	public function searchFieldGroup(string $name)
+	{
+		foreach($this->groups as $group){
+			if($group->search($name)) return $group;
+		}
+		return false;
+	}
+
+	public function searchFieldGroupName(string $name)
+	{
+		foreach($this->groups as $groupName => $group){
+			if($group->search($name) !== false) return $groupName;
+		}
+		return false;
+	}
+
+	public function getGroup(string $name)
+	{
+		if(!$this->hasGroup($name)){
+			throw GroupException::notDefined($name);
+		}
+		return $this->groups->get($name);
+	}
+
 	public function hasGroup(string $name)
 	{
 		return $this->groups->has($name);
-	}
-
-	public function addFieldToGroup(string $field, ?string $groupName = null)
-	{
-		if(is_null($groupName)){
-			$groupName = $this->getDefaultGroupName();
-		}
-		if($this->groupHasField($groupName, $field)){
-			throw GroupException::hasField($groupName, $field);
-		}
-		$group = $this->getGroup($groupName)->add($field);
-		return $this;
 	}
 
 	public function groupHasField(string $group, string $name)
@@ -90,35 +110,99 @@ trait HasGroups
 	{
 		$groupFrom = $this->searchFieldGroup($fieldName);
 		if(!$groupFrom){
-			throw GroupException::notDefined($fieldName);
+			throw FormFieldException::notDefined($fieldName);
 		}
 		$groupTo = $this->getGroup($groupNameTo);
 		$groupFrom->forget($fieldName);
-		$groupTo->add($fieldName);
+		$groupTo->push($fieldName);
 		return $this;
 	}
 
-	public function searchFieldGroup(string $name)
+	public function removeFieldFromGroup(string $fieldName, ?string $group = 'default')
 	{
-		foreach($this->groups as $group){
-			if($group->contains($name)) return $group;
-		}
-	}
-
-	public function removeFieldFromGroup(string $fieldName, ?string $groupName = null)
-	{
-		if(is_null($groupName)){
-			$group = $this->searchFieldGroup($fieldName);
-		}
-		else{
-			$group = $this->getGroup($groupName);
-		}
+		$group = $this->getGroup($groupName);
 		$group->forget($fieldName);
 		return $this;
 	}
 
-	public function isFieldInGroup(string $fieldName, string $groupName)
+	public function moveFieldUp(string $name, $offset = false)
 	{
-		return $this->getGroup($groupName)->contains($fieldName);
+		$groupName = $this->searchFieldGroupName($name);
+		if(!$groupName){
+			throw FormFieldException::notDefined($name);
+		}
+		$group = $this->groups->get($groupName);
+		if(!$offset){
+			return $this->moveFieldToTop($name, $group);
+		}
+		if($offset < 0){
+			return $this->moveFieldDown($name, $offset*-1);
+		}
+		$index = $group->search($name);
+		if(($index - $offset) <= 0){
+			return $this->moveFieldToTop($name, $group);
+		}
+		$replace = [$name, $group->get($index-$offset)];
+		$group = $group->forget($index)->values();
+		$group->splice($index-$offset, 1, $replace);
+		$this->groups->put($groupName, $group);
+		return $this;
+	}
+
+	public function moveFieldDown(string $name, $offset = false)
+	{
+		$groupName = $this->searchFieldGroupName($name);
+		if(!$groupName){
+			throw FormFieldException::notDefined($name);
+		}
+		$group = $this->groups->get($groupName);
+		if(!$offset){
+			return $this->moveFieldToBottom($name, $group);
+		}
+		if($offset < 0){
+			return $this->moveFieldUp($name, $offset*-1);
+		}
+		$index = $group->search($name);
+		$size = $group->count();
+		if(($index + $offset) >= ($size-1)){
+			return $this->moveFieldToBottom($name, $group);
+		}
+		$replace = [$group->get($index+$offset), $name];
+		$group = $group->forget($index)->values();
+		$group->splice($index+$offset-1, 1, $replace);
+		$this->groups->put($groupName, $group);
+		return $this;
+	}
+
+	protected function moveFieldToTop(string $name, $group)
+	{
+		$index = $group->search($name);
+		$group->splice($index, 1);
+		$group->prepend($name);
+		return $this;
+	}
+
+	protected function moveFieldToBottom(string $name, $group)
+	{
+		$index = $group->search($name);
+		$group->splice($index, 1);
+		$group->push($name);
+		return $this;
+	}
+
+	public function buildGroups($names = null)
+	{
+		if(is_null($names)) $names = $this->getGroupNames();
+		$groups = $this->getGroups($names);
+		$out = [];
+        foreach($groups as $name => $fields){
+        	$out[$name] = array_merge(array_flip($fields), $this->getFields($fields));
+        }
+        return $out;
+	}
+
+	public function getGroupNames()
+	{
+		return $this->groups->keys()->all();
 	}
 }

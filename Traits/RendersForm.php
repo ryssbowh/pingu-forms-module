@@ -2,17 +2,20 @@
 
 namespace Pingu\Forms\Traits;
 
+use Pingu\Core\Traits\HasViewSuggestions;
+use Pingu\Forms\Exceptions\FormException;
 
 trait RendersForm
 {
-    public function getViewSuggestions()
-    {
-        return ['forms.form-'.$this->getName(), 'forms.form', 'forms::form'];
-    }
+    use HasViewSuggestions;
 
-    public function renderActions()
+    protected function buildViewSuggestions()
     {
-        echo view('forms::actions', ['actions' => $this->actions->toArray()])->render();
+        $this->setViewSuggestions([
+            'forms.form-'.$this->name,
+            'forms.form',
+            'forms::form'
+        ]);
     }
 
 	/**
@@ -22,30 +25,17 @@ trait RendersForm
      */
     public function render()
     {
-        echo $this->renderAsString();
-    }
-
-    /**
-     * Renders the form and returns as string
-     * @return string
-     */
-    public function renderAsString()
-    {   
-        $this->end();
-        return view()->first($this->getViewSuggestions(), ['form' => $this])->render();
+        echo view()->first($this->getViewSuggestions(), ['form' => $this])->render();
     }
 
     /**
      * 
      * @param array $names  
      */
-    public function renderGroups(array $names = null)
+    public function renderFields(array $names = null)
     {
-        $groups = $this->getGroups($names);
-        foreach($groups as $name => $fields){
-        	$groups[$name] = $this->getFields($fields);
-        }
-        echo view('forms::groups', ['form' => $this, 'groups'=>$groups])->render();
+        $groups = $this->buildGroups($names);
+        echo view('forms::groups', ['form' => $this, 'groups'=> $groups])->render();
     }
 
     /**
@@ -57,7 +47,9 @@ trait RendersForm
      */
     public function renderStart()
     {
-        echo \FormFacade::open($this->attributes->toArray());
+        $this->checkIfBuilt();
+        $attributes = $this->attributes->toArray();
+        echo \FormFacade::open($attributes);
     }
 
     /**
@@ -69,6 +61,14 @@ trait RendersForm
     public function renderEnd()
     {
         echo \FormFacade::close();
+    }
+
+    public function checkIfBuilt()
+    {
+        if(!$this->built)
+        {
+            throw FormException::notBuilt($this->getName());
+        }
     }
 
 }

@@ -2,6 +2,8 @@
 
 namespace Pingu\Forms\Support;
 
+use Pingu\Core\Entities\BaseModel;
+use Pingu\Forms\Contracts\Models\FormableContract;
 use Pingu\Forms\Traits\HasModelFields;
 
 class ModelForm extends Form
@@ -15,15 +17,21 @@ class ModelForm extends Form
     protected $fieldList;
     protected $groupList;
     protected $attributeList;
+    public $editing = false;
 
-    public function __construct(array $url, string $method, $model, $fields, ?string $name = null, array $attributes = [], array $actions = [], array $groups = [])
+    public function __construct(array $url, string $method, FormableContract $model, $fields = [], ?string $name = null, array $attributes = [], array $groups = [])
     {
     	$this->model = $model;
+    	if($model->exists()){
+    		$this->editing = true;
+    	}
+        $this->fieldList = $fields;
+    	if(!$fields){
+    		$this->fieldList = $this->editing ? $model->getEditFormFields() : $model->getAddFormFields();
+    	}
     	$this->setName($name);
     	$this->url = $url;
     	$this->method = $method;
-    	$this->fieldList = $fields;
-    	$this->actionList = $actions;
     	$this->groupList = $groups;
     	$this->attributeList = $attributes;
     	parent::__construct();
@@ -32,13 +40,15 @@ class ModelForm extends Form
     protected function setName(?string $name)
     {
     	if(!$name){
-    		
+    		$name = ($this->editing ? 'editModel-' : 'addModel-') . $this->model::formIdentifier());
     	}
+    	$this->name = $name;
     }
 
     protected function makeFields()
     {
-        $this->addModelFields($this->fieldList, $this->model);
+        $this->fields = collect();
+        $this->_addModelFields($this->fieldList, $this->model);
     }
 
     public function name()
@@ -58,12 +68,7 @@ class ModelForm extends Form
 
     public function fields()
     {
-    	return $this->fieldsList;
-    }
-
-    public function actions()
-    {
-    	return $this->actionList;
+    	return $this->fieldList;
     }
 
     public function groups()
@@ -75,5 +80,4 @@ class ModelForm extends Form
     {
     	return $this->attributeList;
     }
-    
 }

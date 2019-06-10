@@ -4,6 +4,7 @@ namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
 use Pingu\Forms\Contracts\FormContract;
+use Pingu\Forms\Support\Form;
 
 class FormBuilt
 {
@@ -16,7 +17,7 @@ class FormBuilt
      *
      * @return void
      */
-    public function __construct(string $name, FormContract $form)
+    public function __construct(string $name, Form $form)
     {
         $this->name = $name;
         $this->form = $form;

@@ -22,6 +22,11 @@ trait Formable {
 
     use FormAccessible;
 
+    public static function formIdentifier()
+    {
+        return kebab_case(static::friendlyName());
+    }
+
     /**
      * List of fields to be edited when adding a model through a form
      * @return array

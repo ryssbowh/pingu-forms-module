@@ -8,7 +8,7 @@ class GroupException extends \Exception{
 		return new static("Group $name is already defined in this form");
 	}
 
-	public static function Defined($name)
+	public static function notDefined($name)
 	{
 		return new static("Group $name is not defined in this form");
 	}

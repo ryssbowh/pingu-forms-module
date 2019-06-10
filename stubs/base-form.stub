@@ -9,6 +9,14 @@ use Pingu\Forms\Support\Form;
 class $CLASS$ extends Form
 {
 	/**
+	 * Bring variables in your form through the constructor :
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	/**
 	 * Fields definitions for this form, classes used here
 	 * must extend Pingu\Forms\Support\Field
 	 * 
@@ -63,25 +71,6 @@ class $CLASS$ extends Form
 	}
 
 	/**
-	 * Actions for this form, valid types are 'submit' or 'button'.
-	 * Label is required
-	 * 
-	 * @return array
-	 */
-	public function actions()
-	{
-		return [
-			'submit' => [
-				'type' => 'submit',
-				'label' => 'Submit',
-				'attributes' => [
-					'data-data' => 'a-data'
-				]
-			]
-		];
-	}
-
-	/**
 	 * Define fields groups in your form here.
 	 * if none are given a default one will be created with all fields in it.
 	 * 
@@ -96,18 +85,11 @@ class $CLASS$ extends Form
     }
 
     /**
-     * Defines attributes for your form here.
-     * class, action and method should not be put there as they will be overriden.
-     * enctype will be overriden if files() returns true.
-     *
+     * Various options that you can access in your templates/events
      * @return array
      */
-    public function attributes()
+    public function options()
     {
-    	return [
-    		'data-id' => 'something',
-    		'id' => 'my-very-spcial-form',
-    		'accept-charset' => 'test'
-    	]
+        return [];
     }
 }
