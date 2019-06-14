@@ -1,1 +1,0 @@
-{{ FormFacade::email($renderer->name, $renderer->getValue(), $renderer->attributes->toArray()) }}

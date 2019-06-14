@@ -5,7 +5,7 @@ class FormException extends \Exception{
 
 	public static function name($name)
 	{
-		return new static("'$name' is not valid, a form name can only contain letters, underscores and hyphens");
+		return new static("'$name' is not valid, a form name can only contain letters, numbers and hyphens");
 	}
 
 	public static function notBuilt($name)

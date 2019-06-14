@@ -1,1 +1,0 @@
-{{ FormFacade::submit($renderer->label, $renderer->attributes->toArray()) }}

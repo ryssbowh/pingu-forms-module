@@ -4,6 +4,7 @@ namespace Pingu\Forms\Traits;
 use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Exceptions\FormException;
 use Pingu\Forms\Support\ClassBag;
+use Pingu\Forms\Support\Fields\Submit;
 use Pingu\Forms\Traits\HasFields;
 use Pingu\Forms\Traits\RendersForm;
 
@@ -33,25 +34,43 @@ trait Form
         $this->buildViewSuggestions();
     }
 
+    /**
+     * Removes non-wanted characters from name
+     * 
+     * @param  string $name
+     * @return string
+     */
     protected function makeName(string $name)
     {
-        if (!preg_match('/^[A-Za-z_\-]+$/', $name)){
-            throw FormException::name($name);
-        }
-        return $name;
+        return preg_replace('/[^A-Za-z0-9\-]/i', '', $name);
     }
 
+    /**
+     * Name getter
+     * 
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * moves the action into the attributes Collection
+     * 
+     * @param  array  $url
+     */
     protected function makeUrl(array $url)
     {
         $key = array_keys($url)[0];
         $this->attributes->put($key, $url[$key]);
     }
 
+    /**
+     * Get classes for that form
+     * 
+     * @return string
+     */
     protected function getClasses()
     {
         $classes = theme_config('forms.classes.'.$this->name) ?? theme_config('forms.default-classes');
@@ -60,7 +79,7 @@ trait Form
     }
 
     /**
-     * Marks this form as built, populates the fields if applicable and sends an event
+     * Marks this form as built, populates the fields with session and sends an event
      *
      * @return Form
      */
@@ -70,6 +89,23 @@ trait Form
         \FormFacade::considerRequest();
         event(new FormBuilt($this->getName(), $this));
         return $this;
+    }
+
+    /**
+     * Adds a submit field to this form 
+     * 
+     * @param string $label
+     * @param string $name
+     * @return Field
+     */
+    public function addSubmit($label = 'Submit', $name = 'submit')
+    {
+        return $this->addField($name, [
+            'field' => Submit::class,
+            'options' => [
+                'label' => $label
+            ]
+        ]);
     }
 
 }

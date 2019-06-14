@@ -49,4 +49,12 @@ interface FormableContract {
      */
     public static function formIdentifier();
 
+    /**
+     * Build a field class according to its definition
+     * 
+     * @param  string $name
+     * @return Field
+     */
+    public function buildFieldClass(string $name);
+
 }

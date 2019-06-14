@@ -1,1 +1,0 @@
-{{ FormFacade::select($renderer->name, $renderer->getItems(), $renderer->getValue(), $renderer->attributes->toArray()) }}

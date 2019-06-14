@@ -1,1 +1,0 @@
-{{ FormFacade::text($renderer->name, $renderer->getValue(), $renderer->attributes->toArray()) }}

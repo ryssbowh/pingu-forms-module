@@ -3,6 +3,7 @@
 namespace Pingu\Forms\Traits;
 
 use Pingu\Core\Traits\HasViewSuggestions;
+use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Exceptions\FormException;
 
 trait RendersForm
@@ -29,6 +30,7 @@ trait RendersForm
     }
 
     /**
+     * Renders the fields of this forms, group by group
      * 
      * @param array $names  
      */
@@ -47,7 +49,8 @@ trait RendersForm
      */
     public function renderStart()
     {
-        $this->checkIfBuilt();
+        \FormFacade::considerRequest();
+        event(new FormBuilt($this->getName(), $this));
         $attributes = $this->attributes->toArray();
         echo \FormFacade::open($attributes);
     }
@@ -63,6 +66,11 @@ trait RendersForm
         echo \FormFacade::close();
     }
 
+    /**
+     * If this form isn't built we can't render it.
+     * 
+     * @throws FormException
+     */
     public function checkIfBuilt()
     {
         if(!$this->built)

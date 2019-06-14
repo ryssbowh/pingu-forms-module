@@ -2,15 +2,15 @@
 namespace Pingu\Forms\Support\Fields;
 
 use Pingu\Forms\Support\Field;
-use Pingu\Forms\Support\Types\Datetime as DatetimeType;
+use Pingu\Forms\Support\Types\Boolean;
 
-class Datetime extends Field
-{	
+class Checkbox extends Field
+{
 	/**
 	 * @inheritDoc
 	 */
 	public function getDefaultType()
 	{
-		return DatetimeType::class;
+		return Boolean::class;
 	}
 }

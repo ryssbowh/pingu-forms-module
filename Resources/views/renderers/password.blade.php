@@ -1,1 +1,0 @@
-{{ FormFacade::password($renderer->name, $renderer->attributes->toArray()) }}

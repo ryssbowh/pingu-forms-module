@@ -26,11 +26,10 @@ class $CLASS$ extends Form
 	{
 		return [
 			'email' => [
-				'type' => Email::class,
-				'label' => 'Email Address'
+				'field' => TextInput::class,
 			],
 			'name' => [
-				'type' => Text::class
+				'field' => TextInput::class
 			]
 		];
 	}
@@ -62,6 +61,7 @@ class $CLASS$ extends Form
 	/**
 	 * Name for this form, ideally it would be application unique, 
 	 * best to prefix it with the name of the module it's for.
+	 * only alphanumeric and hyphens
 	 * 
 	 * @return string
 	 */

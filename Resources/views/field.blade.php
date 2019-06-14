@@ -1,8 +1,6 @@
-<div class="{{ $field->classes->toString() }} {{ isset($errors) and $errors->has($field->getName()) ? ' is-invalid' : '' }}">
-	@if($field->label)
-		<div class="{{ $field->labelClasses->toString() }}">{{ $field->label }}@if($field->required) *@endif</div>
+<div class="{{ $field->wrapperClasses }} {{ isset($errors) and $errors->has($field->getName()) ? ' is-invalid' : '' }}">
+	@if($label = $field->option('label'))
+		{{ FormFacade::label($label.($field->attribute('required') ? ' *' : ''), null, ['class' => $field->labelClasses]) }}
 	@endif
-	<div class="{{ $field->innerClasses->toString() }}">
-		{{ $renderer->render() }}
-	</div>
+	@yield('inner')
 </div>
