@@ -183,10 +183,11 @@ trait Formable {
         foreach($values as $name => $value){
             if(!in_array($name, $this->fillable)) continue;
 
+            $type = $this->getFieldType($name);
             if(method_exists($this, $name)){
                 $relation = $this->$name();
                 if($relation instanceof Relation){
-                    $res = $fields[$name]['type']::saveRelationships($this, $name, $value);
+                    $res = $type::saveRelationships($this, $name, $value);
                     $return = ($return or $res);
                 }
             }
@@ -205,8 +206,9 @@ trait Formable {
         $fields = $this->getFieldDefinitions();
         $return = true;
         foreach($fields as $name => $data){
+            $type = $this->getFieldType($name);
             if(method_exists($this, $name)){
-                $res = $data['type']::destroyRelationships($this, $name);
+                $res = $type::destroyRelationships($this, $name);
                 $return = ($return and $res);
             }
         }
@@ -221,19 +223,31 @@ trait Formable {
      * @return  FormableModel
      */
     public function formFill(array $values){
-        $fields = $this::getFieldDefinitions();
         foreach($this->getFillableFields($values) as $name => $value){
-            if(!isset($fields[$name])){
-                throw new FieldNotDefined('field '.$name.' is not defined in '.get_class($this));
-            }
-            if(!isset($fields[$name]['type'])){
-                $fields[$name]['type'] = Type::class;
-            }
+            $type = $this->getFieldType($name);
             if($this->isFillable($name)){
-                $fields[$name]['type']::setModelValue($this, $name, $value);   
+                $type::setModelValue($this, $name, $value);   
             }
         }
         return $this;
+    }
+
+    /**
+     * Return the default field type classname for a field
+     * 
+     * @param  string $name
+     * @return string
+     */
+    public function getFieldType(string $name)
+    {
+        $fields = $this::getFieldDefinitions();
+        if(!isset($fields[$name])){
+            throw FormFieldException::notDefinedInModel($name,get_class($this));
+        }
+        if(!isset($fields[$name]['type'])){
+            return $fields[$name]['field']::getDefaultType();
+        }
+        return $fields[$name]['type'];
     }
 
     /**

@@ -26,7 +26,7 @@ trait RendersForm
      */
     public function render()
     {
-        echo view()->first($this->getViewSuggestions(), ['form' => $this])->render();
+        echo $this->renderAsString();
     }
 
     /**
@@ -77,6 +77,11 @@ trait RendersForm
         {
             throw FormException::notBuilt($this->getName());
         }
+    }
+
+    public function renderAsString()
+    {
+        return view()->first($this->getViewSuggestions(), ['form' => $this])->render();
     }
 
 }

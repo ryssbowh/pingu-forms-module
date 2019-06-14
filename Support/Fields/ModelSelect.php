@@ -17,7 +17,7 @@ class ModelSelect extends ModelCheckboxes
 	/**
 	 * @inheritDoc
 	 */
-	public function getDefaultType()
+	public static function getDefaultType()
 	{
 		return Model::class;
 	}

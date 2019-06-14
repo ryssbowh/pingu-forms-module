@@ -34,7 +34,7 @@ trait HasModelItems
 		}
 		$value = [];
 		foreach($models as$model){
-			$value[] = $model->getKey();
+			$value[] = (string)$model->getKey();
 		}
 		$this->value = $value;
 		return $this;

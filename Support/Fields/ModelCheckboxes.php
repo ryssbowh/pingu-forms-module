@@ -24,7 +24,7 @@ class ModelCheckboxes extends Checkboxes implements HasModelField
 	/**
 	 * @inheritDoc
 	 */
-	public function getDefaultType()
+	public static function getDefaultType()
 	{
 		return ManyModel::class;
 	}

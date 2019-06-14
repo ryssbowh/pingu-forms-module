@@ -9,7 +9,7 @@ class Datetime extends Field
 	/**
 	 * @inheritDoc
 	 */
-	public function getDefaultType()
+	public static function getDefaultType()
 	{
 		return DatetimeType::class;
 	}

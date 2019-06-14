@@ -11,7 +11,7 @@ class Checkboxes extends Field implements HasItemsField
 	/**
 	 * @inheritDoc
 	 */
-	public function getDefaultType()
+	public static function getDefaultType()
 	{
 		return Boolean::class;
 	}

@@ -27,7 +27,7 @@ class Model extends Type
 			$model->$name()->dissociate();
 		}
 		else{
-			$modelValue = $model->getFieldDefinitions()[$name]['model']::findOrFail($value);
+			$modelValue = $model->fieldDefinitions()[$name]['options']['model']::findOrFail($value);
         	$model->$name()->associate($modelValue);
         }
 	}

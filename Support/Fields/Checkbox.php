@@ -9,7 +9,7 @@ class Checkbox extends Field
 	/**
 	 * @inheritDoc
 	 */
-	public function getDefaultType()
+	public static function getDefaultType()
 	{
 		return Boolean::class;
 	}

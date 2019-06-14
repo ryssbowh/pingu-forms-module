@@ -9,7 +9,7 @@ class NumberInput extends Field
 	/**
 	 * @inheritDoc
 	 */
-	public function getDefaultType()
+	public static function getDefaultType()
 	{
 		return Integer::class;
 	}

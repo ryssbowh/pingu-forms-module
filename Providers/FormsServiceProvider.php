@@ -51,10 +51,10 @@ class FormsServiceProvider extends ServiceProvider
      */
     public function registerFormMacros()
     {
-        // $this->app->singleton('form', function ($app) {
-        //     $form = new Macros($app['html'], $app['url'], $app['view'], $app['session.store']->token());
-        //     return $form->setSessionStore($app['session.store']);
-        // });
+        $this->app->singleton('form', function ($app) {
+            $form = new Macros($app['html'], $app['url'], $app['view'], $app['session.store']->token());
+            return $form->setSessionStore($app['session.store']);
+        });
     }
 
     /**

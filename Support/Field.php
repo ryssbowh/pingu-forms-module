@@ -47,7 +47,7 @@ abstract class Field
 	 * 
 	 * @return string
 	 */
-	public function getDefaultType()
+	public static function getDefaultType()
 	{
 		return Text::class;
 	}
