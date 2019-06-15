@@ -40,8 +40,9 @@ trait HasFields
     	if(!isset($definition['field'])){
     		throw FormFieldException::missingDefinition($name, 'field');
     	}
+        $definition['options']['type'] = $definition['options']['type'] ?? $definition['field']::getDefaultType();
     	$class = $definition['field'];
-    	$field = new $class($name, $definition['options'] ?? [], $definition['attributes'] ?? []);
+    	$field = new $class($name, $definition['options'], $definition['attributes'] ?? []);
         $field->setForm($this);
         $this->fields->put($name, $field);
         return $field;

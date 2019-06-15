@@ -3,12 +3,12 @@
 namespace Pingu\Forms\Providers;
 
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Support\ServiceProvider;
+use Pingu\Core\Support\ModuleServiceProvider;
 use Pingu\Forms\Console\MakeFormCommand;
 use Pingu\Forms\Macros;
 use Themes;
 
-class FormsServiceProvider extends ServiceProvider
+class FormsServiceProvider extends ModuleServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.

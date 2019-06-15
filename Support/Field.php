@@ -103,7 +103,7 @@ abstract class Field
 		]);
 		$this->wrapperClasses = $this->getWrapperClasses();
 		$this->labelClasses = $this->getLabelClasses();
-		$this->attributes->put('class', $this->getClasses($this->attributes->get('class')));
+		$this->attributes->put('class', $this->getClasses($this->attributes->get('class', '')));
     }
 
     /**
@@ -196,9 +196,6 @@ abstract class Field
 	 */
 	public static function buildFieldClass(string $name, array $definition)
     {
-    	if(!isset($definition['field'])){
-            throw FormFieldException::missingDefinition($name, 'field');
-        }
         return new $definition['field']($name, $definition['options'] ?? [], $definition['attributes'] ?? []);
     }
 

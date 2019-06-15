@@ -20,6 +20,11 @@ class Type
 		$this->field = $field;
 	}
 
+	public static function addValidationRules()
+	{
+		return '';
+	}
+
 	/**
 	 * Sets the value of a field to a model
 	 * 

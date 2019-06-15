@@ -25,6 +25,9 @@ trait Formable {
 
     use FormAccessible;
 
+    protected $fieldDefinitionsCache;
+    protected $fieldRulesCache;
+
     /**
      * This define an identifier for a form that handles this model.
      * It's used to generate the form name.
@@ -62,23 +65,47 @@ trait Formable {
 
 	/**
 	 * Return field definitions for that model and throws an event
-     * so that other modules can modify the form definition
+     * so that other modules can modify the form definition.
+     * Definitions will be kept in cache so the event is thrown only once per request.
      * 
+     * @throws FormFieldException
 	 * @return array
 	 */
 	public function getFieldDefinitions($fields = null)
 	{
-        $definitions = $this->fieldDefinitions();
-        event(new ModelFieldDefinitions($definitions, $this));
+        if(!is_null($this->fieldDefinitionsCache)){
+            $definitions = $this->fieldDefinitionsCache;
+        }
+        else{
+            $definitions = $this->buildFieldDefinitions();
+        }
         if(!is_null($fields)){
             $definitions = array_intersect_key($definitions, array_flip($fields));
         }
+        return $definitions;
+    }
+
+    protected function buildFieldDefinitions()
+    {
+        $definitions = $this->fieldDefinitions();
+        foreach($definitions as $name => $definition){
+            if(!isset($definition['field'])){
+                throw FormFieldException::missingDefinition($name, 'field');
+            }
+            $definition['attributes'] = $definition['attributes'] ?? [];
+            $definition['options']['type'] = $definition['options']['type'] ?? $definition['field']::getDefaultType();
+            $definitions[$name] = $definition;
+        }
+        event(new ModelFieldDefinitions($definitions, $this));
+        $this->fieldDefinitionsCache = $definitions;
+        
 		return $definitions;
 	}
 
 	/**
 	 * Validation rules for this model, throws an event so
      * that other modules can change the form validation.
+     * The default type for each of the field can add rules here.
      * 
      * @param  array $fields
 	 * @see https://laravel.com/docs/5.7/validation
@@ -86,12 +113,32 @@ trait Formable {
 	 */
     public function getValidationRules($fields = null)
     {
-        $rules = $this->validationRules();
-        event(new ModelValidationRules($rules, $this));
+        if(!is_null($this->fieldRulesCache)){
+            $rules = $this->fieldRulesCache;
+        }
+        else{
+            $rules = $this->buildValidationRules();
+        }
         if(!is_null($fields)){
             $rules = array_intersect_key($rules, array_flip($fields));
         }
         // return $this->replaceRulesTokens($rules);
+        return $rules;
+    }
+
+    protected function buildValidationRules()
+    {
+        $definitions = $this->getFieldDefinitions();
+        $rules = $this->validationRules();
+        foreach($rules as $field => $rule){
+            if(!isset($definitions[$field])){
+                throw FormFieldException::notDefinedInModel($field, get_class($this));
+            }
+            $typeRules = trim($definitions[$field]['options']['type']::addValidationRules(), '|');
+            $rule .= '|'.$typeRules;
+            $rules[$field] = trim($rule, '|');
+        }
+        event(new ModelValidationRules($rules, $this));
         return $rules;
     }
 
@@ -223,6 +270,7 @@ trait Formable {
      * @return  FormableModel
      */
     public function formFill(array $values){
+        dump($values);
         foreach($this->getFillableFields($values) as $name => $value){
             $type = $this->getFieldType($name);
             if($this->isFillable($name)){
