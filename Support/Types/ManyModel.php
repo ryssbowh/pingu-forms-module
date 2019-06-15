@@ -52,7 +52,7 @@ class ManyModel extends Model
 	/**
 	 * @inheritDoc
 	 */
-	public static function setModelValue(BaseModel $model, string $name, $value)
+	public static function setModelValue(BaseModel $model, string $name, $value, array $fieldOptions)
 	{
 		return true;
 	}

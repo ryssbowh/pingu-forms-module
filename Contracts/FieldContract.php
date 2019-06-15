@@ -29,7 +29,7 @@ interface FieldContract extends FormElementContract
 	 * @param string    $field
 	 * @param mixed    $value
 	 */
-	public static function setModelValue(BaseModel $model, string $field, $value);
+	public static function setModelValue(BaseModel $model, string $field, $value, array $fieldOptions);
 
 	/**
 	 * Saves the relationships associated to this type of field

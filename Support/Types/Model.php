@@ -21,13 +21,13 @@ class Model extends Type
 	/**
 	 * @inheritDoc
 	 */
-	public static function setModelValue(BaseModel $model, string $name, $value)
+	public static function setModelValue(BaseModel $model, string $name, $value, array $fieldOptions)
 	{
 		if(!$value){
 			$model->$name()->dissociate();
 		}
 		else{
-			$modelValue = $model->fieldDefinitions()[$name]['options']['model']::findOrFail($value);
+			$modelValue = $fieldOptions['model']::findOrFail($value);
         	$model->$name()->associate($modelValue);
         }
 	}

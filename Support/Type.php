@@ -32,7 +32,7 @@ class Type
 	 * @param string    $field
 	 * @param mixed    $value
 	 */
-	public static function setModelValue(BaseModel $model, string $field, $value)
+	public static function setModelValue(BaseModel $model, string $field, $value, array $fieldOptions)
 	{
 		$model->$field = $value;
 	}

@@ -5,6 +5,7 @@ use Collective\Html\Eloquent\FormAccessible;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Validator as ValidatorContract;
 use Pingu\Forms\Components\Fields\{Text, Model};
 use Pingu\Forms\Events\AddFormFields;
@@ -27,6 +28,7 @@ trait Formable {
 
     protected $fieldDefinitionsCache;
     protected $fieldRulesCache;
+    protected $fieldValidationMessagesCache;
 
     /**
      * This define an identifier for a form that handles this model.
@@ -149,8 +151,17 @@ trait Formable {
      */
     public function getValidationMessages()
     {
+        if(!is_null($this->fieldValidationMessagesCache)){
+            return $this->fieldValidationMessagesCache;
+        }
+        return $this->buildValidationMessages();
+    }
+
+    protected function buildValidationMessages()
+    {
         $messages = $this->validationMessages();
         event(new ModelValidationMessages($messages, $this));
+        $this->fieldValidationMessagesCache = $messages;
         return $messages;
     }
 
@@ -270,11 +281,11 @@ trait Formable {
      * @return  FormableModel
      */
     public function formFill(array $values){
-        dump($values);
+        $definitions = $this->getFieldDefinitions();
         foreach($this->getFillableFields($values) as $name => $value){
             $type = $this->getFieldType($name);
             if($this->isFillable($name)){
-                $type::setModelValue($this, $name, $value);   
+                $type::setModelValue($this, $name, $value, $definitions[$name]);   
             }
         }
         return $this;
@@ -289,13 +300,7 @@ trait Formable {
     public function getFieldType(string $name)
     {
         $fields = $this::getFieldDefinitions();
-        if(!isset($fields[$name])){
-            throw FormFieldException::notDefinedInModel($name,get_class($this));
-        }
-        if(!isset($fields[$name]['type'])){
-            return $fields[$name]['field']::getDefaultType();
-        }
-        return $fields[$name]['type'];
+        return $fields[$name]['options']['type'];
     }
 
     /**
@@ -346,6 +351,16 @@ trait Formable {
         }
         
         return Field::buildFieldClass($name, $fields[$name]);
+    }
+
+    public function uploadFormFile(UploadedFile $file, string $fieldName)
+    {
+        $definition = $this->getFieldDefinitions()[$fieldName];
+        $type = $definition['options']['type'] ?? $definition['field']::getDefaultType();
+        if(!$type instanceof UploadFileContract){
+            throw MediaFieldException::typeCantUpload($fieldName, $type)
+        }
+        return \Media::uploadFile($file, $definition['disk'] ?? null);
     }
 
 }

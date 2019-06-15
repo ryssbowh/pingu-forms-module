@@ -101,7 +101,7 @@ trait Field
 		return $this->name;
 	}
 
-	public static function setModelValue(BaseModel $model, string $field, $value)
+	public static function setModelValue(BaseModel $model, string $field, $value, array $fieldOptions)
 	{
 		$model->$field = $value;
 	}
