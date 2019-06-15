@@ -45,6 +45,8 @@ a valid field definition :
 Fields can also be elements that you can add to your form but do not have a value, for example submit is considered as a field.
 So you could define any type of 'field' that you want and add it to your layout (Image, link, download etc)
 
+If you want to define new fields, they must extend Field
+
 ### Types 
 Types define how the value of a field must be handled (Boolean, Model, Text etc), those types define methods, for example how to modify the db query when filtering on this type of field. Or how to set the value of the field when given a value.
 

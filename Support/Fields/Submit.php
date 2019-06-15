@@ -10,4 +10,12 @@ class Submit extends Field
 		$options['label'] = $options['label'] ?? 'Submit';
 		parent::__construct($name, $options, $attributes);
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDefaultView()
+	{
+		return 'forms::fields.'.$this->getType();
+	}
 }

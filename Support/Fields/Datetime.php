@@ -13,4 +13,12 @@ class Datetime extends Field
 	{
 		return DatetimeType::class;
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDefaultView()
+	{
+		return 'forms::fields.'.$this->getType();
+	}
 }

@@ -57,5 +57,13 @@ class ModelCheckboxes extends Checkboxes implements HasModelField
 	{
 		return 'checkboxes';
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDefaultView()
+	{
+		return 'forms::fields.'.$this->getType();
+	}
 	
 }

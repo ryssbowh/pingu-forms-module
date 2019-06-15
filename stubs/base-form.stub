@@ -67,7 +67,7 @@ class $CLASS$ extends Form
 	 */
 	public function name()
 	{
-		return 'user.details';
+		return 'user-details';
 	}
 
 	/**

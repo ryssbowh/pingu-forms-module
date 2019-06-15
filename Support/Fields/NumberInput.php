@@ -13,4 +13,12 @@ class NumberInput extends Field
 	{
 		return Integer::class;
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDefaultView()
+	{
+		return 'forms::fields.'.$this->getType();
+	}
 }

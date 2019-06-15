@@ -33,5 +33,13 @@ class Select extends Field implements HasItemsField
 		$this->value = is_array($value) ? $value : [$value];
 		return $this;
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDefaultView()
+	{
+		return 'forms::fields.'.$this->getType();
+	}
 	
 }

@@ -99,7 +99,7 @@ abstract class Field
     	$this->setViewSuggestions([
 			'forms.fields.form-'.$this->form->getName().'_'.$this->getType(),
 			'forms.fields.'.$this->getType(),
-			'forms::fields.'.$this->getType()
+			$this->getDefaultView()
 		]);
 		$this->wrapperClasses = $this->getWrapperClasses();
 		$this->labelClasses = $this->getLabelClasses();
@@ -201,4 +201,6 @@ abstract class Field
         }
         return new $definition['field']($name, $definition['options'] ?? [], $definition['attributes'] ?? []);
     }
+
+   	public abstract function getDefaultView();
 }

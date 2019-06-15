@@ -50,5 +50,13 @@ class ModelSelect extends ModelCheckboxes
 	{
 		return 'select';
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDefaultView()
+	{
+		return 'forms::fields.'.$this->getType();
+	}
 	
 }
