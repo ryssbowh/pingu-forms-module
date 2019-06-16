@@ -10,15 +10,15 @@ class Boolean extends Type
 	/**
 	 * @inheritDoc
 	 */
-	public function valueForField($value)
-	{
-		return (bool)$value;
-	}
+	// public function valueForField($value)
+	// {
+	// 	return (bool)$value;
+	// }
 
 	/**
 	 * @inheritDoc
 	 */
-	public static function filterQueryModifier(Builder $query, string $name, $value)
+	public function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if($value){
 			$query->where($name, '=', (int)$value);

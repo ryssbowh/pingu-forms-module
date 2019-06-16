@@ -1,11 +1,13 @@
 <?php
 namespace Pingu\Forms\Exceptions;
 
+use Pingu\Forms\Support\Form;
+
 class FormFieldException extends \Exception{
 
-	public static function alreadyDefined($name)
+	public static function alreadyDefined($name, Form $form)
 	{
-		return new static("Field '$name' is already defined in this form");
+		return new static("Field '$name' is already defined in form ".$form->getName());
 	}
 
 	public static function notDefined($name)

@@ -20,7 +20,7 @@ class Type
 		$this->field = $field;
 	}
 
-	public static function addValidationRules()
+	public function addValidationRules()
 	{
 		return '';
 	}
@@ -32,7 +32,7 @@ class Type
 	 * @param string    $field
 	 * @param mixed    $value
 	 */
-	public static function setModelValue(BaseModel $model, string $field, $value, array $fieldOptions)
+	public function setModelValue(BaseModel $model, string $field, $value)
 	{
 		$model->$field = $value;
 	}
@@ -44,7 +44,7 @@ class Type
 	 * @param  string  $name 
 	 * @param  mixed  $value
 	 */
-	public static function filterQueryModifier(Builder $query, string $name, $value)
+	public function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if($value){
 			$query->where($name, '=', $value);
@@ -58,7 +58,7 @@ class Type
 	 * @param  string    $name
 	 * @param  value    $value
 	 */
-	public static function saveRelationships(BaseModel $model, string $name, $value)
+	public function saveRelationships(BaseModel $model, string $name, $value)
 	{
 		return false;
 	}
@@ -69,7 +69,7 @@ class Type
 	 * @param  BaseModel $model
 	 * @param  string    $name
 	 */
-	public static function destroyRelationships(BaseModel $model, string $name)
+	public function destroyRelationships(BaseModel $model, string $name)
 	{
 		return true;
 	}

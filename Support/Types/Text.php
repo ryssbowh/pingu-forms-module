@@ -9,7 +9,7 @@ class Text extends Type
 	/**
 	 * @inheritDoc
 	 */
-	public static function filterQueryModifier(Builder $query, string $name, $value)
+	public function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if($value){
 			$query->where($name, 'like', '%'.$value.'%');

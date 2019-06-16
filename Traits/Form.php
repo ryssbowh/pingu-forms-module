@@ -4,6 +4,7 @@ namespace Pingu\Forms\Traits;
 use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Exceptions\FormException;
 use Pingu\Forms\Support\ClassBag;
+use Pingu\Forms\Support\Fields\Hidden;
 use Pingu\Forms\Support\Fields\Submit;
 use Pingu\Forms\Traits\HasFields;
 use Pingu\Forms\Traits\RendersForm;
@@ -92,23 +93,6 @@ trait Form
     }
 
     /**
-     * Adds a submit field to this form 
-     * 
-     * @param string $label
-     * @param string $name
-     * @return Field
-     */
-    public function addSubmit($label = 'Submit', $name = 'submit')
-    {
-        return $this->addField($name, [
-            'field' => Submit::class,
-            'options' => [
-                'label' => $label
-            ]
-        ]);
-    }
-
-    /**
      * Sets/gets an option
      * 
      * @param  string $name
@@ -138,6 +122,38 @@ trait Form
             return $this;
         }
         return $this->attributes->get($name);
+    }
+
+    /**
+     * Adds a hidden field to this form
+     * 
+     * @param string $name
+     * @param mixed $value
+     */
+    public function addHiddenField(string $name, $value)
+    {
+        $this->addField($name, new Hidden(
+            $name,
+            ['default' => $value]
+        ));
+        $this->moveFieldUp($name);
+        return $this;
+    }
+
+    /**
+     * Adds a submit field to this form 
+     * 
+     * @param string $label
+     * @param string $name
+     * @return Field
+     */
+    public function addSubmit($label = 'Submit', $name = 'submit')
+    {
+        $this->addField($name, new Submit(
+            $name, 
+            ['label' => $label]
+        ));
+        return $this;
     }
 
 }

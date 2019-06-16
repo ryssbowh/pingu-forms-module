@@ -15,31 +15,31 @@ class ManyModel extends Model
 	/**
 	 * @inheritDoc
 	 */
-	public function setValue($models)
-	{
-		if($models instanceof Collection){
-			$models = $models->flatten()->all();
-		}
-		if(!is_array($models)){
-			throw FormFieldException::notAnArray($this->name, $models);
-		}
-		foreach($models as $model){
-			if(!$model instanceof BaseModel){
-				throw FormFieldException::notABaseModel($this->name, $model); 
-			}
-		}
-		$value = [];
-		foreach($models as$model){
-			$value[] = $model->getKey();
-		}
-		$this->value = $value;
-		return $this;
-	}
+	// public function setValue($models)
+	// {
+	// 	if($models instanceof Collection){
+	// 		$models = $models->flatten()->all();
+	// 	}
+	// 	if(!is_array($models)){
+	// 		throw FormFieldException::notAnArray($this->name, $models);
+	// 	}
+	// 	foreach($models as $model){
+	// 		if(!$model instanceof BaseModel){
+	// 			throw FormFieldException::notABaseModel($this->name, $model); 
+	// 		}
+	// 	}
+	// 	$value = [];
+	// 	foreach($models as$model){
+	// 		$value[] = $model->getKey();
+	// 	}
+	// 	$this->value = $value;
+	// 	return $this;
+	// }
 
 	/**
 	 * @inheritDoc
 	 */
-	public static function filterQueryModifier(Builder $query, string $name, $value)
+	public function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if(!$value) return;
 		$model = $query->getModel()->getFieldDefinitions()[$name]['model'];
@@ -52,7 +52,7 @@ class ManyModel extends Model
 	/**
 	 * @inheritDoc
 	 */
-	public static function setModelValue(BaseModel $model, string $name, $value, array $fieldOptions)
+	public function setModelValue(BaseModel $model, string $name, $value)
 	{
 		return true;
 	}
@@ -60,7 +60,7 @@ class ManyModel extends Model
 	/**
 	 * @inheritDoc
 	 */
-	public static function saveRelationships(BaseModel $model, string $name, $value){
+	public function saveRelationships(BaseModel $model, string $name, $value){
 		$model->$name()->sync($value);
 		$model->load($name);
 		return true;

@@ -35,14 +35,11 @@ trait HasFields
      * @throws FormFieldException
      * @return Field
      */
-	protected function _addField(string $name, array $definition)
+	protected function _addField(string $name, Field $field)
     {
-    	if(!isset($definition['field'])){
-    		throw FormFieldException::missingDefinition($name, 'field');
-    	}
-        $definition['options']['type'] = $definition['options']['type'] ?? $definition['field']::getDefaultType();
-    	$class = $definition['field'];
-    	$field = new $class($name, $definition['options'], $definition['attributes'] ?? []);
+        if($this->fields->has($name)){
+            throw FormFieldException::alreadyDefined($name, $this);
+        }
         $field->setForm($this);
         $this->fields->put($name, $field);
         return $field;
@@ -56,8 +53,9 @@ trait HasFields
      */
 	protected function _addFields(array $fields)
     {
-        foreach($fields as $field => $definition){
-            $this->_addField($field, $definition);
+        foreach($fields as $name => $fieldDef){
+            $field = Field::buildFieldClass($name, $fieldDef);
+            $this->_addField($name, $field);
         }
         return $this;
     }
@@ -85,10 +83,10 @@ trait HasFields
      * @param string $group
      * @return Form
      */
-    public function addField(string $name, array $definition, $group = 'default')
+    public function addField(string $name, Field $field, $group = 'default')
     {
         $group = $this->getGroup($group);
-        $field = $this->_addField($name, $definition);
+        $field = $this->_addField($name, $field);
         $group->push($name);
         return $field;
     }

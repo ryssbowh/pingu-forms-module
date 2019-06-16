@@ -20,6 +20,7 @@ use Pingu\Forms\Exceptions\ModelNotSaved;
 use Pingu\Forms\Exceptions\ModelRelationsNotSaved;
 use Pingu\Forms\Support\Field;
 use Pingu\Forms\Support\Type;
+use Pingu\Media\Contracts\UploadFileContract;
 use Validator;
 
 trait Formable {
@@ -87,6 +88,11 @@ trait Formable {
         return $definitions;
     }
 
+    /**
+     * Builds this model fields definitions and store them in a variable as cache
+     * 
+     * @return array
+     */
     protected function buildFieldDefinitions()
     {
         $definitions = $this->fieldDefinitions();
@@ -94,9 +100,7 @@ trait Formable {
             if(!isset($definition['field'])){
                 throw FormFieldException::missingDefinition($name, 'field');
             }
-            $definition['attributes'] = $definition['attributes'] ?? [];
-            $definition['options']['type'] = $definition['options']['type'] ?? $definition['field']::getDefaultType();
-            $definitions[$name] = $definition;
+            $definitions[$name] = $definition['field']::buildFieldClass($name, $definition);
         }
         event(new ModelFieldDefinitions($definitions, $this));
         $this->fieldDefinitionsCache = $definitions;
@@ -124,21 +128,27 @@ trait Formable {
         if(!is_null($fields)){
             $rules = array_intersect_key($rules, array_flip($fields));
         }
-        // return $this->replaceRulesTokens($rules);
         return $rules;
     }
 
+    /**
+     * Builds the validation rules and store them in a variable as cache
+     * 
+     * @return array
+     */
     protected function buildValidationRules()
     {
         $definitions = $this->getFieldDefinitions();
         $rules = $this->validationRules();
-        foreach($rules as $field => $rule){
-            if(!isset($definitions[$field])){
-                throw FormFieldException::notDefinedInModel($field, get_class($this));
-            }
-            $typeRules = trim($definitions[$field]['options']['type']::addValidationRules(), '|');
+        foreach($rules as $fieldName => $rule){
+            if(!isset($definitions[$fieldName])) continue;
+            /**
+             * Adding each field custom validation rules
+             */
+            $field = $definitions[$fieldName];
+            $typeRules = trim($field->addValidationRules(), '|');
             $rule .= '|'.$typeRules;
-            $rules[$field] = trim($rule, '|');
+            $rules[$fieldName] = trim($rule, '|');
         }
         event(new ModelValidationRules($rules, $this));
         return $rules;
@@ -157,6 +167,11 @@ trait Formable {
         return $this->buildValidationMessages();
     }
 
+    /**
+     * Builds the validation messages and store them in a variable as a cache
+     * 
+     * @return array
+     */
     protected function buildValidationMessages()
     {
         $messages = $this->validationMessages();
@@ -164,26 +179,6 @@ trait Formable {
         $this->fieldValidationMessagesCache = $messages;
         return $messages;
     }
-
-    /**
-     * Replace tokens within rules with fields from the object
-     * example rule : 'required|email|unique:users,email,{id}'
-     * @param  array  $rules
-     * @return array
-     */
-    // public function replaceRulesTokens(array $rules)
-    // {
-    //     foreach($rules as $key => $rule){
-    //         preg_match('/^.*\{([a-zA-Z]+)\}.*$/', $rule, $matches);
-    //         if($matches){
-    //             foreach($matches as $match){
-    //                 $rule = str_replace('{'.$match.'}', $this->$match, $rule);
-    //             }
-    //             $rules[$key] = $rule;
-    //         }
-    //     }
-    //     return $rules;
-    // }
 
     /**
      * Validates a request and return validated data
@@ -241,11 +236,11 @@ trait Formable {
         foreach($values as $name => $value){
             if(!in_array($name, $this->fillable)) continue;
 
-            $type = $this->getFieldType($name);
+            $type = $fields[$name]->option('type');
             if(method_exists($this, $name)){
                 $relation = $this->$name();
                 if($relation instanceof Relation){
-                    $res = $type::saveRelationships($this, $name, $value);
+                    $res = $type->saveRelationships($this, $name, $value);
                     $return = ($return or $res);
                 }
             }
@@ -275,7 +270,7 @@ trait Formable {
 
     /**
      * Populates this with values coming from a form submit.
-     * If the type isn't defined for a field, the default will be used (class Type).
+     * If the type isn't defined for a field, the default will be used (as defined in the field)
      * 
      * @param  array $values
      * @return  FormableModel
@@ -283,24 +278,12 @@ trait Formable {
     public function formFill(array $values){
         $definitions = $this->getFieldDefinitions();
         foreach($this->getFillableFields($values) as $name => $value){
-            $type = $this->getFieldType($name);
+            $type = $definitions[$name]->option('type');
             if($this->isFillable($name)){
-                $type::setModelValue($this, $name, $value, $definitions[$name]);   
+                $type->setModelValue($this, $name, $value);   
             }
         }
         return $this;
-    }
-
-    /**
-     * Return the default field type classname for a field
-     * 
-     * @param  string $name
-     * @return string
-     */
-    public function getFieldType(string $name)
-    {
-        $fields = $this::getFieldDefinitions();
-        return $fields[$name]['options']['type'];
     }
 
     /**
@@ -355,12 +338,11 @@ trait Formable {
 
     public function uploadFormFile(UploadedFile $file, string $fieldName)
     {
-        $definition = $this->getFieldDefinitions()[$fieldName];
-        $type = $definition['options']['type'] ?? $definition['field']::getDefaultType();
-        if(!$type instanceof UploadFileContract){
-            throw MediaFieldException::typeCantUpload($fieldName, $type)
+        $field = $this->getFieldDefinitions()[$fieldName];
+        if(!$field instanceof UploadFileContract){
+            throw MediaFieldException::fieldCantUpload($fieldName, $field);
         }
-        return \Media::uploadFile($file, $definition['disk'] ?? null);
+        return $field->uploadFile($file);
     }
 
 }

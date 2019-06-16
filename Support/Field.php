@@ -37,6 +37,7 @@ abstract class Field
 		$this->name = $name;
 		if(!isset($options['label'])) $options['label'] = label($this->name);
 		if(!isset($options['type'])) $options['type'] = $this->getDefaultType();
+		$options['type'] = new $options['type']($this);
 		$this->options = collect($options);
 		$this->attributes = collect($attributes);
 		$this->setValue($this->options->get('default') ?? null);
@@ -178,6 +179,11 @@ abstract class Field
 	{
 		$this->value = $value;
 		return $this;
+	}
+
+	public function addValidationRules()
+	{
+		return '';
 	}
 
 	/**

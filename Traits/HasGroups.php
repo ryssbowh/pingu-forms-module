@@ -2,6 +2,7 @@
 
 namespace Pingu\Forms\Traits;
 
+use Illuminate\Support\Collection;
 use Pingu\Forms\Exceptions\FormFieldException;
 use Pingu\Forms\Exceptions\GroupException;
 
