@@ -14,7 +14,7 @@ A form's life cycle from definition to saving in db :
 - class building
 	Those arrays will be turned into a Field class and added to the form
 - rendering
-	Before the form is being rendered, the event `Formbuilt` will be thrown, so other modules can update it.
+	Before the form is being rendered, the event `FormBuilt` will be thrown, so other modules can update it.
 - form is rendered through a view
 - validation. The form is submitted. see [Laravel validation](https://laravel.com/docs/5.7/validation)
 	For class defined forms, the validation rules and messages sit in the class.
@@ -26,16 +26,17 @@ A basic form must define a name, a method, an url and some fields. It can also d
 ### Fields
 A field define how the field is rendered on screen, it has nothing to do with how the value of that field is saved in db, this is the role of the Type.
 
-A field can have options and attributes. Each field must define a Type, if you don't define a Type, each field has a default one.
+A field can have options and attributes. Each field must define a Type, if you don't define a Type, each field has a default one (Text).
 
-Each field can define a number of required options, see each field class (Support/Fields fodler)
+Each field can define a number of required options, see each field class (Support/Fields folder)
 
 a valid field definition :
 
 `'name' => [
 	'field' => TextInput::class,
 	'options' => [
-		'myoption' => 'myvalue'
+		'myoption' => 'myvalue',
+		'type' => Boolean::class
 	],
 	'attributes' => [
 		'required' => true

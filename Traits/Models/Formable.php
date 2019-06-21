@@ -187,9 +187,9 @@ trait Formable {
      * @param  array   $fields
      * @return array
      */
-    public function validateForm(array $values, array $fields)
+    public function validateForm(array $values, array $fields, bool $editing)
     {
-        $validator = $this->makeValidator($values, $fields);
+        $validator = $this->makeValidator($values, $fields, $editing);
         $validator->validate();
         return $validator->validated();
     }
@@ -201,9 +201,13 @@ trait Formable {
      * @param  array $fields
      * @return Validator
      */
-    public function makeValidator(array $values, array $fields)
+    public function makeValidator(array $values, array $fields, bool $editing)
     {   
-    	$rules = array_intersect_key($this->getValidationRules(), array_flip($fields));
+        $rules = array_intersect_key($this->getValidationRules(), array_flip($fields));
+        if($editing){
+            //If we're editing we only validate the values that are present :
+    	   $rules = array_intersect_key($rules, $values);
+        }
 		$messages = $this->getValidationMessages();
 		$validator = Validator::make($values, $rules, $messages);
         $this->modifyValidator($validator, $values, $fields);
@@ -278,8 +282,8 @@ trait Formable {
     public function formFill(array $values){
         $definitions = $this->getFieldDefinitions();
         foreach($this->getFillableFields($values) as $name => $value){
-            $type = $definitions[$name]->option('type');
             if($this->isFillable($name)){
+                $type = $definitions[$name]->option('type');
                 $type->setModelValue($this, $name, $value);   
             }
         }

@@ -5,6 +5,7 @@ use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Exceptions\FormException;
 use Pingu\Forms\Support\ClassBag;
 use Pingu\Forms\Support\Fields\Hidden;
+use Pingu\Forms\Support\Fields\Link;
 use Pingu\Forms\Support\Fields\Submit;
 use Pingu\Forms\Traits\HasFields;
 use Pingu\Forms\Traits\RendersForm;
@@ -156,4 +157,17 @@ trait Form
         return $this;
     }
 
+    /**
+     * Adds a delete button to this form
+     * @param string $label
+     * @param string $field
+     */
+    public function addDeleteButton($url, $label = "Delete", $field = 'delete')
+    {
+        $this->addField($field, new Link($field,
+            ['label' => $label, 'url' => $url],
+            ['class' => 'delete']
+        ));
+        return $this;
+    }
 }

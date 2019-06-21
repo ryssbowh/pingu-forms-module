@@ -61,6 +61,18 @@ class ModelForm extends Form
     }
 
     /**
+     * Get classes for that form
+     * 
+     * @return string
+     */
+    protected function getClasses()
+    {
+        $classes = theme_config('forms.classes.'.$this->name) ?? theme_config('forms.default-classes');
+        $classes .= ' form-'.$this->name.($this->editing ? ' form-editModel' : ' form-addModel');
+        return $classes;
+    }
+
+    /**
      * @inheritDoc
      */
     public function name()

@@ -5,11 +5,16 @@ class FormException extends \Exception{
 
 	public static function name($name)
 	{
-		return new static("'$name' is not valid, a form name can only contain letters, numbers and hyphens");
+		return new static("form name '$name' is not valid, a form name can only contain letters, numbers and hyphens");
 	}
 
 	public static function notBuilt($name)
 	{
-		return new static($name." is not finished building, call '\$form->built()' before rendering it.");
+		return new static('form '.$name." is not finished building, call '\$form->built()' before rendering it.");
+	}
+
+	public static function noGroups($name)
+	{
+		return new static('form '.$name." doesn't define any group.");
 	}
 }

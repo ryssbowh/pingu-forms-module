@@ -3,6 +3,7 @@
 namespace Pingu\Forms\Traits;
 
 use Illuminate\Support\Collection;
+use Pingu\Forms\Exceptions\FormException;
 use Pingu\Forms\Exceptions\FormFieldException;
 use Pingu\Forms\Exceptions\GroupException;
 
@@ -18,6 +19,9 @@ trait HasGroups
 	 */
 	private function makeGroups(array $groups)
 	{
+		if(!$groups){
+			throw FormException::noGroups(class_basename($this));
+		}
 		$this->groups = collect();
 		foreach ($groups as $name => $fields) {
 			$this->createGroup($name, $fields);

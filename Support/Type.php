@@ -15,7 +15,7 @@ class Type
 {
 	protected $field;
 
-	public function construct__(Field $field)
+	public function __construct(Field $field)
 	{
 		$this->field = $field;
 	}
