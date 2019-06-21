@@ -24,7 +24,6 @@
         }
     },
     "require": {
-        "laravelcollective/html":"^5.4.0",
-        "pingu/core-module": "1.1.*"
+        "laravelcollective/html":"^5.4.0"
     }
 }
