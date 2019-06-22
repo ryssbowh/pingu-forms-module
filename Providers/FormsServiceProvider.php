@@ -117,11 +117,9 @@ class FormsServiceProvider extends ModuleServiceProvider
      */
     public function registerCommands()
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                MakeFormCommand::class,
-            ]);
-        }
+        $this->commands([
+            MakeFormCommand::class,
+        ]);
     }
 
     /**
