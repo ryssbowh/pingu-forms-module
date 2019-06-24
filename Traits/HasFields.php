@@ -37,7 +37,8 @@ trait HasFields
      */
 	protected function _addField(string $name, Field $field)
     {
-        if($this->fields->has($name)){
+        if($this->fields->has($name) === true){
+            exit();
             throw FormFieldException::alreadyDefined($name, $this);
         }
         $field->setForm($this);

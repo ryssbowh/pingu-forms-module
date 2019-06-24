@@ -81,19 +81,6 @@ trait Form
     }
 
     /**
-     * Marks this form as built, populates the fields with session and sends an event
-     *
-     * @return Form
-     */
-    public function built()
-    {   
-        $this->built = true;
-        \FormFacade::considerRequest();
-        event(new FormBuilt($this->getName(), $this));
-        return $this;
-    }
-
-    /**
      * Sets/gets an option
      * 
      * @param  string $name

@@ -33,7 +33,7 @@ class FormsServiceProvider extends ModuleServiceProvider
         // $this->registerFormMacros();
         $this->registerRules();        
 
-        \Asset::container('modules')->add('forms-js', 'module-assets/Forms/js/Forms.js');
+        \Asset::container('modules')->add('forms-js', 'module-assets/Forms.js');
     }
 
     /**
