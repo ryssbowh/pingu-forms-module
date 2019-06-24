@@ -1,8 +1,10 @@
-<div class="{{ $fieldClasses }} field-{{ $type }}{{ isset($errors) and $errors->has($name) ? ' is-invalid' : '' }}">
-	@if($label)
-		<div class="{{ $labelClasses }}">{{ $label }}@if(isset($required) and $required) *@endif</div>
+<div class="{{ $field->wrapperClasses }} {{ isset($errors) and $errors->has($field->getName()) ? ' is-invalid' : '' }}">
+	@if($label = $field->option('label'))
+		<label class="{{ $field->labelClasses }}">{{ $label.($field->attribute('required') ? ' *' : '') }}
+			@if($helper = $field->option('helper'))
+				<div class="helper">{{ $helper }}</div>
+			@endif
+		</label>
 	@endif
-	<div class="{{ $fieldInnerClasses }}">
-		@yield('inner')
-	</div>
+	@yield('inner')
 </div>

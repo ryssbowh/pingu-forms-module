@@ -3,7 +3,8 @@
 namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
-use Pingu\Forms\Form;
+use Pingu\Forms\Contracts\FormContract;
+use Pingu\Forms\Support\Form;
 
 class FormBuilt
 {

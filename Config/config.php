@@ -1,41 +1,59 @@
 <?php
 
 return [
-    'name' => 'Forms',
+    'name' => 'Forms', 
+    'generator' =>[
+        /**
+         * Path to generate Form classes
+         */
+        'paths' => [
+            'forms' => 'Forms'
+        ]
+    ],
     'noValueLabel' => 'Select',
-    'submit-default-classes' => '',
-    'form-default-classes' => 'form',
     /**
-     * Classes per form, indexed by the name of the form
+     * Classes for forms, indexed by the name of the form
      */
-    'classes' => [],
-    'field-default-classes' => 'form-group',
+    'classes' => [
+    ],
     /**
-     * Classes for fields, index by field renderer name
+     * default classes for form
      */
-    'field-classes' => [],
-    'label-default-classes' => 'label',
+    'default-classes' => 'form',
     /**
-     * Classes for labels, index by field renderer name
+     * Classes for fields, index by field name
+     */
+    'field-classes' => [
+        'default' => [
+            'textinput' => 'form-control',
+            'select' => 'form-control',
+            'password' => 'form-control',
+            'datetime' => 'form-control',
+            'email' => 'form-control',
+            'textarea' => 'form-control',
+            'checkbox' => 'form-check form-check-inline',
+            'radio' => 'form-check form-check-inline',
+            'submit' => 'btn btn-primary'
+        ]
+    ],
+    /**
+     * Extra classes for fields
+     */
+    'field-default-classes' => 'field-inner',
+    /**
+     * Classes for labels, index by field name
      */
     'label-classes' => [],
-    'field-inner-default-classes' => 'field-inner',
     /**
-     * Classes for inner fields, index by field renderer name
+     * Default classes for label
      */
-    'field-inner-classes' => [],
-    'renderer-default-classes' => 'form-control',
+    'label-default-classes' => 'label',
     /**
-     * Classes renderers, index by field renderer name
+     * Field wrapper classes index by field name
      */
-    'renderer-classes' => [
-        'text' => 'form-control',
-        'select' => 'form-control',
-        'password' => 'form-control',
-        'datetime' => 'form-control js-datepicker',
-        'email' => 'form-control',
-        'textarea' => 'form-control',
-        'checkbox' => 'form-check form-check-inline',
-        'radio' => 'form-check form-check-inline'
-    ]
+    'wrapper-classes' => [],
+    /**
+     * field wrapper default classes
+     */
+    'wrapper-default-classes' => 'field',
 ];

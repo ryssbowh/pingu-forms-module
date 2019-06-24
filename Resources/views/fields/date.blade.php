@@ -1,5 +1,1 @@
-@extends('forms::field')
-
-@section('inner')
-{{ FormFacade::text($name, $default ?? null, $rendererAttributes) }}
-@overwrite
+{{ FormFacade::text($renderer->name, $renderer->getValue(), $renderer->attributes->toArray()) }}

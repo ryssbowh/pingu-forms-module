@@ -1,10 +1,8 @@
 @extends('forms::field')
 
 @section('inner')
-@foreach( $checkboxes as $key => $checkbox)
 	<div class="form-check form-check-inline">
-		{{ FormFacade::checkbox($name, $key, $checkbox['checked'], $checkbox['attributes']) }}
-		<label class="form-check-label" for="{{ $checkbox['attributes']['id'] }}">{{ $checkbox['label'] }}</label>
+		{{ FormFacade::hidden($field->getName(), 0, ['class' => 'noPopulation']) }}
+		{{ FormFacade::checkbox($field->getName(), 1, $field->getValue(), $field->attributes->toArray()) }}
 	</div>
-@endforeach
 @overwrite

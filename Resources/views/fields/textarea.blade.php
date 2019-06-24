@@ -1,5 +1,5 @@
 @extends('forms::field')
 
 @section('inner')
-{{ FormFacade::textarea($name, $default ?? null, $rendererAttributes) }}
+	{{ FormFacade::textarea($field->getName(), $field->getValue(), $field->attributes->toArray()) }}
 @overwrite

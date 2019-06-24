@@ -9,9 +9,7 @@
 @endif
 
 {{ $form->renderStart() }}
-
 <div class="fields">
-	{{ $form->renderLayout() }}
+	{{ $form->renderFields() }}
 </div>
-{{ $form->renderSubmit() }}
 {{ $form->renderEnd() }}

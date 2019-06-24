@@ -1,5 +1,5 @@
 @extends('forms::field')
 
 @section('inner')
-{{ FormFacade::select($name, $items, $default ?? null, $rendererAttributes) }}
+	{{ FormFacade::select($field->getName(), $field->getItems(), $field->getValue(), $field->attributes->toArray()) }}	
 @overwrite
