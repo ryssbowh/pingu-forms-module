@@ -21,7 +21,8 @@ class Boolean extends Type
 	public function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if($value){
-			$query->where($name, '=', (int)$value);
+			$value = $value == 'true' ? 1 : 0;
+			$query->where($name, '=', $value);
 		}
 	}
 }

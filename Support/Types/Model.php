@@ -13,8 +13,7 @@ class Model extends Type
 	public function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if(!$value) return;
-		$table = $this->field->option('model')::tableName();
-		$query->where(str_singular($table).'_id', '=', $value);
+		$query->where($name.'_id', '=', $value);
 	}
 
 	/**

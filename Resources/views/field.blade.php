@@ -2,7 +2,7 @@
 	@if($label = $field->option('label'))
 		<label class="{{ $field->labelClasses }}">{{ $label.($field->attribute('required') ? ' *' : '') }}
 			@if($helper = $field->option('helper'))
-				<div class="helper">{{ $helper }}</div>
+				<div class="helper">{!! $helper !!}</div>
 			@endif
 		</label>
 	@endif

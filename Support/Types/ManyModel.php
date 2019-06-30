@@ -15,34 +15,10 @@ class ManyModel extends Model
 	/**
 	 * @inheritDoc
 	 */
-	// public function setValue($models)
-	// {
-	// 	if($models instanceof Collection){
-	// 		$models = $models->flatten()->all();
-	// 	}
-	// 	if(!is_array($models)){
-	// 		throw FormFieldException::notAnArray($this->name, $models);
-	// 	}
-	// 	foreach($models as $model){
-	// 		if(!$model instanceof BaseModel){
-	// 			throw FormFieldException::notABaseModel($this->name, $model); 
-	// 		}
-	// 	}
-	// 	$value = [];
-	// 	foreach($models as$model){
-	// 		$value[] = $model->getKey();
-	// 	}
-	// 	$this->value = $value;
-	// 	return $this;
-	// }
-
-	/**
-	 * @inheritDoc
-	 */
 	public function filterQueryModifier(Builder $query, string $name, $value)
 	{
 		if(!$value) return;
-		$model = $query->getModel()->getFieldDefinitions()[$name]['model'];
+		$model = $query->getModel()->getFieldDefinitions()[$name]->option('model');
 		$model = new $model;
 		$query->whereHas($name, function($query) use ($model, $value){
             $query->where(str_singular($model->getTable()).'_id', '=', $value);
