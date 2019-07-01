@@ -4,38 +4,11 @@
 - [ ] test all sorts of relations
 - [ ] test macros
 
-## v2.0.0 Remade everything
-
-## v1.1.4
-- added js for dashify fields
-- added new validation rule `valid_url` 
-- added functions to move a field up in his layout or group
-- added docs
-
-## v1.1.3
-- renamed fieldQueryModifier in filterQueryModifier in Field
-
-## v1.1.2
-- Model fields can define a queryCallback
-
-## v1.1.1
-- Refactored FormableModel and FormableController to throw events at each step of the process
-- fixed field templates
-- refactored Renderers
-- added Route folder and Route service provider
-- added Url field
-- added Boolean field
-- added singleCheckbox Renderer
-- added default classes for all parts of a form
-- ignore fields starting with _ in formFill
-
-## v1.0.3 wrote readme
-
 ### Forms
 A form's life cycle from definition to saving in db :
 - definition :
 	Either through a form class (`module:make-form` command) for forms that don't define a model form. Fields are defined as arrays
-	Or through a ModelForm instance. fields are defined in the model (which must implement `FormableContract`) as arrays. When the system retrieves those definitions, the event `AddFormFields` or `EditFormFields` are thrown.
+	Or through a ModelForm instance. fields are defined in the model (which must implement `FormableContract`) as arrays. When the system retrieves those fields, the event `AddFormFields` or `EditFormFields` are thrown.
 - class building
 	Those arrays will be turned into a Field class and added to the form
 - rendering
@@ -77,6 +50,14 @@ If you want to define new fields, they must extend Field
 Types define how the value of a field must be handled (Boolean, Model, Text etc), those types define methods, for example how to modify the db query when filtering on this type of field. Or how to set the value of the field when given a value.
 
 It also define whether or not the associated field define relationships (for a model), which is used when saving a model.
+
+Types methods :
+
+- `addValidationRules` : add validation rules for that field
+- `setModelValue` : sets a model field value with a value coming from a form
+- `filterQueryModifier` : Query modifier when querying (filtering) on this type.
+- `saveRelationships` : Saves relationships for this type
+- `destroyRelationships`: Destroys relationships for that type.
 
 ### groups
 Fields can be organized in groups, and you have many methods available to move them around (`HasFields` and `HasGroups` traits). If you don't define groups for your form, they will all go into a 'default' group.

@@ -1,4 +1,4 @@
-import * as h from 'pingu-helpers';
+import * as h from 'PinguHelpers';
 import dashify from 'dashify';
 
 const Forms = (() => {
@@ -9,7 +9,7 @@ const Forms = (() => {
 
 	function init()
 	{
-		console.log('Forms initialized');
+		h.log('Forms initialized');
 		if(opt.dashify.length){
 			bindDashify(opt.dashify);
 		}

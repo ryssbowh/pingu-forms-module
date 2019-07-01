@@ -1,10 +1,7 @@
 <?php
-
 namespace $NAMESPACE$;
 
-use Pingu\Forms\Fields\Base\Email;
-use Pingu\Forms\Fields\Base\Text;
-use Pingu\Forms\Support\Form;
+use Pingu\Forms\Support\Fields\Submit;
 
 class $CLASS$ extends Form
 {
@@ -25,11 +22,8 @@ class $CLASS$ extends Form
 	public function fields()
 	{
 		return [
-			'email' => [
-				'field' => TextInput::class,
-			],
-			'name' => [
-				'field' => TextInput::class
+			'submit' => [
+				'field' => Submit::class,
 			]
 		];
 	}
@@ -86,6 +80,7 @@ class $CLASS$ extends Form
 
     /**
      * Various options that you can access in your templates/events
+     
      * @return array
      */
     public function options()
