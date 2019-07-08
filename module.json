@@ -3,7 +3,6 @@
     "alias": "forms",
     "description": "Pingu Forms API",
     "keywords": [],
-    "active": 1,
     "order": 2,
     "providers": [
         "Pingu\\Forms\\Providers\\FormsServiceProvider"
