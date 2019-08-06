@@ -4,6 +4,7 @@
     "description": "Pingu Forms API",
     "keywords": [],
     "order": 2,
+    "core": 1,
     "providers": [
         "Pingu\\Forms\\Providers\\FormsServiceProvider"
     ],
