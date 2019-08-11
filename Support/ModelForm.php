@@ -27,11 +27,11 @@ class ModelForm extends Form
     	if(!$fields){
     		$this->fieldList = $this->editing ? $model->getEditFormFields() : $model->getAddFormFields();
     	}
+        $this->attributeList = $attributes;
     	$this->setName($name);
     	$this->url = $url;
     	$this->method = $method;
     	$this->groupList = $groups;
-    	$this->attributeList = $attributes;
     	parent::__construct();
     }
 

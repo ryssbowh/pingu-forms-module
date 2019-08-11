@@ -37,6 +37,21 @@ trait Form
     }
 
     /**
+     * Takes the get parameters of a request and adds them as hidden fields
+     * @param  ?array $only
+     * @return Pingu\Forms\Support\Form
+     */
+    public function considerGet(?array $only = null)
+    {
+        if($input = request()->input()){
+            $input = is_null($only) ? $input : array_intersect_key($input, array_flip($only));
+            foreach($input as $param => $value){
+                $this->addHiddenField($param, $value);
+            }
+        }
+    }
+
+    /**
      * Removes non-wanted characters from name
      * 
      * @param  string $name

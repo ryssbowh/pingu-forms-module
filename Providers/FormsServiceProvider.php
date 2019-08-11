@@ -29,7 +29,6 @@ class FormsServiceProvider extends ModuleServiceProvider
         $this->registerFactories();
         $this->registerCommands();
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'forms');
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         // $this->registerFormMacros();
         $this->registerRules();        
 
