@@ -8,6 +8,31 @@ use Pingu\Forms\Support\Types\Text;
 class Select extends Field implements HasItemsField
 {
 	protected $required = ['items'];
+
+	/**
+	 * @inheritDoc
+	 */
+	public function __construct(string $name, array $options = [], array $attributes = [])
+	{	
+		parent::__construct($name, $options, $attributes);
+		$this->option('items', $this->buildItems($this->option('items')));
+	}
+
+	public function getName()
+	{
+		if($this->isMultiple()){
+			return $this->name.'[]';
+		}
+		return $this->name;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function buildItems($items)
+	{
+		return $items;
+	}
 	
 	/**
 	 * @inheritDoc

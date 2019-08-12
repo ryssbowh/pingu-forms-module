@@ -11,6 +11,13 @@ interface HasItemsField
 	public function getItems();
 
 	/**
+	 * builds items
+	 * 
+	 * @return array
+	 */
+	public function buildItems($items);
+
+	/**
 	 * Can the user choose several items
 	 * 
 	 * @return boolean

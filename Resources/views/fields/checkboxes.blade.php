@@ -1,10 +1,10 @@
 @extends('forms::field')
 
 @section('inner')
-	@foreach( $field->getItems() as $key => $label)
+	@foreach( $field->getItems() as $item)
 		<div class="form-check form-check-inline">
-			{{ FormFacade::checkbox($field->getName(), $key, in_array($key, $field->getValue()), ['id' => 'field-'.$field->getName().'-'.$key]) }}
-			<label class="form-check-label" for="field-{{ $field->getName().'-'.$key }}">{{ $label }}</label>
+			{{ FormFacade::checkbox($field->getName(), $item->getKey(), in_array($item->getKey(), $field->getValue()), $item->getAttributes()) }}
+			<label class="form-check-label" for="{{ $item->getId() }}">{{ $item->getLabel() }}</label>
 		</div>
 	@endforeach
 @overwrite

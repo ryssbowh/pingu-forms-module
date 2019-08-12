@@ -4,6 +4,7 @@ namespace Pingu\Forms\Support\Fields;
 use Pingu\Forms\Contracts\HasModelField;
 use Pingu\Forms\Exceptions\FormFieldException;
 use Pingu\Forms\Support\Fields\Checkboxes;
+use Pingu\Forms\Support\ItemList;
 use Pingu\Forms\Support\Types\ManyModel;
 use Pingu\Forms\Traits\HasModelItems;
 
@@ -18,7 +19,6 @@ class ModelCheckboxes extends Checkboxes implements HasModelField
 		$options['separator'] = $options['separator'] ?? ' - ';
 		$options['textField'] = is_array($options['textField']) ? $options['textField'] : [$options['textField']];
 		parent::__construct($name, $options, $attributes);
-		$this->option('items', $this->option('items') ?? $this->option('model')::all());
 	}
 
 	/**
@@ -40,14 +40,13 @@ class ModelCheckboxes extends Checkboxes implements HasModelField
 	/**
 	 * @inheritDoc
 	 */
-	public function getItems()
+	public function buildItems($models)
 	{
-		$models = $this->option('items');
         $values = [];
         foreach($models as $model){
             $values[''.$model->id] = implode($this->option('separator'), $model->only($this->option('textField')));
         }
-        return $values;
+        return new ItemList($values, $this->getName());
 	}
 
 	/**

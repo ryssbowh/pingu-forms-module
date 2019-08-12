@@ -3,15 +3,27 @@ namespace Pingu\Forms\Support\Fields;
 
 use Pingu\Forms\Contracts\HasModelField;
 use Pingu\Forms\Support\Form;
+use Pingu\Forms\Support\ItemList;
 use Pingu\Forms\Support\Types\Model;
+use Pingu\Forms\Traits\HasModelItems;
 
-class ModelSelect extends ModelCheckboxes
+class ModelSelect extends Select implements HasModelField
 {
+	use HasModelItems;
+
 	public function __construct(string $name, array $options = [], array $attributes = [])
 	{
 		$options['allowNoValue'] = $options['allowNoValue'] ?? true;
 		$options['noValueLabel'] = $options['noValueLabel'] ?? theme_config('forms.noValueLabel');
 		parent::__construct($name, $options, $attributes);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getModel()
+	{
+		return $this->option('model');
 	}
 
 	/**
@@ -33,14 +45,16 @@ class ModelSelect extends ModelCheckboxes
 	/**
 	 * @inheritDoc
 	 */
-	public function getItems()
+	public function buildItems($models)
 	{
-		$items = array_reverse(parent::getItems(), true);
+        $values = [];
         if($this->option('allowNoValue')){
-        	$items[''] = $this->option('noValueLabel');
-        	$items = array_reverse($items, true);
+        	$values[''] = $this->option('noValueLabel');
         }
-        return $items;
+        foreach($models as $model){
+            $values[''.$model->id] = implode($this->option('separator'), $model->only($this->option('textField')));
+        }
+        return $values;
 	}
 
 	/**

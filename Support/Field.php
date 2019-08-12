@@ -140,6 +140,16 @@ abstract class Field
 	}
 
 	/**
+	 * Get attributes as array
+	 * 
+	 * @return array
+	 */
+	public function getAttributes()
+	{
+		return $this->attributes->toArray();
+	}
+
+	/**
 	 * type getter, this is used to find the right view.
 	 * 
 	 * @return string
