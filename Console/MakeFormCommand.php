@@ -2,67 +2,82 @@
 
 namespace Pingu\Forms\Console;
 
+use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
-use Nwidart\Modules\Commands\GeneratorCommand;
-use Nwidart\Modules\Support\Config\GenerateConfigReader;
-use Nwidart\Modules\Support\Stub;
-use Nwidart\Modules\Traits\ModuleCommandTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class MakeFormCommand extends GeneratorCommand
+class MakeFormCommand extends Command
 {
-    use ModuleCommandTrait;
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'module:make-form';
-
-    /**
-     * The name of argument name.
-     *
-     * @var string
-     */
-    protected $argumentName = 'name';
+    protected $name = 'make:form';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Creates an new form class';
-
-    public function getDefaultNamespace() : string
-    {
-        return config('forms.generator.paths.form', 'Forms');
-    }
+    protected $description = 'Create a form class.';
 
     /**
-     * @return mixed
+     * Laravel filesystem
+     * @var Filesystem
      */
-    protected function getTemplateContents()
-    {
-        $module = $this->laravel['modules']->findOrFail($this->getModuleName());
-        $stub = new Stub('/base-form.stub', [
-            'NAMESPACE' => $this->getClassNamespace($module),
-            'CLASS'     => $this->getClass(),
-        ]);
-        $stub->setBasePath(\Module::find('Forms')->getPath().'/stubs');
-        return $stub->render();
-    }
+    protected $files;
+
+    protected $stub = __DIR__ . '/../stubs/base-form.stub'; 
 
     /**
+     * Execute the console command.
+     *
      * @return mixed
      */
-    protected function getDestinationFilePath()
+    public function handle()
     {
-        $path = $this->laravel['modules']->getModulePath($this->getModuleName());
+        $directory = $this->getDirectory();
+        $this->makeDirectory($directory);
+        $namespace = $this->getNamespace();
+        $path = $directory.'/'.$this->getFileName();
+        $stub = $this->laravel['files']->get(realpath($this->stub));
+        $stub = str_replace(
+            ['$NAMESPACE$', '$CLASS$'],
+            [$namespace, $this->getClassName()],
+            $stub
+        );
+        $this->laravel['files']->put($path, $stub);
+        $this->info('Block '.$path.' created !');
+    }
 
-        $formPath = config('forms.generator.paths.forms', 'Forms');
+    public function getNamespace()
+    {
+        return config('app.namespace').'\Forms';
+    }
 
-        return $path . $formPath . '/' . $this->getFileName() . '.php';
+    public function getFileName()
+    {
+        return $this->getClassName().'.php';
+    }
+
+    public function getClassName()
+    {
+        return Str::studly($this->argument('name'));
+    }
+
+    public function getDirectory()
+    {
+        return app_path('Forms');
+    }
+
+    public function makeDirectory($directory)
+    {
+        if(!file_exists($directory)){
+            $this->laravel['files']->makeDirectory($directory);
+        }
     }
 
     /**
@@ -73,17 +88,7 @@ class MakeFormCommand extends GeneratorCommand
     protected function getArguments()
     {
         return [
-            ['name', InputArgument::REQUIRED, 'The name of the form class.'],
-            ['module', InputArgument::REQUIRED, 'The name of module will be used.'],
+            ['name', InputArgument::REQUIRED, 'Form class name.'],
         ];
     }
-
-    /**
-     * @return string
-     */
-    private function getFileName()
-    {
-        return Str::studly($this->argument('name'));
-    }
-
 }

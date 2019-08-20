@@ -2,6 +2,7 @@
 namespace $NAMESPACE$;
 
 use Pingu\Forms\Support\Fields\Submit;
+use Pingu\Forms\Support\Form;
 
 class $CLASS$ extends Form
 {

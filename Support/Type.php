@@ -20,21 +20,21 @@ class Type
 		$this->field = $field;
 	}
 
-	public function addValidationRules()
+	public function getFieldName()
 	{
-		return '';
+		return $this->field->getName();
 	}
 
 	/**
 	 * Sets the value of a field to a model
 	 * 
 	 * @param BaseModel $model
-	 * @param string    $field
 	 * @param mixed    $value
 	 */
-	public function setModelValue(BaseModel $model, string $field, $value)
+	public function setModelValue(BaseModel $model, $value)
 	{
-		$model->$field = $value;
+		$name = $this->getFieldName();
+		$model->$name = $value;
 	}
 	
 	/**
@@ -44,23 +44,23 @@ class Type
 	 * @param  string  $name 
 	 * @param  mixed  $value
 	 */
-	public function filterQueryModifier(Builder $query, string $name, $value)
+	public function filterQueryModifier(Builder $query, $value)
 	{
 		if($value){
-			$query->where($name, '=', $value);
+			$query->where($this->getFieldName(), '=', $value);
 		}
 	}
 
 	/**
-	 * Saves a model's relation for that type 
+	 * Saves a model's relation for that type.
 	 * 
 	 * @param  BaseModel $model
 	 * @param  string    $name
-	 * @param  value    $value
+	 * @param  value    $value Have changes been made.
 	 */
-	public function saveRelationships(BaseModel $model, string $name, $value)
+	public function saveRelationships(BaseModel $model, $value)
 	{
-		return false;
+		return;
 	}
 
 	/**
@@ -69,8 +69,8 @@ class Type
 	 * @param  BaseModel $model
 	 * @param  string    $name
 	 */
-	public function destroyRelationships(BaseModel $model, string $name)
-	{
-		return true;
-	}
+	// public function destroyRelationships(BaseModel $model, string $name)
+	// {
+	// 	return;
+	// }
 }

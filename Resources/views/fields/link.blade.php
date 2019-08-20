@@ -1,1 +1,1 @@
-{{ Html::link($field->option('url'), $field->option('label'), $field->attributes->toArray(), $field->option('secure')) }}
+<a href="{{ $field->option('url') }}" {!! $field->getHtmlAttributes() !!}>{{ $field->option('label') }}</a>

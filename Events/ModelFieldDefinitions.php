@@ -3,23 +3,23 @@
 namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
-use Pingu\Core\Entities\BaseModel;
+use Pingu\Forms\Contracts\Models\FormableContract;
 
 class ModelFieldDefinitions
 {
     use SerializesModels;
 
-    protected $definitions, $model;
+    protected $definitions, $object;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(array &$definitions, BaseModel $model)
+    public function __construct(array &$definitions, FormableContract $object)
     {
         $this->definitions = $definitions;
-        $this->model = $model;
+        $this->object = $object;
     }
 
     /**

@@ -9,10 +9,10 @@ class Text extends Type
 	/**
 	 * @inheritDoc
 	 */
-	public function filterQueryModifier(Builder $query, string $name, $value)
+	public function filterQueryModifier(Builder $query, $value)
 	{
 		if($value){
-			$query->where($name, 'like', '%'.$value.'%');
+			$query->where($this->getFieldName(), 'like', '%'.$value.'%');
 		}
 	}
 }

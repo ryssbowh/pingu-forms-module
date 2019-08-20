@@ -2,14 +2,15 @@
 namespace Pingu\Forms\Support\Fields;
 
 use Pingu\Forms\Support\Field;
+use Pingu\Forms\Support\Types\Password as PasswordType;
 
 class Password extends Field
 {
 	/**
 	 * @inheritDoc
 	 */
-	public function getDefaultView()
+	public static function getDefaultType()
 	{
-		return 'forms::fields.'.$this->getType();
+		return PasswordType::class;
 	}
 }

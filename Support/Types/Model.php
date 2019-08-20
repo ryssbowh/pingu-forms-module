@@ -10,23 +10,24 @@ class Model extends Type
 	/**
 	 * @inheritDoc
 	 */
-	public function filterQueryModifier(Builder $query, string $name, $value)
+	public function filterQueryModifier(Builder $query, $value)
 	{
 		if(!$value) return;
-		$query->where($name.'_id', '=', $value);
+		$query->where($this->getFieldName().'_id', '=', $value);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function setModelValue(BaseModel $model, string $name, $value)
+	public function setModelValue(BaseModel $model, $value)
 	{
+		$name = $this->getFieldName();
+		$modelClass = $this->field->option('model');
 		if(!$value){
 			$model->$name()->dissociate();
 		}
 		else{
-			$modelValue = $this->field->option('model')::findOrFail($value);
-        	$model->$name()->associate($modelValue);
+        	$model->$name()->associate($modelClass::find($value));
         }
 	}
 }

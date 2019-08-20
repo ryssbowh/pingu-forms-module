@@ -10,21 +10,21 @@ interface FormableContract {
      * 
      * @return array
      */
-    public function formAddFields();
+    public function getAddFormFields();
 
     /**
      * List of fields to be edited by default when editing this model through a form
      * 
      * @return array
      */
-    public function formEditFields();
+    public function getEditFormFields();
 
 	/**
 	 * Return field definitions for that model
      * 
 	 * @return array
 	 */
-	public function fieldDefinitions();
+	public function getFieldDefinitions();
 
 	/**
 	 * Validation rules for this model
@@ -32,7 +32,7 @@ interface FormableContract {
 	 * @see https://laravel.com/docs/5.7/validation
 	 * @return array
 	 */
-    public function validationRules();
+    public function getValidationRules();
 
     /**
      * Validation messages for this model
@@ -40,7 +40,7 @@ interface FormableContract {
      * @see https://laravel.com/docs/5.7/validation
      * @return array
      */
-    public function validationMessages();
+    public function getValidationMessages();
 
     /**
      * Returns a form identifier
@@ -50,11 +50,12 @@ interface FormableContract {
     public static function formIdentifier();
 
     /**
-     * Build a field class according to its definition
-     * 
-     * @param  string $name
-     * @return Field
+     * Get form value.
+     *
+     * @param string $key
+     *
+     * @return mixed
      */
-    public function buildFieldClass(string $name);
+    public function getFormValue(string $key);
 
 }

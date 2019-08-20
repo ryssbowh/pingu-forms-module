@@ -101,28 +101,28 @@ trait Field
 		return $this->name;
 	}
 
-	public static function setModelValue(BaseModel $model, string $field, $value, array $fieldOptions)
-	{
-		$model->$field = $value;
-	}
+	// public static function setModelValue(BaseModel $model, string $field, $value, array $fieldOptions)
+	// {
+	// 	$model->$field = $value;
+	// }
 
 	
-	public static function filterQueryModifier(Builder $query, string $name, $value)
-	{
-		if($value){
-			$query->where($name, '=', $value);
-		}
-	}
+	// public static function filterQueryModifier(Builder $query, string $name, $value)
+	// {
+	// 	if($value){
+	// 		$query->where($name, '=', $value);
+	// 	}
+	// }
 
-	public static function saveRelationships(BaseModel $model, string $name, $value)
-	{
-		return false;
-	}
+	// public static function saveRelationships(BaseModel $model, string $name, $value)
+	// {
+	// 	return false;
+	// }
 
-	public static function destroyRelationships(BaseModel $model, string $name)
-	{
-		return true;
-	}
+	// public static function destroyRelationships(BaseModel $model, string $name)
+	// {
+	// 	return true;
+	// }
 	
 	public function render()
 	{

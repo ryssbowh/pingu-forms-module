@@ -9,9 +9,10 @@ class Datetime extends Type
 	/**
 	 * @inheritDoc
 	 */
-	public function filterQueryModifier(Builder $query, string $name, $value)
+	public function filterQueryModifier(Builder $query, $value)
 	{
 		if(!$value) return;
+		$name = $this->getFieldName();
 		if(isset($value['from']) and $value['from']){
 			$query->where($name, '>=', $value['from']);
 		}

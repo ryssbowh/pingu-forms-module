@@ -3,24 +3,24 @@
 namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
-use Pingu\Core\Entities\BaseModel;
 use Illuminate\Validation\Validator;
+use Pingu\Forms\Contracts\Models\FormableContract;
 
 class ModelValidator
 {
     use SerializesModels;
 
-    public $validator,$model;
+    public $validator,$object;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Validator $validator, BaseModel $model)
+    public function __construct(Validator $validator, FormableContract $object)
     {
         $this->validator = $validator;
-        $this->model = $model;
+        $this->object = $object;
     }
 
     /**

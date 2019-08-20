@@ -62,9 +62,9 @@ class Select extends Field implements HasItemsField
 	/**
 	 * @inheritDoc
 	 */
-	public function getDefaultView()
+	public static function getDefaultType()
 	{
-		return 'forms::fields.'.$this->getType();
+		return Text::class;
 	}
 	
 }

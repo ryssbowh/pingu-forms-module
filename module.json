@@ -6,7 +6,8 @@
     "order": 2,
     "core": 1,
     "providers": [
-        "Pingu\\Forms\\Providers\\FormsServiceProvider"
+        "Pingu\\Forms\\Providers\\FormsServiceProvider",
+        "Pingu\\Forms\\Providers\\ConsoleServiceProvider"
     ],
     "aliases": [],
     "files": [

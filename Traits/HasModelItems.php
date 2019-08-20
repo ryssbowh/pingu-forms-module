@@ -21,20 +21,21 @@ trait HasModelItems
 		if($models instanceof Collection){
 			$models = $models->flatten()->all();
 		}
-		if($models instanceof BaseModel){
+		elseif(!is_array($models)){
 			$models = [$models];
 		}
-		if(!is_array($models)){
-			throw FormFieldException::notAnArray($this->name, $models);
-		}
-		foreach($models as $model){
-			if(!$model instanceof BaseModel){
-				throw FormFieldException::notABaseModel($this->name, $model); 
-			}
-		}
+
 		$value = [];
-		foreach($models as$model){
-			$value[] = (string)$model->getKey();
+		foreach($models as $model){
+			if($model instanceof BaseModel){
+				$value[] = (string)$model->getKey();
+			}
+			elseif(is_numeric($model)){
+				$value[] = (string)$model;
+			}
+			else{
+				throw FormFieldException::invalidValue($this->name, $model);
+			}
 		}
 		$this->value = $value;
 		return $this;

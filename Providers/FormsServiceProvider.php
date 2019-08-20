@@ -27,7 +27,6 @@ class FormsServiceProvider extends ModuleServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerFactories();
-        $this->registerCommands();
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'forms');
         // $this->registerFormMacros();
         $this->registerRules();        
@@ -111,23 +110,4 @@ class FormsServiceProvider extends ModuleServiceProvider
         }
     }
 
-    /**
-     * Registers console commands
-     */
-    public function registerCommands()
-    {
-        $this->commands([
-            MakeFormCommand::class,
-        ]);
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [];
-    }
 }

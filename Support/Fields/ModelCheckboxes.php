@@ -18,6 +18,7 @@ class ModelCheckboxes extends Checkboxes implements HasModelField
 	{
 		$options['separator'] = $options['separator'] ?? ' - ';
 		$options['textField'] = is_array($options['textField']) ? $options['textField'] : [$options['textField']];
+		$options['items'] = $options['items'] ?? $options['model']::all();
 		parent::__construct($name, $options, $attributes);
 	}
 
@@ -55,14 +56,6 @@ class ModelCheckboxes extends Checkboxes implements HasModelField
 	public function getType()
 	{
 		return 'checkboxes';
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getDefaultView()
-	{
-		return 'forms::fields.'.$this->getType();
 	}
 	
 }

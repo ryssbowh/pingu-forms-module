@@ -1,17 +1,9 @@
 <?php
 namespace Pingu\Forms\Support\Fields;
 
-use Pingu\Forms\Support\Field;
+use Pingu\Forms\Support\NoValueField;
 
-class Link extends Field
+class Link extends NoValueField
 {
 	protected $required = ['label', 'url'];
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getDefaultView()
-	{
-		return 'forms::fields.'.$this->getType();
-	}
 }

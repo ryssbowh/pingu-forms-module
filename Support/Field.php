@@ -6,10 +6,11 @@ use Pingu\Forms\Exceptions\FormFieldException;
 use Pingu\Forms\Support\Form;
 use Pingu\Forms\Support\Type;
 use Pingu\Forms\Support\Types\Text;
+use Pingu\Forms\Traits\HasClasses;
 
 abstract class Field
 {
-	use HasViewSuggestions;
+	use HasViewSuggestions, HasClasses;
 
 	protected $required = [];
 	protected $name;
@@ -48,9 +49,16 @@ abstract class Field
 	 * 
 	 * @return string
 	 */
-	public static function getDefaultType()
+	abstract public static function getDefaultType();
+
+	/**
+	 * Get the default view for that field 
+	 * 
+	 * @return string
+	 */
+	public function getDefaultView()
 	{
-		return Text::class;
+		return 'forms::fields.'.$this->getType();
 	}
 
 	/**
@@ -150,6 +158,20 @@ abstract class Field
 	}
 
 	/**
+	 * Get attributes as array
+	 * 
+	 * @return array
+	 */
+	public function getHtmlAttributes()
+	{
+		$out = ' ';
+		foreach($this->attributes as $name => $value){
+			$out .= $name.'="'.$value.'"';
+		}
+		return $out;
+	}
+
+	/**
 	 * type getter, this is used to find the right view.
 	 * 
 	 * @return string
@@ -167,6 +189,16 @@ abstract class Field
 	public function getName()
 	{
 		return $this->name;
+	}
+
+	/**
+	 * name getter to be displayed in an html form
+	 * 
+	 * @return string
+	 */
+	public function getHtmlName()
+	{
+		return $this->name . ($this->isMultiple() ? '[]' : '');
 	}
 
 	/**
@@ -191,7 +223,12 @@ abstract class Field
 		return $this;
 	}
 
-	public function addValidationRules()
+	/**
+	 * Add validation rules specific to this field
+	 *
+	 * @return  string
+	 */
+	public function extraValidationRules()
 	{
 		return '';
 	}
@@ -214,6 +251,4 @@ abstract class Field
     {
         return new $definition['field']($name, $definition['options'] ?? [], $definition['attributes'] ?? []);
     }
-
-   	public abstract function getDefaultView();
 }

@@ -12,7 +12,7 @@ use Pingu\Forms\Traits\RendersForm;
 
 trait Form
 {
-    use RendersForm, HasFields;
+    use RendersForm, HasFields, HasClasses;
 
     public $attributes;
     public $options;
@@ -24,12 +24,12 @@ trait Form
         $this->name = $this->makeName($this->name());
         $this->id = $this->id();
         $this->options = collect($this->options());
-        $this->attributes = collect([
+        $this->attributes = collect(array_merge($this->attributes(), [
             'method' => $this->method(),
             'files' => true,
             'id' => $this->id(),
-            'class' => $this->getClasses()
-        ]);
+        ]));
+        $this->addClasses($this->getDefaultClasses());
         $this->makeUrl($this->url());
         $this->makeFields($this->fields());
         $this->makeGroups($this->groups());
@@ -49,6 +49,16 @@ trait Form
                 $this->addHiddenField($param, $value);
             }
         }
+    }
+
+    /**
+     * Adds the class 'ajax-form' to this form
+     * 
+     * @return Form
+     */
+    public function isAjax()
+    {
+        return $this->addClass('js-ajax-form');
     }
 
     /**
@@ -84,14 +94,14 @@ trait Form
     }
 
     /**
-     * Get classes for that form
+     * Get default classes for that form
      * 
      * @return string
      */
-    protected function getClasses()
+    protected function getDefaultClasses()
     {
         $classes = theme_config('forms.classes.'.$this->name) ?? theme_config('forms.default-classes');
-        $classes .= ' form-'.$this->name;
+        $classes .= ' form form-'.$this->name;
         return $classes;
     }
 
@@ -131,14 +141,12 @@ trait Form
      * Adds a hidden field to this form
      * 
      * @param string $name
-     * @param mixed $value
+     * @param mixed value
+     * @return Form
      */
     public function addHiddenField(string $name, $value)
     {
-        $this->addField($name, new Hidden(
-            $name,
-            ['default' => $value]
-        ));
+        $this->addField(new Hidden($name, ['default' => $value]));
         $this->moveFieldUp($name);
         return $this;
     }
@@ -148,14 +156,11 @@ trait Form
      * 
      * @param string $label
      * @param string $name
-     * @return Field
+     * @return Form
      */
-    public function addSubmit($label = 'Submit', $name = 'submit')
+    public function addSubmit(string $label = 'Submit', string $name = '_submit')
     {
-        $this->addField($name, new Submit(
-            $name, 
-            ['label' => $label]
-        ));
+        $this->addField(new Submit($name, ['label' => $label]));
         return $this;
     }
 
@@ -164,12 +169,39 @@ trait Form
      * @param string $label
      * @param string $field
      */
-    public function addDeleteButton($url, $label = "Delete", $field = 'delete')
+    public function addDeleteButton(string $url, string $label = "Delete", string $field = '_delete')
     {
-        $this->addField($field, new Link($field,
-            ['label' => $label, 'url' => $url],
-            ['class' => 'delete']
-        ));
+        $this->addField(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'delete']));
+        return $this;
+    }
+
+    /**
+     * Adds a back button to this form
+     * 
+     * @param string      $label
+     * @param string|null $url 
+     * @param string      $field
+     * @return Form
+     */
+    public function addBackButton(string $label = "Back", ?string $url = null, string $field = '_back')
+    {
+        if(is_null($url)){
+            $url = url()->previous();
+        }
+        $this->addField(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'back']));
+        return $this;
+    }
+
+    /**
+     * Disables a field
+     * 
+     * @param  string $name
+     * @return Form
+     */
+    public function disableField(string $name)
+    {
+        $field = $this->getField($name);
+        $this->addField(new Hidden($name, ['default' => $field->getValue()]));
         return $this;
     }
 }

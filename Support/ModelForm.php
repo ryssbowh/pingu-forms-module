@@ -19,16 +19,25 @@ class ModelForm extends Form
     protected $attributeList;
     protected $editing;
 
-    public function __construct(array $url, string $method, FormableContract $model, $fields = [], ?string $name = null, array $attributes = [], array $groups = [])
+    public function __construct(
+        array $url, 
+        string $method, 
+        FormableContract $model, 
+        bool $editing, 
+        $fields = [], 
+        ?string $name = null, 
+        array $attributes = [], 
+        array $groups = []
+    )
     {
-        $this->editing = $model->exists;
+        $this->editing = $editing;
         $this->model = $model;
         $this->fieldList = $fields;
     	if(!$fields){
     		$this->fieldList = $this->editing ? $model->getEditFormFields() : $model->getAddFormFields();
     	}
         $this->attributeList = $attributes;
-    	$this->setName($name);
+    	$this->name = ($this->editing ? 'edit-' : 'add-').$model::formIdentifier();
     	$this->url = $url;
     	$this->method = $method;
     	$this->groupList = $groups;
@@ -53,9 +62,6 @@ class ModelForm extends Form
      */
     protected function setName(?string $name)
     {
-    	if(!$name){
-    		$name = ($this->editing ? 'editModel-' : 'addModel-') . $this->model::formIdentifier();
-    	}
     	$this->name = $name;
         return $this;
     }
@@ -65,10 +71,10 @@ class ModelForm extends Form
      * 
      * @return string
      */
-    protected function getClasses()
+    protected function getDefaultClasses()
     {
         $classes = theme_config('forms.classes.'.$this->name) ?? theme_config('forms.default-classes');
-        $classes .= ' form-'.$this->name.($this->editing ? ' form-editModel' : ' form-addModel');
+        $classes .= ' form form-'.$this->name.($this->editing ? ' form-editModel' : ' form-addModel');
         return $classes;
     }
 

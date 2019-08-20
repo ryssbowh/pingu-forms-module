@@ -1,6 +1,7 @@
 <?php
 namespace Pingu\Forms\Exceptions;
 
+use Pingu\Core\Entities\BaseModel;
 use Pingu\Forms\Support\Form;
 
 class FormFieldException extends \Exception{
@@ -58,5 +59,15 @@ class FormFieldException extends \Exception{
 	public static function missingOption($name, $option)
 	{
 		return new static("Field '$name' is missing a '$option' option'");
+	}
+
+	public static function invalidValue(string $name, $value)
+	{
+		return new static("$value is not a valid value for field $name");
+	}
+
+	public static function missingRule(string $name, BaseModel $model)
+	{
+		return new static("model ".get_class($model)." : missing a validation rule for '$name'");
 	}
 }

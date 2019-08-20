@@ -4,14 +4,21 @@ import dashify from 'dashify';
 const Forms = (() => {
 
 	let opt = {
-		dashify : $('input.js-dashify')
+		forms: $('form'),
 	};
 
 	function init()
 	{
 		h.log('Forms initialized');
-		if(opt.dashify.length){
-			bindDashify(opt.dashify);
+		if(opt.forms.length){
+			initForm(opt.forms)
+		}
+	}
+
+	function initForm(form)
+	{
+		if(form.find('input.js-dashify').length){
+			bindDashify(form.find('input.js-dashify'));
 		}
 	}
 
@@ -37,6 +44,7 @@ const Forms = (() => {
 
 	return {
 		init: init,
+		initForm: initForm,
 		getMethod: getMethod
 	};
 

@@ -32,6 +32,41 @@ trait Formable {
     protected $fieldValidationMessagesCache;
 
     /**
+     * List of fields for add request
+     * 
+     * @return array
+     */
+    abstract function formAddFields();
+
+    /**
+     * List of fields for edit request
+     * 
+     * @return array
+     */
+    abstract function formEditFields();
+
+    /**
+     * List of field definitions 
+     * 
+     * @return array
+     */
+    abstract function fieldDefinitions();
+
+    /**
+     * List of validation rules 
+     * 
+     * @return array
+     */
+    abstract function validationRules();
+
+    /**
+     * List of validation messages
+     * 
+     * @return array
+     */
+    abstract function validationMessages();
+
+    /**
      * This define an identifier for a form that handles this model.
      * It's used to generate the form name.
      * 
@@ -146,7 +181,7 @@ trait Formable {
              * Adding each field custom validation rules
              */
             $field = $definitions[$fieldName];
-            $typeRules = trim($field->addValidationRules(), '|');
+            $typeRules = trim($field->extraValidationRules(), '|');
             $rule .= '|'.$typeRules;
             $rules[$fieldName] = trim($rule, '|');
         }
@@ -184,12 +219,24 @@ trait Formable {
      * Validates a request and return validated data
      * 
      * @param  Request $request
-     * @param  array   $fields
+     * @param  array   $fields fields to be validated
      * @return array
      */
-    public function validateForm(array $values, array $fields, bool $editing)
+    public function validateRequest(Request $request, array $fields)
     {
-        $validator = $this->makeValidator($values, $fields, $editing);
+        return $this->validateRequestValues($request->all(), $fields);
+    }
+
+    /**
+     * Validates values and return validated data
+     * 
+     * @param  array $values
+     * @param  array   $fields fields to be validated
+     * @return array
+     */
+    public function validateRequestValues(array $values, array $fields)
+    {
+        $validator = $this->makeValidator($values, $fields);
         $validator->validate();
         return $validator->validated();
     }
@@ -201,18 +248,51 @@ trait Formable {
      * @param  array $fields
      * @return Validator
      */
-    public function makeValidator(array $values, array $fields, bool $editing)
+    public function makeValidator(array $values, array $fields)
     {   
+        //1 - remove non fillable fields
+        $values = $this->removeNonFormableValues($values);
+        //2 - $fields contains the fields to validate (add or edit fields), but
+        //maybe fields have been manually added to the form, so need to merge the two
+        $fields = array_unique(array_merge($fields, array_keys($values)));
+        //3 - make sure a validation rule exist for all present fields
+        $this->ensureRulesExist($fields);
+        //4 - Select rules for the fields
         $rules = array_intersect_key($this->getValidationRules(), array_flip($fields));
-        if($editing){
-            //If we're editing we only validate the values that are present :
-    	   $rules = array_intersect_key($rules, $values);
-        }
 		$messages = $this->getValidationMessages();
 		$validator = Validator::make($values, $rules, $messages);
         $this->modifyValidator($validator, $values, $fields);
 		event(new ModelValidator($validator, $this));
 		return $validator;
+    }
+
+    /**
+     * Ensure that a rule is defined for every field
+     * 
+     * @param array  $fields
+     * @throws FormFieldException
+     */
+    protected function ensureRulesExist(array $fields)
+    {
+        $rules = $this->getValidationRules();
+        foreach($fields as $field){
+            if(!isset($rules[$field])){
+                throw FormFieldException::missingRule($field, $this);
+            }
+        }
+    }
+
+    /**
+     * Remove all values which start with underscore
+     * 
+     * @param  array  $values
+     * @return array
+     */
+    protected function removeNonFormableValues(array $values)
+    {
+        return array_filter($values, function($key){
+            return substr($key, 0, 1) != '_';
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -236,7 +316,7 @@ trait Formable {
             throw new ModelNotSaved('Can\'t save '.$this->friendlyName().'\'s relationships : '.$this->friendlyName().' is not saved');
         }
         $fields = $this::getFieldDefinitions();
-        $return = false;
+        $changes = false;
         foreach($values as $name => $value){
             if(!in_array($name, $this->fillable)) continue;
 
@@ -244,13 +324,12 @@ trait Formable {
             if(method_exists($this, $name)){
                 $relation = $this->$name();
                 if($relation instanceof Relation){
-                    $res = $type->saveRelationships($this, $name, $value);
-                    $return = ($return or $res);
+                    $change = $type->saveRelationships($this, $value);
+                    $changes = ($changes or $change);
                 }
             }
         }
-        
-        return $return;
+        return $changes;
     }
 
     /**
@@ -258,19 +337,19 @@ trait Formable {
      * 
      * @return bool
      */
-    public function destroyRelationships()
-    {
-        $fields = $this->getFieldDefinitions();
-        $return = true;
-        foreach($fields as $name => $data){
-            $type = $this->getFieldType($name);
-            if(method_exists($this, $name)){
-                $res = $type::destroyRelationships($this, $name);
-                $return = ($return and $res);
-            }
-        }
-        return $return;
-    }
+    // public function destroyRelationships()
+    // {
+    //     $fields = $this->getFieldDefinitions();
+    //     $changes = true;
+    //     foreach($fields as $name => $data){
+    //         $type = $fields[$name]->option('type');
+    //         if(method_exists($this, $name)){
+    //             $change = $type::destroyRelationships($this);
+    //             $changes = ($changes and $change);
+    //         }
+    //     }
+    //     return $changes;
+    // }
 
     /**
      * Populates this with values coming from a form submit.
@@ -281,25 +360,11 @@ trait Formable {
      */
     public function formFill(array $values){
         $definitions = $this->getFieldDefinitions();
-        foreach($this->getFillableFields($values) as $name => $value){
-            if($this->isFillable($name)){
-                $type = $definitions[$name]->option('type');
-                $type->setModelValue($this, $name, $value);   
-            }
+        foreach($values as $name => $value){
+            $type = $definitions[$name]->option('type');
+            $type->setModelValue($this, $value);   
         }
         return $this;
-    }
-
-    /**
-     * Filters an array of [field => value] to remove fields starting with _
-     * 
-     * @param  array  $fields
-     * @return array
-     */
-    public function getFillableFields(array $fields){
-        return array_filter($fields, function($field){
-            return substr($field, 0, 1) != '_';
-        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -320,33 +385,7 @@ trait Formable {
         catch(\Exception $e){
             throw new ModelRelationsNotSaved($this::friendlyName().' relations could not be saved');
         }
-        
         return ($this->getChanges() or $changesRelation);
-    }
-
-    /**
-     * Helper to build a field class from a field name
-     * 
-     * @param  string $name
-     * @return Field
-     */
-    public function buildFieldClass(string $name)
-    {
-        $fields = $this->fieldDefinitions();
-        if(!isset($fields[$name])){
-            throw FormFieldException::notDefinedInModel($name, get_class($this));
-        }
-        
-        return Field::buildFieldClass($name, $fields[$name]);
-    }
-
-    public function uploadFormFile(UploadedFile $file, string $fieldName)
-    {
-        $field = $this->getFieldDefinitions()[$fieldName];
-        if(!$field instanceof UploadFileContract){
-            throw MediaFieldException::fieldCantUpload($fieldName, $field);
-        }
-        return $field->uploadFile($file);
     }
 
 }

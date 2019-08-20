@@ -3,23 +3,23 @@
 namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
-use Pingu\Core\Entities\BaseModel;
+use Pingu\Forms\Contracts\Models\FormableContract;
 
 class ModelValidationRules
 {
     use SerializesModels;
 
-    protected $rules, $model;
+    protected $rules, $object;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(array &$rules, BaseModel $model)
+    public function __construct(array &$rules, FormableContract $object)
     {
         $this->rules = $rules;
-        $this->model = $model;
+        $this->object = $object;
     }
 
     /**

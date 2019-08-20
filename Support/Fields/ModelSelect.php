@@ -11,10 +11,15 @@ class ModelSelect extends Select implements HasModelField
 {
 	use HasModelItems;
 
+	protected $required = ['model', 'textField'];
+
 	public function __construct(string $name, array $options = [], array $attributes = [])
 	{
 		$options['allowNoValue'] = $options['allowNoValue'] ?? true;
 		$options['noValueLabel'] = $options['noValueLabel'] ?? theme_config('forms.noValueLabel');
+		$options['separator'] = $options['separator'] ?? ' - ';
+		$options['textField'] = is_array($options['textField']) ? $options['textField'] : [$options['textField']];
+		$options['items'] = $options['items'] ?? $options['model']::all();
 		parent::__construct($name, $options, $attributes);
 	}
 
@@ -63,14 +68,6 @@ class ModelSelect extends Select implements HasModelField
 	public function getType()
 	{
 		return 'select';
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getDefaultView()
-	{
-		return 'forms::fields.'.$this->getType();
 	}
 	
 }

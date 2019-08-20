@@ -13,12 +13,4 @@ class Checkbox extends Field
 	{
 		return Boolean::class;
 	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getDefaultView()
-	{
-		return 'forms::fields.'.$this->getType();
-	}
 }

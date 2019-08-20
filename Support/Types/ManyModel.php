@@ -15,9 +15,10 @@ class ManyModel extends Model
 	/**
 	 * @inheritDoc
 	 */
-	public function filterQueryModifier(Builder $query, string $name, $value)
+	public function filterQueryModifier(Builder $query, $value)
 	{
 		if(!$value) return;
+		$name = $this->getFieldName();
 		$model = $query->getModel()->getFieldDefinitions()[$name]->option('model');
 		$model = new $model;
 		$query->whereHas($name, function($query) use ($model, $value){
@@ -28,15 +29,44 @@ class ManyModel extends Model
 	/**
 	 * @inheritDoc
 	 */
-	public function setModelValue(BaseModel $model, string $name, $value)
+	public function setModelValue(BaseModel $model, $value)
 	{
-		return true;
+		return;
 	}
 
 	/**
-	 * @inheritDoc
+	 * Takes an input and turn it into an array of integers if the values are numeric.
+	 * Need to do that as values coming from a form are always strings.
+	 * 
+	 * @param  mixed $input
+	 * @return array
 	 */
-	public function saveRelationships(BaseModel $model, string $name, $value){
+	protected function sanitizeValue($input)
+	{
+		return array_map(function($item){
+			return is_numeric($item) ? (int)$item : $item;
+		}, $input);
+	}
+
+	/**
+	 * Saves relationships for a model.
+	 * We first sanitize the coming value and check if the current 
+	 * relationships holds the same values as the new value. 
+	 * If so we return false to indicate that no changes have been made.
+	 * 
+	 * @param  BaseModel $model
+	 * @param  string    $name
+	 * @param  mixed     $value
+	 * @return bool
+	 */
+	public function saveRelationships(BaseModel $model, $value){
+		$name = $this->getFieldName();
+		$foreignKey = $model->$name()->getRelatedKeyName();
+		$currentValue = $model->$name->pluck($foreignKey)->toArray();
+		$value = $this->sanitizeValue($value);
+		if($value == $currentValue){
+			return false;
+		}
 		$model->$name()->sync($value);
 		$model->load($name);
 		return true;

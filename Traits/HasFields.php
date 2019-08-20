@@ -38,7 +38,6 @@ trait HasFields
 	protected function _addField(string $name, Field $field)
     {
         if($this->fields->has($name) === true){
-            exit();
             throw FormFieldException::alreadyDefined($name, $this);
         }
         $field->setForm($this);
@@ -70,8 +69,8 @@ trait HasFields
      */
     public function addFields(array $fields, $group = 'default')
     {
-        foreach($fields as $name => $definition){
-            $this->addField($name, $definition);
+        foreach($fields as $definition){
+            $this->addField($definition);
         }
         return $this;
     }
@@ -79,17 +78,16 @@ trait HasFields
     /**
      * Adds a field to this form and to a group
      * 
-     * @param string $name
-     * @param array  $definition
+     * @param Field $field
      * @param string $group
      * @return Form
      */
-    public function addField(string $name, Field $field, $group = 'default')
+    public function addField(Field $field, $group = 'default')
     {
         $group = $this->getGroup($group);
-        $field = $this->_addField($name, $field);
-        $group->push($name);
-        return $field;
+        $field = $this->_addField($field->getName(), $field);
+        $group->push($field->getName());
+        return $this;
     }
 
     /**
@@ -114,10 +112,9 @@ trait HasFields
      */
 	public function removeField(string $name)
 	{
-		$this->getField($name);
 		$this->fields->forget($name);
 		$group = $this->searchFieldGroup($name);
-		if($group) $group->forget($name);
+		if($group) $group->forget($group->search($name));
 		return $this;
 	}
 
@@ -179,6 +176,20 @@ trait HasFields
     public function setFieldValue(string $name, $value)
     {
         $this->getField($name)->setValue($value);
+        return $this;
+    }
+
+    /**
+     * Sets fields values
+     *
+     * @param array $values
+     * @return Form
+     */
+    public function setFieldValues(array $values)
+    {
+        foreach($values as $name => $value){
+            $this->setFieldValue($name, $value);
+        }
         return $this;
     }
 

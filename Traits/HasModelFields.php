@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Pingu\Core\Entities\BaseModel;
 use Pingu\Forms\Contracts\Models\FormableContract;
 use Pingu\Forms\Exceptions\FormFieldException;
+use Pingu\Forms\Support\Field;
 use Pingu\Forms\Traits\HasFields;
 
 trait HasModelFields
@@ -27,8 +28,8 @@ trait HasModelFields
             }
             $field = $this->_addField($name, $definitions[$name]);
             
-            if($this->model->exists){
-                $field->setValue($this->model->$name);
+            if($this->editing){
+                $field->setValue($this->model->getFormValue($name));
             }
         }
         return $this;
@@ -64,10 +65,11 @@ trait HasModelFields
     	if(!isset($definitions[$name])){
     		throw FormFieldException::notDefinedInModel($name, get_class($model));
     	}
-        $field = $this->addField($name, $definitions[$name], $group);
+        $field = $definitions[$name];
         if($model->exists){
-            $field->setValue($model->$name);
+            $field->setValue($model->getFormValue($name));
         }
-        return $field;
+        $this->addField($field, $group);
+        return $this;
     }
 }
