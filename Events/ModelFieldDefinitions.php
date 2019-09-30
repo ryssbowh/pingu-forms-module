@@ -3,6 +3,7 @@
 namespace Pingu\Forms\Events;
 
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Pingu\Forms\Contracts\Models\FormableContract;
 
 class ModelFieldDefinitions
@@ -16,7 +17,7 @@ class ModelFieldDefinitions
      *
      * @return void
      */
-    public function __construct(array &$definitions, FormableContract $object)
+    public function __construct(Collection $definitions, FormableContract $object)
     {
         $this->definitions = $definitions;
         $this->object = $object;

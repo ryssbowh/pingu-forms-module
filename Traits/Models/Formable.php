@@ -70,21 +70,6 @@ trait Formable {
     abstract protected function validationMessages();
 
     /**
-     * Retrieves a cache content
-     * 
-     * @param  string $key
-     * @param  Closure $callback
-     * @return array
-     */
-    protected function getFieldsCache(string $key, $callback)
-    {   
-        if(config('forms.useCache', false)){
-            return \Cache::rememberForever($key.'.'.get_class($this), $callback);
-        }
-        return $callback();
-    }
-
-    /**
      * This define an identifier for a form that handles this model.
      * It's used to generate the form name.
      * 
@@ -94,85 +79,6 @@ trait Formable {
     {
         return kebab_case(static::friendlyName());
     }
-
-    /**
-     * List of fields to be edited when adding a model through a form
-     * 
-     * @return array
-     */
-    public function getAddFormFields()
-    {
-        $formable = $this;
-        return $this->getFieldsCache($this->addFormFieldsCache, function() use ($formable){
-            $fields = $formable->formAddFields();
-            event(new AddFormFields($fields, $formable));
-            return $fields;
-        });
-    }
-
-    /**
-     * List of fields to be edited when editing this model through a form
-     * 
-     * @return array
-     */
-    public function getEditFormFields()
-    {
-        $formable = $this;
-        return $this->getFieldsCache($this->editFormFieldsCache, function() use ($formable){
-            $fields = $formable->formEditFields();
-            event(new EditFormFields($fields, $formable));
-            return $fields;
-        });
-    }
-
-	/**
-	 * Return field definitions for that model.
-     * Definitions will be kept in cache forever
-     * 
-     * @throws FormFieldException
-     * @param  array|string $fields
-	 * @return mixed
-	 */
-	public function getFieldDefinitions($fields = null)
-	{
-        $formable = $this;
-        $definitions = $this->getFieldsCache($this->fieldDefinitionsCache, function() use ($formable){
-            $definitions = $formable->fieldDefinitions();
-            event(new ModelFieldDefinitions($definitions, $formable));
-            return $definitions;
-        });
-        if(!is_null($fields)){
-            if(is_array($fields)){
-                $definitions = array_intersect_key($definitions, array_flip($fields));
-            }
-            else{
-                $definitions = $definitions[$fields] ?? null;
-            }
-        }
-        return $definitions;
-    }
-
-    /**
-     * Builds this model fields definitions and store them in a variable as cache
-     * throws an event so that other modules can modify the form definition
-     * 
-     * @return array
-     */
-    public function buildFieldDefinitions()
-    {
-        $formable = $this;
-        return $this->getFieldsCache($this->builtFieldDefinitionsCache, function() use ($formable){
-            $definitions = $formable->getFieldDefinitions();
-            foreach($definitions as $name => $definition){
-                if(!isset($definition['field'])){
-                    throw FormFieldException::missingDefinition($name, 'field');
-                }
-                $definitions[$name] = $definition['field']::buildFieldClass($name, $definition);
-            }
-            return $definitions;
-        });
-
-	}
 
 	/**
 	 * Validation rules for this model, throws an event so
@@ -217,21 +123,6 @@ trait Formable {
     public function getUpdateValidationRules()
     {
         return $this->getValidationRules($this->getEditFormFields());
-    }
-
-    /**
-     * Validation messages for this model
-     * @see https://laravel.com/docs/5.7/validation
-     * @return array
-     */
-    public function getValidationMessages()
-    {
-        $formable = $this;
-        return $this->getFieldsCache($this->fieldValidationMessagesCache, function() use ($formable){
-            $messages = $formable->validationMessages();
-            event(new ModelValidationMessages($messages, $formable));
-            return $messages;
-        });
     }
 
     /**
