@@ -26,13 +26,28 @@ interface FormableContract {
 	 */
 	public function getFieldDefinitions();
 
+    /**
+     * Build an array of field classes
+     * 
+     * @return array
+     */
+    public function buildFieldDefinitions();
+
 	/**
-	 * Validation rules for this model
+	 * Validation rules for this model for store requests
      * 
 	 * @see https://laravel.com/docs/5.7/validation
 	 * @return array
 	 */
-    public function getValidationRules();
+    public function getStoreValidationRules();
+
+    /**
+     * Validation rules for this model for edit requests
+     * 
+     * @see https://laravel.com/docs/5.7/validation
+     * @return array
+     */
+    public function getUpdateValidationRules();
 
     /**
      * Validation messages for this model
@@ -57,5 +72,13 @@ interface FormableContract {
      * @return mixed
      */
     public function getFormValue(string $key);
+
+    /**
+     * Build a form field class according to field definition
+     * 
+     * @param  string $name
+     * @return Field
+     */
+    public function buildFieldClass(string $name);
 
 }

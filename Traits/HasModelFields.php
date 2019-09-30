@@ -21,7 +21,7 @@ trait HasModelFields
     protected function makeFields(array $fields)
     {
         $this->fields = collect();
-        $definitions = $this->model->getFieldDefinitions();
+        $definitions = $this->model->buildFieldDefinitions();
         foreach($fields as $name){
             if(!isset($definitions[$name])){
                 throw FormFieldException::notDefinedInModel($name, get_class($this->model));
@@ -61,7 +61,7 @@ trait HasModelFields
      */
     public function addModelField(string $name, FormableContract $model, $group = 'default')
     {
-    	$definitions = $model->getFieldDefinitions();
+    	$definitions = $model->buildFieldDefinitions();
     	if(!isset($definitions[$name])){
     		throw FormFieldException::notDefinedInModel($name, get_class($model));
     	}

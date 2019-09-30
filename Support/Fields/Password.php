@@ -2,7 +2,7 @@
 namespace Pingu\Forms\Support\Fields;
 
 use Pingu\Forms\Support\Field;
-use Pingu\Forms\Support\Types\Password as PasswordType;
+use Pingu\Forms\Support\Types\Text;
 
 class Password extends Field
 {
@@ -11,6 +11,6 @@ class Password extends Field
 	 */
 	public static function getDefaultType()
 	{
-		return PasswordType::class;
+		return Text::class;
 	}
 }

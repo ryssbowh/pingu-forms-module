@@ -123,7 +123,7 @@ trait HasGroups
 	public function searchFieldGroup(string $name)
 	{
 		foreach($this->groups as $group){
-			if($group->search($name)) return $group;
+			if(is_integer($group->search($name))) return $group;
 		}
 		return false;
 	}

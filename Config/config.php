@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'name' => 'Forms', 
+    'name' => 'Forms',
+    'useCache' => !env('APP_DEBUG'),
     'generator' =>[
         /**
          * Path to generate Form classes

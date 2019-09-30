@@ -19,7 +19,7 @@ class ManyModel extends Model
 	{
 		if(!$value) return;
 		$name = $this->getFieldName();
-		$model = $query->getModel()->getFieldDefinitions()[$name]->option('model');
+		$model = $query->getModel()->buildFieldDefinitions()[$name]->option('model');
 		$model = new $model;
 		$query->whereHas($name, function($query) use ($model, $value){
             $query->where(str_singular($model->getTable()).'_id', '=', $value);

@@ -27,44 +27,62 @@ trait Formable {
 
     use FormAccessible;
 
-    protected $fieldDefinitionsCache;
-    protected $fieldRulesCache;
-    protected $fieldValidationMessagesCache;
+    protected $fieldDefinitionsCache = 'forms.fieldDefinitions';
+    protected $builtFieldDefinitionsCache = 'forms.builtFieldDefinitions';
+    protected $fieldRulesCache = 'forms.fieldRules';
+    protected $fieldValidationMessagesCache = 'forms.fieldMessages';
+    protected $addFormFieldsCache = 'forms.addFields';
+    protected $editFormFieldsCache = 'forms.editFields';
 
     /**
      * List of fields for add request
      * 
      * @return array
      */
-    abstract function formAddFields();
+    abstract protected function formAddFields();
 
     /**
      * List of fields for edit request
      * 
      * @return array
      */
-    abstract function formEditFields();
+    abstract protected function formEditFields();
 
     /**
      * List of field definitions 
      * 
      * @return array
      */
-    abstract function fieldDefinitions();
+    abstract protected function fieldDefinitions();
 
     /**
      * List of validation rules 
      * 
      * @return array
      */
-    abstract function validationRules();
+    abstract protected function validationRules();
 
     /**
      * List of validation messages
      * 
      * @return array
      */
-    abstract function validationMessages();
+    abstract protected function validationMessages();
+
+    /**
+     * Retrieves a cache content
+     * 
+     * @param  string $key
+     * @param  Closure $callback
+     * @return array
+     */
+    protected function getFieldsCache(string $key, $callback)
+    {   
+        if(config('forms.useCache', false)){
+            return \Cache::rememberForever($key.'.'.get_class($this), $callback);
+        }
+        return $callback();
+    }
 
     /**
      * This define an identifier for a form that handles this model.
@@ -84,9 +102,12 @@ trait Formable {
      */
     public function getAddFormFields()
     {
-        $fields = $this->formAddFields();
-        event(new AddFormFields($fields, $this));
-        return $fields;
+        $formable = $this;
+        return $this->getFieldsCache($this->addFormFieldsCache, function() use ($formable){
+            $fields = $formable->formAddFields();
+            event(new AddFormFields($fields, $formable));
+            return $fields;
+        });
     }
 
     /**
@@ -96,51 +117,61 @@ trait Formable {
      */
     public function getEditFormFields()
     {
-        $fields = $this->formEditFields();
-        event(new EditFormFields($fields, $this));
-        return $fields;
+        $formable = $this;
+        return $this->getFieldsCache($this->editFormFieldsCache, function() use ($formable){
+            $fields = $formable->formEditFields();
+            event(new EditFormFields($fields, $formable));
+            return $fields;
+        });
     }
 
 	/**
-	 * Return field definitions for that model and throws an event
-     * so that other modules can modify the form definition.
-     * Definitions will be kept in cache so the event is thrown only once per request.
+	 * Return field definitions for that model.
+     * Definitions will be kept in cache forever
      * 
      * @throws FormFieldException
-	 * @return array
+     * @param  array|string $fields
+	 * @return mixed
 	 */
 	public function getFieldDefinitions($fields = null)
 	{
-        if(!is_null($this->fieldDefinitionsCache)){
-            $definitions = $this->fieldDefinitionsCache;
-        }
-        else{
-            $definitions = $this->buildFieldDefinitions();
-        }
+        $formable = $this;
+        $definitions = $this->getFieldsCache($this->fieldDefinitionsCache, function() use ($formable){
+            $definitions = $formable->fieldDefinitions();
+            event(new ModelFieldDefinitions($definitions, $formable));
+            return $definitions;
+        });
         if(!is_null($fields)){
-            $definitions = array_intersect_key($definitions, array_flip($fields));
+            if(is_array($fields)){
+                $definitions = array_intersect_key($definitions, array_flip($fields));
+            }
+            else{
+                $definitions = $definitions[$fields] ?? null;
+            }
         }
         return $definitions;
     }
 
     /**
      * Builds this model fields definitions and store them in a variable as cache
+     * throws an event so that other modules can modify the form definition
      * 
      * @return array
      */
-    protected function buildFieldDefinitions()
+    public function buildFieldDefinitions()
     {
-        $definitions = $this->fieldDefinitions();
-        foreach($definitions as $name => $definition){
-            if(!isset($definition['field'])){
-                throw FormFieldException::missingDefinition($name, 'field');
+        $formable = $this;
+        return $this->getFieldsCache($this->builtFieldDefinitionsCache, function() use ($formable){
+            $definitions = $formable->getFieldDefinitions();
+            foreach($definitions as $name => $definition){
+                if(!isset($definition['field'])){
+                    throw FormFieldException::missingDefinition($name, 'field');
+                }
+                $definitions[$name] = $definition['field']::buildFieldClass($name, $definition);
             }
-            $definitions[$name] = $definition['field']::buildFieldClass($name, $definition);
-        }
-        event(new ModelFieldDefinitions($definitions, $this));
-        $this->fieldDefinitionsCache = $definitions;
-        
-		return $definitions;
+            return $definitions;
+        });
+
 	}
 
 	/**
@@ -152,41 +183,40 @@ trait Formable {
 	 * @see https://laravel.com/docs/5.7/validation
 	 * @return array
 	 */
-    public function getValidationRules($fields = null)
+    protected function getValidationRules($fields = null)
     {
-        if(!is_null($this->fieldRulesCache)){
-            $rules = $this->fieldRulesCache;
-        }
-        else{
-            $rules = $this->buildValidationRules();
-        }
+        $formable = $this;
+        $rules = $this->getFieldsCache($this->fieldRulesCache, function() use ($formable){
+            $definitions = $formable->buildFieldDefinitions();
+            $rules = $formable->validationRules();
+            foreach($rules as $fieldName => $rule){
+                if(!isset($definitions[$fieldName])) continue;
+                /**
+                 * Adding each field custom validation rules
+                 */
+                $field = $definitions[$fieldName];
+                $typeRules = trim($field->extraValidationRules(), '|');
+                $rule .= '|'.$typeRules;
+                $rules[$fieldName] = trim($rule, '|');
+            }
+            event(new ModelValidationRules($rules, $formable));
+            return $rules;
+        });
+
         if(!is_null($fields)){
             $rules = array_intersect_key($rules, array_flip($fields));
         }
         return $rules;
     }
 
-    /**
-     * Builds the validation rules and store them in a variable as cache
-     * 
-     * @return array
-     */
-    protected function buildValidationRules()
+    public function getStoreValidationRules()
     {
-        $definitions = $this->getFieldDefinitions();
-        $rules = $this->validationRules();
-        foreach($rules as $fieldName => $rule){
-            if(!isset($definitions[$fieldName])) continue;
-            /**
-             * Adding each field custom validation rules
-             */
-            $field = $definitions[$fieldName];
-            $typeRules = trim($field->extraValidationRules(), '|');
-            $rule .= '|'.$typeRules;
-            $rules[$fieldName] = trim($rule, '|');
-        }
-        event(new ModelValidationRules($rules, $this));
-        return $rules;
+        return $this->getValidationRules($this->getAddFormFields());
+    }
+
+    public function getUpdateValidationRules()
+    {
+        return $this->getValidationRules($this->getEditFormFields());
     }
 
     /**
@@ -196,34 +226,41 @@ trait Formable {
      */
     public function getValidationMessages()
     {
-        if(!is_null($this->fieldValidationMessagesCache)){
-            return $this->fieldValidationMessagesCache;
-        }
-        return $this->buildValidationMessages();
+        $formable = $this;
+        return $this->getFieldsCache($this->fieldValidationMessagesCache, function() use ($formable){
+            $messages = $formable->validationMessages();
+            event(new ModelValidationMessages($messages, $formable));
+            return $messages;
+        });
     }
 
     /**
-     * Builds the validation messages and store them in a variable as a cache
-     * 
-     * @return array
-     */
-    protected function buildValidationMessages()
-    {
-        $messages = $this->validationMessages();
-        event(new ModelValidationMessages($messages, $this));
-        $this->fieldValidationMessagesCache = $messages;
-        return $messages;
-    }
-
-    /**
-     * Validates a request and return validated data
+     * Validates a store request and return validated data
      * 
      * @param  Request $request
-     * @param  array   $fields fields to be validated
+     * @param  ?array   $fields fields to be validated
      * @return array
      */
-    public function validateRequest(Request $request, array $fields)
+    public function validateStoreRequest(Request $request, ?array $fields = null)
     {
+        if(is_null($fields)){
+            $fields = $this->getAddFormFields();
+        }
+        return $this->validateRequestValues($request->all(), $fields);
+    }
+
+    /**
+     * Validates a update request and return validated data
+     * 
+     * @param  Request $request
+     * @param  ?array   $fields fields to be validated
+     * @return array
+     */
+    public function validateUpdateRequest(Request $request, ?array $fields = null)
+    {
+        if(is_null($fields)){
+            $fields = $this->getEditFormFields();
+        }
         return $this->validateRequestValues($request->all(), $fields);
     }
 
@@ -259,11 +296,32 @@ trait Formable {
         $this->ensureRulesExist($fields);
         //4 - Select rules for the fields
         $rules = array_intersect_key($this->getValidationRules(), array_flip($fields));
-		$messages = $this->getValidationMessages();
-		$validator = Validator::make($values, $rules, $messages);
+        $messages = $this->getValidationMessages();
+        $validator = Validator::make($values, $rules, $messages);
         $this->modifyValidator($validator, $values, $fields);
-		event(new ModelValidator($validator, $this));
-		return $validator;
+        event(new ModelValidator($validator, $this));
+        return $validator;
+    }
+
+    protected function getBundleFieldsRulesAndMessages(array $bundleFields = null)
+    {
+        if(!$this instanceof EntityContract){
+            return [[],[]];
+        }
+        if(is_null($bundleFields)){
+            $bundleFields = $this->bundle()->entityBundleFields();
+        }
+        else{
+            $bundleFields = array_map(function($name){
+                return $this->bundle()->getEntityBundleField(strtolower(substr($name, 6)));
+            }, $bundleFields);
+        }
+        $rules = $messages = [];
+        foreach($bundleFields as $field){
+            $rules[$field] = $field->bundleFieldValidationRule($field);
+            $messages[$field] = $field->bundleFieldValidationMessages($field);
+        }
+        return [$rules, $messages];
     }
 
     /**
@@ -299,6 +357,8 @@ trait Formable {
      * Hook to add rules to the validator
      * 
      * @param  ValidatorContract $validator
+     * @param  array             $values
+     * @param  array             $fields
      */
     protected function modifyValidator(ValidatorContract $validator, array $values, array $fields){}
 
@@ -315,7 +375,7 @@ trait Formable {
         if(!$this->id){
             throw new ModelNotSaved('Can\'t save '.$this->friendlyName().'\'s relationships : '.$this->friendlyName().' is not saved');
         }
-        $fields = $this::getFieldDefinitions();
+        $fields = $this::buildFieldDefinitions();
         $changes = false;
         foreach($values as $name => $value){
             if(!in_array($name, $this->fillable)) continue;
@@ -359,7 +419,7 @@ trait Formable {
      * @return  FormableModel
      */
     public function formFill(array $values){
-        $definitions = $this->getFieldDefinitions();
+        $definitions = $this->buildFieldDefinitions();
         foreach($values as $name => $value){
             $type = $definitions[$name]->option('type');
             $type->setModelValue($this, $value);   
@@ -386,6 +446,15 @@ trait Formable {
             throw new ModelRelationsNotSaved($this::friendlyName().' relations could not be saved');
         }
         return ($this->getChanges() or $changesRelation);
+    }
+
+    public function buildFieldClass(string $name)
+    {
+        $definition = $this->getFieldDefinitions($name);
+        if(is_null($definition)){
+            throw FormFieldException::notDefinedInModel($name, get_class($this));
+        }
+        return Field::buildFieldClass($name, $definition);
     }
 
 }
