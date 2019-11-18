@@ -1,16 +1,23 @@
 <?php
-namespace $NAMESPACE$;
+namespace Pingu\Forms\Forms;
 
+use Illuminate\Support\Str;
+use Pingu\Core\Entities\BaseModel;
 use Pingu\Forms\Support\Fields\Submit;
 use Pingu\Forms\Support\Form;
 
-class $CLASS$ extends Form
+class BaseModelCreateForm extends Form
 {
+    protected $action;
+    protected $model;
+
     /**
      * Bring variables in your form through the constructor :
      */
-    public function __construct()
+    public function __construct(BaseModel $model, array $action)
     {
+        $this->action = $action;
+        $this->model = $model;
         parent::__construct();
     }
 
@@ -20,13 +27,11 @@ class $CLASS$ extends Form
      * 
      * @return array
      */
-    public function elements()
+    public function elements(): array
     {
-        return [
-            'submit' => [
-                'field' => Submit::class,
-            ]
-        ];
+        $fields = $this->model->fields()->toFormElements();
+        $fields['_submit'] = new Submit('_submit');
+        return $fields;
     }
 
     /**
@@ -34,7 +39,7 @@ class $CLASS$ extends Form
      * 
      * @return string
      */
-    public function method()
+    public function method(): string
     {
         return 'POST';
     }
@@ -46,11 +51,12 @@ class $CLASS$ extends Form
      * ['action' => 'MyController@action']
      * 
      * @return array
+     * 
      * @see https://github.com/LaravelCollective/docs/blob/5.6/html.md
      */
-    public function action()
+    public function action(): array
     {
-        return ['route' => 'user.login'];
+        return $this->action;
     }
 
     /**
@@ -60,18 +66,8 @@ class $CLASS$ extends Form
      * 
      * @return string
      */
-    public function name()
+    public function name(): string
     {
-        return 'user-details';
-    }
-
-    /**
-     * Various options that you can access in your templates/events
-     
-     * @return array
-     */
-    public function options()
-    {
-        return [];
+        return 'create-'.class_machine_name($this->model);
     }
 }

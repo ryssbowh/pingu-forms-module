@@ -1,1 +1,1 @@
-{{ FormFacade::submit($field->option('label'), $field->attributes->toArray()) }}
+{{ FormFacade::submit($field->option('label'), $attributes->toArray()) }}

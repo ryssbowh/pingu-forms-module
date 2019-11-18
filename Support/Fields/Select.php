@@ -1,70 +1,61 @@
 <?php
 namespace Pingu\Forms\Support\Fields;
 
-use Pingu\Forms\Contracts\HasItemsField;
+use Illuminate\Support\Arr;
 use Pingu\Forms\Support\Field;
-use Pingu\Forms\Support\Types\Text;
+use Pingu\Forms\Support\ItemList;
 
-class Select extends Field implements HasItemsField
+class Select extends Field
 {
-	protected $required = ['items'];
+    protected $required = ['items'];
+    protected $items;
+    protected $value = [];
 
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct(string $name, array $options = [], array $attributes = [])
-	{	
-		parent::__construct($name, $options, $attributes);
-		$this->option('items', $this->buildItems($this->option('items')));
-	}
+    public function __construct(string $name, array $options = [], array $attributes = [])
+    {   
+        parent::__construct($name, $options, $attributes);
+        $this->attribute('multiple', $this->isMultiple());
+        $this->items = $this->buildItems();
+    }
 
-	public function getName()
-	{
-		if($this->isMultiple()){
-			return $this->name.'[]';
-		}
-		return $this->name;
-	}
+    public function getHtmlName()
+    {
+        return $this->name . ($this->isMultiple() ? '[]' : '');
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function buildItems($items)
-	{
-		return $items;
-	}
-	
-	/**
-	 * @inheritDoc
-	 */
-	public function getItems()
-	{
-		return $this->option('items'); 
-	}
+    /**
+     * @inheritDoc
+     */
+    public function setValue($value)
+    {
+        if ($value) {
+            $this->value = array_map('strval', Arr::wrap($value));
+        }
+        return $this;
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function isMultiple()
-	{
-		return $this->attribute('multiple') ?? false;
-	}
+    /**
+     * @inheritDoc
+     */
+    public function buildItems()
+    {
+        return new ItemList($this->option('items'), $this->getName());
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getItems(): ItemList
+    {
+        return $this->items;
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function setValue($value)
-	{
-		$this->value = is_array($value) ? $value : [$value];
-		return $this;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public static function getDefaultType()
-	{
-		return Text::class;
-	}
-	
+    public function getViewData()
+    {
+        $array = array_merge(
+            parent::getViewData(),
+            ['items' => $this->items->toArray()]
+        );
+        return $array;
+    }
 }

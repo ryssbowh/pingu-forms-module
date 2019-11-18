@@ -2,43 +2,13 @@
 
 namespace Pingu\Forms\Traits;
 
-use Pingu\Core\Traits\HasViewSuggestions;
+use Pingu\Core\Traits\RendersWithSuggestions;
 use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Exceptions\FormException;
 
 trait RendersForm
 {
-    use HasViewSuggestions;
-
-    protected function buildViewSuggestions()
-    {
-        $this->setViewSuggestions([
-            'forms.form-'.$this->name,
-            'forms.form',
-            'forms::form'
-        ]);
-    }
-
-	/**
-     * Prints this form
-     * 
-     * @return string
-     */
-    public function render()
-    {
-        echo $this->renderAsString();
-    }
-
-    /**
-     * Renders the fields of this forms, group by group
-     * 
-     * @param array $names  
-     */
-    public function renderFields(array $names = null)
-    {
-        $groups = $this->buildGroups($names);
-        echo view('forms::groups', ['form' => $this, 'groups'=> $groups])->render();
-    }
+    use RendersWithSuggestions;
 
     /**
      * print form's opening
@@ -52,6 +22,7 @@ trait RendersForm
         \FormFacade::considerRequest();
         event(new FormBuilt($this->getName(), $this));
         $attributes = $this->attributes->toArray();
+        $attributes['class'] = $this->classes->get(true);
         echo \FormFacade::open($attributes);
     }
 
@@ -66,22 +37,9 @@ trait RendersForm
         echo \FormFacade::close();
     }
 
-    /**
-     * If this form isn't built we can't render it.
-     * 
-     * @throws FormException
-     */
-    public function checkIfBuilt()
+    public function getViewData()
     {
-        if(!$this->built)
-        {
-            throw FormException::notBuilt($this->getName());
-        }
-    }
-
-    public function renderAsString()
-    {
-        return view()->first($this->getViewSuggestions(), ['form' => $this])->render();
+        return ['form' => $this];
     }
 
 }

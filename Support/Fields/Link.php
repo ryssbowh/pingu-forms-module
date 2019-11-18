@@ -1,9 +1,9 @@
 <?php
 namespace Pingu\Forms\Support\Fields;
 
-use Pingu\Forms\Support\NoValueField;
+use Pingu\Forms\Support\Field;
 
-class Link extends NoValueField
+class Link extends Field
 {
-	protected $required = ['label', 'url'];
+    protected $required = ['label', 'url'];
 }

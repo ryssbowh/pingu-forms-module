@@ -10,6 +10,8 @@
 
 {{ $form->renderStart() }}
 <div class="fields">
-	{{ $form->renderFields() }}
+    @foreach($form->getElements() as $element)
+	   {!! $element->render() !!}
+    @endforeach
 </div>
 {{ $form->renderEnd() }}

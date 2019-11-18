@@ -1,5 +1,5 @@
 @extends('forms::field')
 
 @section('inner')
-	{{ FormFacade::text($field->getName(), $field->getValue(), $field->getAttributes()) }}
+	{{ FormFacade::text($field->getHtmlName(), $field->getValue(), $attributes->toArray()) }}
 @overwrite

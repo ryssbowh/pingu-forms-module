@@ -3,37 +3,42 @@ namespace Pingu\Forms\Traits;
 
 use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Exceptions\FormException;
+use Pingu\Forms\Support\AttributeBag;
 use Pingu\Forms\Support\ClassBag;
 use Pingu\Forms\Support\Fields\Hidden;
 use Pingu\Forms\Support\Fields\Link;
 use Pingu\Forms\Support\Fields\Submit;
-use Pingu\Forms\Traits\HasFields;
-use Pingu\Forms\Traits\RendersForm;
 
 trait Form
 {
-    use RendersForm, HasFields, HasClasses;
+    use RendersForm, HasFormElements, HasOptions, HasAttributes;
 
-    public $attributes;
-    public $options;
+    public $classes;
     protected $name;
-    protected $built = false;
 
     public function __construct()
     {
         $this->name = $this->makeName($this->name());
-        $this->id = $this->id();
-        $this->options = collect($this->options());
-        $this->attributes = collect(array_merge($this->attributes(), [
-            'method' => $this->method(),
-            'files' => true,
-            'id' => $this->id(),
-        ]));
-        $this->addClasses($this->getDefaultClasses());
-        $this->makeUrl($this->url());
-        $this->makeFields($this->fields());
-        $this->makeGroups($this->groups());
-        $this->buildViewSuggestions();
+        $this->buildOptions($this->options());
+        $this->buildAttributes(
+            array_merge($this->attributes(), [
+                'method' => $this->method(),
+                'files' => true,
+                'id' => 'form-'.$this->name,
+            ])
+        );
+        $this->setViewSuggestions([
+            'forms.form-'.$this->name,
+            'forms.form',
+            'forms::form'
+        ]);
+        $this->classes = new ClassBag([
+            'form',
+            'form-'.$this->name
+        ]);
+        $this->makeAction($this->action());
+        $this->makeElements($this->elements());
+        $this->afterBuilt();
     }
 
     /**
@@ -45,7 +50,7 @@ trait Form
     {
         if($input = request()->input()){
             $input = is_null($only) ? $input : array_intersect_key($input, array_flip($only));
-            foreach($input as $param => $value){
+            foreach ($input as $param => $value) {
                 $this->addHiddenField($param, $value);
             }
         }
@@ -58,7 +63,8 @@ trait Form
      */
     public function isAjax()
     {
-        return $this->addClass('js-ajax-form');
+        $this->classes->add('js-ajax-form');
+        return $this;
     }
 
     /**
@@ -67,7 +73,7 @@ trait Form
      * @param  string $name
      * @return string
      */
-    protected function makeName(string $name)
+    protected function makeName(string $name): string
     {
         return preg_replace('/[^A-Za-z0-9\-]/i', '', $name);
     }
@@ -77,7 +83,7 @@ trait Form
      * 
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -85,57 +91,16 @@ trait Form
     /**
      * moves the action into the attributes Collection
      * 
-     * @param  array  $url
+     * @param array  $url
      */
-    protected function makeUrl(array $url)
+    protected function makeAction(array $url)
     {
         $key = array_keys($url)[0];
         $this->attributes->put($key, $url[$key]);
     }
 
-    /**
-     * Get default classes for that form
-     * 
-     * @return string
-     */
-    protected function getDefaultClasses()
-    {
-        $classes = theme_config('forms.classes.'.$this->name) ?? theme_config('forms.default-classes');
-        $classes .= ' form form-'.$this->name;
-        return $classes;
-    }
-
-    /**
-     * Sets/gets an option
-     * 
-     * @param  string $name
-     * @param  mixed $value
-     * @return Form|mixed
-     */
-    public function option(string $name, $value = null)
-    {
-        if(!is_null($value)){
-            $this->options->put($name, $value);
-            return $this;
-        }
-        return $this->options->get($name);
-    }
-
-    /**
-     * Sets/gets an attribute
-     * 
-     * @param  string $name
-     * @param  mixed $value
-     * @return Form|mixed
-     */
-    public function attribute(string $name, $value = null)
-    {
-        if(!is_null($value)){
-            $this->attributes->put($name, $value);
-            return $this;
-        }
-        return $this->attributes->get($name);
-    }
+    protected function afterBuilt()
+    {}
 
     /**
      * Adds a hidden field to this form

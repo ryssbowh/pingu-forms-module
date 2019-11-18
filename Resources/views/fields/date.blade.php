@@ -1,1 +1,1 @@
-{{ FormFacade::text($renderer->name, $renderer->getValue(), $renderer->attributes->toArray()) }}
+{{ FormFacade::text($field->getHtmlName(), $field->getValue(), $attributes->toArray()) }}
