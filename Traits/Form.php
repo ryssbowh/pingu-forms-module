@@ -125,7 +125,7 @@ trait Form
      */
     public function addSubmit(string $label = 'Submit', string $name = '_submit')
     {
-        $this->addField(new Submit($name, ['label' => $label]));
+        $this->addElement(new Submit($name, ['label' => $label]));
         return $this;
     }
 
@@ -136,7 +136,7 @@ trait Form
      */
     public function addDeleteButton(string $url, string $label = "Delete", string $field = '_delete')
     {
-        $this->addField(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'delete']));
+        $this->addElement(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'delete']));
         return $this;
     }
 
@@ -153,7 +153,7 @@ trait Form
         if(is_null($url)){
             $url = url()->previous();
         }
-        $this->addField(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'back']));
+        $this->addElement(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'back']));
         return $this;
     }
 
@@ -166,7 +166,7 @@ trait Form
     public function disableField(string $name)
     {
         $field = $this->getField($name);
-        $this->addField(new Hidden($name, ['default' => $field->getValue()]));
+        $this->addElement(new Hidden($name, ['default' => $field->getValue()]));
         return $this;
     }
 }

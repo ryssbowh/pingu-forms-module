@@ -39,6 +39,7 @@ abstract class Field extends FormElement
 
         $this->buildOptions($options);
         $this->buildAttributes($attributes);
+        
         $this->classes = new ClassBag([
             'field'
         ]);
