@@ -6,4 +6,5 @@ use Pingu\Forms\Support\Field;
 
 class NumberInput extends Field
 {
+    protected $attributeOptions = ['required', 'min', 'max']; 
 }

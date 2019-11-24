@@ -3,6 +3,7 @@ namespace Pingu\Forms\Forms;
 
 use Illuminate\Support\Str;
 use Pingu\Core\Entities\BaseModel;
+use Pingu\Entity\Contracts\BundleContract;
 use Pingu\Forms\Support\Fields\Submit;
 use Pingu\Forms\Support\Form;
 

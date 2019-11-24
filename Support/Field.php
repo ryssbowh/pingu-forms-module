@@ -18,12 +18,13 @@ abstract class Field extends FormElement
     protected $form;
     protected $value;
     protected $requiredOptions = [];
+    protected $attributeOptions = ['required'];
     public $classes;
     public $wrapperClasses;
     public $labelClasses;
     protected $index = 0;
     
-    public function __construct(string $name, array $options = [], array $attributes = [])
+    public function __construct(string $name, array $options = [])
     {   
         foreach ($this->requiredOptions as $option) {
             if (!isset($options[$option])) {
@@ -34,11 +35,10 @@ abstract class Field extends FormElement
         if (!isset($options['label'])) {
             $options['label'] = label($this->name);
         }
-        $attributes['required'] = $options['required'] ?? false;
         $this->setValue($options['default'] ?? null);
 
         $this->buildOptions($options);
-        $this->buildAttributes($attributes);
+        $this->buildAttributesFromOptions($this->attributeOptions);
         
         $this->classes = new ClassBag([
             'field'

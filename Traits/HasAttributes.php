@@ -13,6 +13,15 @@ trait HasAttributes
         $this->attributes = new AttributeBag($attributes);
     }
 
+    protected function buildAttributesFromOptions(array $keys = [])
+    {
+        $attributes = [];
+        foreach ($keys as $key) {
+            $attributes[$key] = $this->option($key);
+        }
+        $this->attributes = new AttributeBag($attributes);
+    }
+
     /**
      * Sets/gets an attribute
      * 

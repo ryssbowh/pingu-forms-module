@@ -21,4 +21,8 @@ class FormFieldException extends \Exception
         return new static("Field '$name' is missing a '$option' option'");
     }
 
+    public static function modelFieldDoesntExist($fieldName, $name, $model)
+    {
+        return new static("Field '$fieldName' : field '$name' is not defined in model $model");
+    }
 }
