@@ -2,6 +2,7 @@
 
 namespace Pingu\Forms\Traits;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Pingu\Forms\Exceptions\FormException;
 use Pingu\Forms\Exceptions\FormFieldException;
@@ -10,6 +11,7 @@ use Pingu\Forms\Exceptions\GroupException;
 trait HasGroups
 {
     protected $groups;
+    protected $defaultGroup = '_default';
 
     /**
      * Creates all groups for that form. When this is called fields must already be defined
@@ -17,16 +19,19 @@ trait HasGroups
      * @param  array  $groups
      * @return Form
      */
-    private function makeGroups(array $groups)
+    protected function makeGroups(array $groups)
     {
-        if(!$groups){
-            throw FormException::noGroups(class_basename($this));
-        }
-        $this->groups = collect();
-        foreach ($groups as $name => $fields) {
-            $this->createGroup($name, $fields);
+        if ($groups) {
+            foreach ($groups as $name => $fields) {
+                $this->moveToGroup($name, $fields);
+            }
         }
         return $this;
+    }
+
+    protected function makeDefaultGroup()
+    {
+        $this->createGroup($this->defaultGroup, $this->getElementNames());
     }
 
     /**
@@ -38,9 +43,12 @@ trait HasGroups
      */
     private function createGroup(string $name, $fields = [])
     {
-        foreach($fields as $field){
-            if(!$this->hasField($field)){
-                throw FormFieldException::notDefined($field);
+        if ($this->hasGroup($name)) {
+            throw GroupException::alreadyDefined($name, $this);
+        }
+        foreach ($fields as $field) {
+            if (!$this->hasElement($field)) {
+                throw FormFieldException::notDefined($field, $this);
             }
         }
         $group = collect($fields);
@@ -86,18 +94,37 @@ trait HasGroups
      * @param string      $field
      * @param string|null $groupName
      */
-    public function addFieldToGroup(string $field, ?string $groupName = null)
+    public function addToGroup($fields, ?string $groupName = null)
     {
-        if(is_null($groupName)){
+        $fields = Arr::wrap($fields);
+        if (is_null($groupName)) {
             $group = $this->getDefaultGroup();
-        }
-        elseif(!$group = $this->hasGroup($groupName)){
+        } elseif (!$this->hasGroup($groupName)) {
             $group = $this->createGroup($groupName);
         }
-        if(!$this->groupHasField($groupName, $field)){
+        foreach ($fields as $field) {
+            return $group->push($field);
+        }
+        return $this;
+    }
+
+    /**
+     * Move a field to another group
+     * 
+     * @param  string $fieldName
+     * @param  string $groupNameTo
+     * @return Form
+     */
+    public function moveToGroup($fields, string $groupNameTo)
+    {
+        $fields = Arr::wrap($fields);
+        $groupTo = $this->getGroup($groupNameTo);
+        foreach ($fields as $field) {
             $groupFrom = $this->searchFieldGroup($field);
-            $groupFrom->forget($field);
-            $group->push($field);
+            if ($groupFrom) {
+                $groupFrom->forget($field);
+            }
+            $groupTo->push($field);
         }
         return $this;
     }
@@ -108,10 +135,10 @@ trait HasGroups
      */
     public function getDefaultGroup()
     {
-        if(!$this->hasGroup('default')){
-            return $this->createGroup('default');
+        if (!$this->hasGroup($this->defaultGroup)) {
+            return $this->createGroup($this->defaultGroup);
         }
-        return $this->group->get('default');
+        return $this->groups->get($this->defaultGroup);
     }
 
     /**
@@ -150,8 +177,8 @@ trait HasGroups
      */
     public function getGroup(string $name)
     {
-        if(!$this->hasGroup($name)){
-            throw GroupException::notDefined($name);
+        if (!$this->hasGroup($name)) {
+            throw GroupException::notDefined($name, $this);
         }
         return $this->groups->get($name);
     }
@@ -178,35 +205,17 @@ trait HasGroups
     }
 
     /**
-     * Move a field to another group
-     * 
-     * @param  string $fieldName
-     * @param  string $groupNameTo
-     * @return Form
-     */
-    public function moveFieldToGroup(string $fieldName, string $groupNameTo)
-    {
-        $groupFrom = $this->searchFieldGroup($fieldName);
-        if(!$groupFrom){
-            throw FormFieldException::notDefined($fieldName);
-        }
-        $groupTo = $this->getGroup($groupNameTo);
-        $groupFrom->forget($fieldName);
-        $groupTo->push($fieldName);
-        return $this;
-    }
-
-    /**
      * Removes a field from a group
      * 
      * @param  string $fieldName
      * @param  string $group
      * @return Form
      */
-    public function removeFieldFromGroup(string $fieldName, ?string $group = 'default')
+    public function removeFromGroup(string $field)
     {
-        $group = $this->getGroup($groupName);
-        $group->forget($fieldName);
+        if ($group = $this->searchFieldGroup($field)){
+            $group->forget($field);
+        }
         return $this;
     }
 
@@ -219,22 +228,22 @@ trait HasGroups
      * @param  boolean $offset
      * @return Form
      */
-    public function moveFieldUp(string $name, $offset = false)
+    public function moveElementUp(string $name, $offset = false)
     {
         $groupName = $this->searchFieldGroupName($name);
-        if(!$groupName){
-            throw FormFieldException::notDefined($name);
+        if (!$groupName) {
+            throw FormFieldException::notDefined($name, $this);
         }
         $group = $this->groups->get($groupName);
-        if(!$offset){
-            return $this->moveFieldToTop($name, $group);
+        if (!$offset) {
+            return $this->moveElementToTop($name, $group);
         }
         if($offset < 0){
-            return $this->moveFieldDown($name, $offset*-1);
+            return $this->moveElementDown($name, $offset*-1);
         }
         $index = $group->search($name);
         if(($index - $offset) <= 0){
-            return $this->moveFieldToTop($name, $group);
+            return $this->moveElementToTop($name, $group);
         }
         $replace = [$name, $group->get($index-$offset)];
         $group = $group->forget($index)->values();
@@ -252,23 +261,23 @@ trait HasGroups
      * @param  boolean $offset
      * @return Form
      */
-    public function moveFieldDown(string $name, $offset = false)
+    public function moveElementDown(string $name, $offset = false)
     {
         $groupName = $this->searchFieldGroupName($name);
         if(!$groupName){
-            throw FormFieldException::notDefined($name);
+            throw FormFieldException::notDefined($name, $this);
         }
         $group = $this->groups->get($groupName);
         if(!$offset){
-            return $this->moveFieldToBottom($name, $group);
+            return $this->moveElementToBottom($name, $group);
         }
         if($offset < 0){
-            return $this->moveFieldUp($name, $offset*-1);
+            return $this->moveElementUp($name, $offset*-1);
         }
         $index = $group->search($name);
         $size = $group->count();
         if(($index + $offset) >= ($size-1)){
-            return $this->moveFieldToBottom($name, $group);
+            return $this->moveElementToBottom($name, $group);
         }
         $replace = [$group->get($index+$offset), $name];
         $group = $group->forget($index)->values();
@@ -284,7 +293,7 @@ trait HasGroups
      * @param  Collection $group
      * @return Form
      */
-    protected function moveFieldToTop(string $name, Collection $group)
+    protected function moveElementToTop(string $name, Collection $group)
     {
         $index = $group->search($name);
         $group->splice($index, 1);
@@ -299,7 +308,7 @@ trait HasGroups
      * @param  Collection $group
      * @return Form
      */
-    protected function moveFieldToBottom(string $name, Collection $group)
+    protected function moveElementToBottom(string $name, Collection $group)
     {
         $index = $group->search($name);
         $group->splice($index, 1);

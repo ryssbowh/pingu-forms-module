@@ -58,5 +58,15 @@ abstract class Form
     {
         return [];
     }
+
+    /**
+     * Groups for the form
+     * 
+     * @return array
+     */
+    protected function groups(): array
+    {
+        return [];
+    }
     
 }

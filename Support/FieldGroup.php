@@ -5,6 +5,7 @@ namespace Pingu\Forms\Support;
 use Pingu\Core\Traits\RendersWithSuggestions;
 use Pingu\Forms\Support\ClassBag;
 use Pingu\Forms\Support\Form;
+use Pingu\Forms\Support\FormElement;
 use Pingu\Forms\Traits\HasOptions;
 
 class FieldGroup extends FormElement
@@ -45,6 +46,19 @@ class FieldGroup extends FormElement
         foreach ($this->fields as $field) {
             $field->setForm($form);
         }
+    }
+
+    public function attribute(string $name, $value)
+    {
+        foreach ($this->fields as $field) {
+            $field->attribute($name, $value);
+        }
+        return $this;
+    }
+
+    public function first(): ?FormElement
+    {
+        return $this->fields[0] ?? null;
     }
 
     public function getFields()

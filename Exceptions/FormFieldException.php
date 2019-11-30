@@ -11,9 +11,9 @@ class FormFieldException extends \Exception
         return new static("Field '$name' is already defined in form ".$form->getName());
     }
 
-    public static function notDefined($name)
+    public static function notDefined($name, Form $form)
     {
-        return new static("Field '$name' is not defined in this form");
+        return new static("Field '$name' is not defined in form ".$form->getName());
     }
 
     public static function missingOption($name, $option)

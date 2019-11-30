@@ -20,7 +20,7 @@ class $CLASS$ extends Form
      * 
      * @return array
      */
-    public function elements()
+    public function elements(): array
     {
         return [
             'submit' => [
@@ -34,7 +34,7 @@ class $CLASS$ extends Form
      * 
      * @return string
      */
-    public function method()
+    public function method(): string
     {
         return 'POST';
     }
@@ -48,7 +48,7 @@ class $CLASS$ extends Form
      * @return array
      * @see https://github.com/LaravelCollective/docs/blob/5.6/html.md
      */
-    public function action()
+    public function action(): array
     {
         return ['route' => 'user.login'];
     }
@@ -60,7 +60,7 @@ class $CLASS$ extends Form
      * 
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return 'user-details';
     }
@@ -70,7 +70,7 @@ class $CLASS$ extends Form
      
      * @return array
      */
-    public function options()
+    public function options(): array
     {
         return [];
     }

@@ -38,32 +38,18 @@ trait HasFormElements
      * 
      * @throws FormFieldException
      * 
-     * @return element
+     * @return Form
      */
-    public function addElement(FormElement $element)
+    public function addElement(FormElement $element, $group = null)
     {
         if ($this->elements->has($element->getName()) === true) {
-            throw FormFieldException::alreadyDefined($name, $this);
+            throw FormFieldException::alreadyDefined($element->getName(), $this);
         }
         $element->setForm($this);
         $this->elements->put($element->getName(), $element);
-        return $element;
+        $this->addToGroup($element->getName(), $group);
+        return $this;
     }
-
-    /**
-     * Add several elements to this forms, but not to any groups
-     * 
-     * @param array $elements
-     * 
-     * @return Form
-     */
-    // protected function _addelements(array $elements)
-    // {
-    //     foreach ($elements as $element) {
-    //         $this->_addelement($element);
-    //     }
-    //     return $this;
-    // }
 
     /**
      * Add elements to this form and to a group
@@ -73,29 +59,13 @@ trait HasFormElements
      * 
      * @return Form
      */
-    public function addElements(array $elements)
+    public function addElements(array $elements, $group = null)
     {
         foreach ($elements as $element) {
-            $this->addelement($element);
+            $this->addelement($element, $group);
         }
         return $this;
     }
-
-    /**
-     * Adds a element to this form and to a group
-     * 
-     * @param element $element
-     * @param string $group
-     * 
-     * @return Form
-     */
-    // public function addelement(element $element, $group = 'default')
-    // {
-    //     $group = $this->getGroup($group);
-    //     $element = $this->_addelement($element);
-    //     $group->push($element->getName());
-    //     return $this;
-    // }
 
     /**
      * Removes elements from this form
@@ -122,10 +92,10 @@ trait HasFormElements
     public function removeElement(string $name)
     {
         $this->elements->forget($name);
-        // $group = $this->searchelementGroup($name);
-        // if ($group) {
-        //     $group->forget($group->search($name));
-        // }
+        $group = $this->searchFieldGroup($name);
+        if ($group) {
+            $group->forget($group->search($name));
+        }
         return $this;
     }
 
@@ -141,7 +111,7 @@ trait HasFormElements
     public function getElement(string $name)
     {
         if (!$this->hasElement($name)) {
-            throw FormFieldException::notDefined($name);
+            throw FormFieldException::notDefined($name, $this);
         }
         return $this->elements->get($name); 
     }
@@ -184,46 +154,4 @@ trait HasFormElements
     {
         return $this->elements->keys()->all();
     }
-
-    /**
-     * Sets the value for a element in that form
-     *
-     * @param string $name
-     * @param mixed $value
-     * 
-     * @return Form
-     */
-    // public function setElementValue(string $name, $value)
-    // {
-    //     $this->getelement($name)->setValue($value);
-    //     return $this;
-    // }
-
-    /**
-     * Sets elements values
-     *
-     * @param array $values
-     * 
-     * @return Form
-     */
-    // public function setelementValues(array $values)
-    // {
-    //     foreach ($values as $name => $value) {
-    //         $this->setelementValue($name, $value);
-    //     }
-    //     return $this;
-    // }
-
-    /**
-     * Gets the value for a element in that form
-     * 
-     * @param string $name
-     * @param mixed $value
-     * 
-     * @return mixed
-     */
-    // public function getelementValue(string $name, $value)
-    // {
-    //     return $this->getelement($name)->getValue($value);
-    // }
 }

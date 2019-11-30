@@ -18,6 +18,7 @@ trait Form
 
     public function __construct()
     {
+        $this->groups = collect();
         $this->name = $this->makeName($this->name());
         $this->buildOptions($this->options());
         $this->buildAttributes(
@@ -38,6 +39,7 @@ trait Form
         ]);
         $this->makeAction($this->action());
         $this->makeElements($this->elements());
+        $this->makeGroups($this->groups());
         $this->afterBuilt();
     }
 
@@ -112,7 +114,7 @@ trait Form
     public function addHiddenField(string $name, $value)
     {
         $this->addField(new Hidden($name, ['default' => $value]));
-        $this->moveFieldUp($name);
+        $this->moveElementUp($name);
         return $this;
     }
 
