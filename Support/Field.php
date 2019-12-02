@@ -22,7 +22,7 @@ abstract class Field extends FormElement
     public $classes;
     public $wrapperClasses;
     public $labelClasses;
-    protected $index = 0;
+    protected $index = null;
     
     public function __construct(string $name, array $options = [])
     {   
