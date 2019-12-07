@@ -7,10 +7,24 @@ use Pingu\Forms\Support\ItemList;
 
 class Select extends Field
 {
-    protected $required = ['items'];
+    /**
+     * @inheritDoc
+     */
+    protected $requiredOptions = ['items'];
+
+    /**
+     * @var ItemList
+     */
     protected $items;
+
+    /**
+     * @var array
+     */
     protected $value = [];
 
+    /**
+     * @inheritDoc
+     */
     public function __construct(string $name, array $options = [], array $attributes = [])
     {   
         parent::__construct($name, $options, $attributes);
@@ -18,6 +32,9 @@ class Select extends Field
         $this->items = $this->buildItems();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHtmlName()
     {
         return $this->name . ($this->isMultiple() ? '[]' : '');
@@ -35,7 +52,9 @@ class Select extends Field
     }
 
     /**
-     * @inheritDoc
+     * Builds the item list
+     * 
+     * @return ItemList
      */
     public function buildItems()
     {
@@ -43,14 +62,19 @@ class Select extends Field
     }
     
     /**
-     * @inheritDoc
+     * Items getter
+     * 
+     * @return ItemList
      */
     public function getItems(): ItemList
     {
         return $this->items;
     }
 
-    public function getViewData()
+    /**
+     * @inheritDoc
+     */
+    public function getViewData(): array
     {
         $array = array_merge(
             parent::getViewData(),

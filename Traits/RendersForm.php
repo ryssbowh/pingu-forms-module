@@ -37,7 +37,12 @@ trait RendersForm
         echo \FormFacade::close();
     }
 
-    public function getViewData()
+    /**
+     * Get the view data
+     * 
+     * @return array
+     */
+    public function getViewData(): array
     {
         return ['form' => $this];
     }

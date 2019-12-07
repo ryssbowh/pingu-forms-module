@@ -3,18 +3,33 @@ namespace Pingu\Forms\Exceptions;
 
 class FormException extends \Exception{
 
-	public static function name($name)
-	{
-		return new static("form name '$name' is not valid, a form name can only contain letters, numbers and hyphens");
-	}
+    /**
+     * @param string $name
+     * 
+     * @return FormException
+     */
+    public static function name(string $name)
+    {
+        return new static("form name '$name' is not valid, a form name can only contain letters, numbers and hyphens");
+    }
 
-	public static function notBuilt($name)
-	{
-		return new static('form '.$name." is not finished building, call '\$form->built()' before rendering it.");
-	}
+    /**
+     * @param string $name
+     * 
+     * @return FormException
+     */
+    public static function notBuilt(string $name)
+    {
+        return new static('form '.$name." is not finished building, call '\$form->built()' before rendering it.");
+    }
 
-	public static function noGroups($name)
-	{
-		return new static('form '.$name." doesn't define any group.");
-	}
+    /**
+     * @param string $name
+     * 
+     * @return FormException
+     */
+    public static function noGroups(string $name)
+    {
+        return new static('form '.$name." doesn't define any group.");
+    }
 }

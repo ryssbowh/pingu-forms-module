@@ -14,16 +14,61 @@ abstract class Field extends FormElement
 {
     use RendersWithSuggestions, HasOptions, HasAttributes;
 
+    /**
+     * @var string
+     */
     protected $name;
+
+    /**
+     * @var Form
+     */
     protected $form;
+
+    /**
+     * @var mixed
+     */
     protected $value;
+
+    /**
+     * @var array
+     */
     protected $requiredOptions = [];
+
+    /**
+     * Options that are html attributes
+     * 
+     * @var array
+     */
     protected $attributeOptions = ['required'];
+
+    /**
+     * @var ClassBag
+     */
     public $classes;
+
+    /**
+     * @var ClassBag
+     */
     public $wrapperClasses;
+
+    /**
+     * @var ClassBag
+     */
     public $labelClasses;
+
+    /**
+     * Index of this field in its group
+     * 
+     * @var int
+     */
     protected $index = null;
     
+    /**
+     * Constructor
+     * 
+     * @param string $name
+     * @param array  $options
+     */
     public function __construct(string $name, array $options = [])
     {   
         foreach ($this->requiredOptions as $option) {
@@ -62,11 +107,21 @@ abstract class Field extends FormElement
         ]);
     }
 
+    /**
+     * Is this field mutiple
+     * 
+     * @return boolean
+     */
     protected function isMultiple(): bool
     {
         return $this->option('multiple') ?? false;
     }
 
+    /**
+     * Set the index
+     * 
+     * @param int $index
+     */
     public function setIndex(int $index)
     {
         $this->index = $index;
@@ -139,7 +194,12 @@ abstract class Field extends FormElement
         return $this;
     }
 
-    public function getViewData()
+    /**
+     * Get view data
+     * 
+     * @return array
+     */
+    public function getViewData(): array
     {
         $this->attributes->put('class', $this->classes->get(true));
         return [

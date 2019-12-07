@@ -5,17 +5,35 @@ use Pingu\Forms\Support\Form;
 
 class GroupException extends \Exception{
 
-    public static function alreadyDefined($name, Form $form)
+    /**
+     * @param string $name
+     * @param Form   $form
+     * 
+     * @return GroupException
+     */
+    public static function alreadyDefined(string $name, Form $form)
     {
         return new static("Group $name is already defined in form ".$form->getName());
     }
 
-    public static function notDefined($name, Form $form)
+    /**
+     * @param string $name
+     * @param Form   $form
+     * 
+     * @return GroupException
+     */
+    public static function notDefined(string $name, Form $form)
     {
         return new static("Group $name is not defined in form ".$form->getName());
     }
 
-    public static function hasField($name, $group)
+    /**
+     * @param string $name
+     * @param string $group
+     * 
+     * @return GroupException
+     */
+    public static function hasField(string $name, string $group)
     {
         return new static("Field $name is already in $group");
     }

@@ -8,23 +8,32 @@ class Item
 {   
     /**
      * Key (value) for this item
-     * @var mixed
+     * 
+     * @var string
      */
     protected $key;
 
     /**
      * Label for this item
+     * 
      * @var string
      */
     protected $label;
 
     /**
      * Attributes collection
+     * 
      * @var Collection
      */
     public $attributes;
 
-    public function __construct(string $key, $label)
+    /**
+     * Constructor
+     * 
+     * @param string $key
+     * @param string $label
+     */
+    public function __construct(string $key, string $label)
     {   
         $this->attributes = collect();
         $this->key = $key;
@@ -34,8 +43,9 @@ class Item
     /**
      * Sets/gets an attribute
      * 
-     * @param  string $name
-     * @param  mixed $value
+     * @param string $name
+     * @param mixed $value
+     * 
      * @return Form|mixed
      */
     public function attribute(string $name, $value = null)

@@ -6,6 +6,11 @@ trait HasOptions
 {
     public $options;
 
+    /**
+     * Build options
+     * 
+     * @param  array  $options
+     */
     protected function buildOptions(array $options = [])
     {
         $this->options = collect($options);

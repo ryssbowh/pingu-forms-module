@@ -6,13 +6,28 @@ use Pingu\Forms\Support\AttributeBag;
 
 trait HasAttributes
 {
+    /**
+     * @var AttributeBag
+     */
     public $attributes;
 
+    /**
+     * Build the field attributes
+     * 
+     * @param array  $attributes
+     */
     protected function buildAttributes(array $attributes = [])
     {
         $this->attributes = new AttributeBag($attributes);
     }
 
+    /**
+     * Build the field attributes from an array of option keys
+     * 
+     * @param array $keys
+     * 
+     * @return AttributeBag
+     */
     protected function buildAttributesFromOptions(array $keys = [])
     {
         $attributes = [];

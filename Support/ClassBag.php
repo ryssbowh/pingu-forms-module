@@ -8,10 +8,16 @@ class ClassBag
 {
     protected $classes = [];
 
+    /**
+     * Constructor
+     * 
+     * @param array|string $classes
+     */
     public function __construct($classes)
     {
         $this->add($classes);
     }
+
     /**
      * Add a class
      * 
@@ -49,6 +55,13 @@ class ClassBag
         return $this;
     }
 
+    /**
+     * Get classes
+     * 
+     * @param bool|boolean $toHtml
+     * 
+     * @return string|array
+     */
     public function get(bool $toHtml = false)
     {
         if ($toHtml) {
@@ -57,6 +70,11 @@ class ClassBag
         return $this->classes;
     }
 
+    /**
+     * Set classes
+     * 
+     * @param string|array $classes
+     */
     public function set($classes)
     {
         if (is_string($classes)) {

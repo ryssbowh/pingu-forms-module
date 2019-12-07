@@ -9,6 +9,11 @@ trait HasForms {
 
     use FormAccessible;
 
+    /**
+     * Get the form instance
+     * 
+     * @return FormRepository
+     */
     public function forms(): FormRepository
     {
         return new BaseForms($this);

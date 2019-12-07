@@ -6,22 +6,47 @@ use Pingu\Forms\Support\Form;
 
 class FormFieldException extends \Exception
 {
-    public static function alreadyDefined($name, Form $form)
+    /**
+     * @param string $name
+     * @param Form   $form
+     * 
+     * @return FormFieldException
+     */
+    public static function alreadyDefined(string $name, Form $form)
     {
         return new static("Field '$name' is already defined in form ".$form->getName());
     }
 
-    public static function notDefined($name, Form $form)
+    /**
+     * @param string $name
+     * @param Form   $form
+     * 
+     * @return FormFieldException
+     */
+    public static function notDefined(string $name, Form $form)
     {
         return new static("Field '$name' is not defined in form ".$form->getName());
     }
 
-    public static function missingOption($name, $option)
+    /**
+     * @param string $name
+     * @param string $option
+     * 
+     * @return FormFieldException
+     */
+    public static function missingOption(string $name, string $option)
     {
         return new static("Field '$name' is missing a '$option' option'");
     }
 
-    public static function modelFieldDoesntExist($fieldName, $name, $model)
+    /**
+     * @param string $fieldName
+     * @param string $name
+     * @param string $model
+     * 
+     * @return FormFieldException
+     */
+    public static function modelFieldDoesntExist(string $fieldName, string $name, string $model)
     {
         return new static("Field '$fieldName' : field '$name' is not defined in model $model");
     }
