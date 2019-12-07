@@ -1,1 +1,0 @@
-{{ FormFacade::hidden($name, $default ?? null, $rendererAttributes) }}

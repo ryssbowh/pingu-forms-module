@@ -80,4 +80,12 @@ class FieldGroup extends FormElement
             'group' => $this
         ];
     }
+
+    public function setValue(array $values)
+    {
+        foreach ($this->fields as $id => $field) {
+            $field->setValue($values[$id] ?? null);
+        }
+        return $this;
+    }
 }
