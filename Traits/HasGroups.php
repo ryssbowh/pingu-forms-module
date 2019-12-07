@@ -16,7 +16,7 @@ trait HasGroups
     /**
      * Creates all groups for that form. When this is called fields must already be defined
      * 
-     * @param  array  $groups
+     * @param  array $groups
      * @return Form
      */
     protected function makeGroups(array $groups)
@@ -64,8 +64,9 @@ trait HasGroups
      */
     public function getGroups(?array $names = null)
     {
-        if(is_null($names)) $groups = $this->groups->toArray();
-        else $groups = $this->groups->only($names)->toArray();
+        if(is_null($names)) { $groups = $this->groups->toArray();
+        } else { $groups = $this->groups->only($names)->toArray();
+        }
         return $groups;
     }
 
@@ -131,6 +132,7 @@ trait HasGroups
 
     /**
      * Gets or creates the 'default' group
+     *
      * @return Collection
      */
     public function getDefaultGroup()
@@ -150,7 +152,8 @@ trait HasGroups
     public function searchFieldGroup(string $name)
     {
         foreach($this->groups as $group){
-            if(is_integer($group->search($name))) return $group;
+            if(is_integer($group->search($name))) { return $group;
+            }
         }
         return false;
     }
@@ -164,7 +167,8 @@ trait HasGroups
     public function searchFieldGroupName(string $name)
     {
         foreach($this->groups as $groupName => $group){
-            if($group->search($name) !== false) return $groupName;
+            if($group->search($name) !== false) { return $groupName;
+            }
         }
         return false;
     }
@@ -184,7 +188,7 @@ trait HasGroups
     }
 
     /**
-     * @param  string  $name
+     * @param  string $name
      * @return boolean
      */
     public function hasGroup(string $name)
@@ -213,7 +217,7 @@ trait HasGroups
      */
     public function removeFromGroup(string $field)
     {
-        if ($group = $this->searchFieldGroup($field)){
+        if ($group = $this->searchFieldGroup($field)) {
             $group->forget($field);
         }
         return $this;
@@ -238,11 +242,11 @@ trait HasGroups
         if (!$offset) {
             return $this->moveElementToTop($name, $group);
         }
-        if($offset < 0){
+        if($offset < 0) {
             return $this->moveElementDown($name, $offset*-1);
         }
         $index = $group->search($name);
-        if(($index - $offset) <= 0){
+        if(($index - $offset) <= 0) {
             return $this->moveElementToTop($name, $group);
         }
         $replace = [$name, $group->get($index-$offset)];
@@ -264,19 +268,19 @@ trait HasGroups
     public function moveElementDown(string $name, $offset = false)
     {
         $groupName = $this->searchFieldGroupName($name);
-        if(!$groupName){
+        if(!$groupName) {
             throw FormFieldException::notDefined($name, $this);
         }
         $group = $this->groups->get($groupName);
-        if(!$offset){
+        if(!$offset) {
             return $this->moveElementToBottom($name, $group);
         }
-        if($offset < 0){
+        if($offset < 0) {
             return $this->moveElementUp($name, $offset*-1);
         }
         $index = $group->search($name);
         $size = $group->count();
-        if(($index + $offset) >= ($size-1)){
+        if(($index + $offset) >= ($size-1)) {
             return $this->moveElementToBottom($name, $group);
         }
         $replace = [$group->get($index+$offset), $name];
@@ -289,7 +293,7 @@ trait HasGroups
     /**
      * Moves a field a the top of its group
      * 
-     * @param  string $name
+     * @param  string     $name
      * @param  Collection $group
      * @return Form
      */
@@ -324,7 +328,8 @@ trait HasGroups
      */
     public function buildGroups($names = null)
     {
-        if(is_null($names)) $names = $this->getGroupNames();
+        if(is_null($names)) { $names = $this->getGroupNames();
+        }
         $groups = $this->getGroups($names);
         $out = [];
         foreach($groups as $name => $fields){

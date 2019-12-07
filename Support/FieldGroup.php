@@ -9,7 +9,8 @@ use Pingu\Forms\Support\FormElement;
 use Pingu\Forms\Traits\HasOptions;
 
 class FieldGroup extends FormElement
-{   
+{
+   
     use RendersWithSuggestions, HasOptions;
 
     protected $fields;
@@ -23,21 +24,27 @@ class FieldGroup extends FormElement
         $this->name = $name;
         $this->fields = $fields;
         $this->buildOptions($options);
-        $this->setViewSuggestions([
+        $this->setViewSuggestions(
+            [
             'forms.field-group-'.$this->name,
             'forms.field-group',
             'forms::field-group'
-        ]);
-        $this->classes = new ClassBag([
+            ]
+        );
+        $this->classes = new ClassBag(
+            [
             'form-element',
             'field-group',
             'field-group-'.$name
-        ]);
-        $this->labelClasses = new ClassBag([
+            ]
+        );
+        $this->labelClasses = new ClassBag(
+            [
             'form-element-label',
             'form-group-label',
             'form-group-label-'.$name
-        ]);
+            ]
+        );
     }
 
     public function setForm(Form $form)

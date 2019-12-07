@@ -22,21 +22,27 @@ trait Form
         $this->name = $this->makeName($this->name());
         $this->buildOptions($this->options());
         $this->buildAttributes(
-            array_merge($this->attributes(), [
+            array_merge(
+                $this->attributes(), [
                 'method' => $this->method(),
                 'files' => true,
                 'id' => 'form-'.$this->name,
-            ])
+                ]
+            )
         );
-        $this->setViewSuggestions([
+        $this->setViewSuggestions(
+            [
             'forms.form-'.$this->name,
             'forms.form',
             'forms::form'
-        ]);
-        $this->classes = new ClassBag([
+            ]
+        );
+        $this->classes = new ClassBag(
+            [
             'form',
             'form-'.$this->name
-        ]);
+            ]
+        );
         $this->makeAction($this->action());
         $this->makeElements($this->elements());
         $this->makeGroups($this->groups());
@@ -45,12 +51,13 @@ trait Form
 
     /**
      * Takes the get parameters of a request and adds them as hidden fields
+     *
      * @param  ?array $only
      * @return Pingu\Forms\Support\Form
      */
     public function considerGet(?array $only = null)
     {
-        if($input = request()->input()){
+        if($input = request()->input()) {
             $input = is_null($only) ? $input : array_intersect_key($input, array_flip($only));
             foreach ($input as $param => $value) {
                 $this->addHiddenField($param, $value);
@@ -93,7 +100,7 @@ trait Form
     /**
      * moves the action into the attributes Collection
      * 
-     * @param array  $url
+     * @param array $url
      */
     protected function makeAction(array $url)
     {
@@ -102,13 +109,14 @@ trait Form
     }
 
     protected function afterBuilt()
-    {}
+    {
+    }
 
     /**
      * Adds a hidden field to this form
      * 
-     * @param string $name
-     * @param mixed value
+     * @param  string      $name
+     * @param  mixed value
      * @return Form
      */
     public function addHiddenField(string $name, $value)
@@ -121,8 +129,8 @@ trait Form
     /**
      * Adds a submit field to this form 
      * 
-     * @param string $label
-     * @param string $name
+     * @param  string $label
+     * @param  string $name
      * @return Form
      */
     public function addSubmit(string $label = 'Submit', string $name = '_submit')
@@ -133,6 +141,7 @@ trait Form
 
     /**
      * Adds a delete button to this form
+     *
      * @param string $label
      * @param string $field
      */
@@ -145,14 +154,14 @@ trait Form
     /**
      * Adds a back button to this form
      * 
-     * @param string      $label
-     * @param string|null $url 
-     * @param string      $field
+     * @param  string      $label
+     * @param  string|null $url 
+     * @param  string      $field
      * @return Form
      */
     public function addBackButton(string $label = "Back", ?string $url = null, string $field = '_back')
     {
-        if(is_null($url)){
+        if(is_null($url)) {
             $url = url()->previous();
         }
         $this->addElement(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'back']));

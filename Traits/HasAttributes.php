@@ -14,7 +14,7 @@ trait HasAttributes
     /**
      * Build the field attributes
      * 
-     * @param array  $attributes
+     * @param array $attributes
      */
     protected function buildAttributes(array $attributes = [])
     {
@@ -41,7 +41,7 @@ trait HasAttributes
      * Sets/gets an attribute
      * 
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      * 
      * @return Form|mixed
      */

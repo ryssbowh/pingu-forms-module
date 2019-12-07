@@ -17,7 +17,9 @@ function label(string $name)
 
 function removeUnderscoreKeys(array $array)
 {
-    return array_filter($array, function($key){
-        return substr($key, 0, 1) != '_';
-    }, ARRAY_FILTER_USE_KEY);
+    return array_filter(
+        $array, function ($key) {
+            return substr($key, 0, 1) != '_';
+        }, ARRAY_FILTER_USE_KEY
+    );
 }

@@ -9,7 +9,7 @@ trait HasOptions
     /**
      * Build options
      * 
-     * @param  array  $options
+     * @param array $options
      */
     protected function buildOptions(array $options = [])
     {
@@ -20,7 +20,7 @@ trait HasOptions
      * Sets/gets an option
      * 
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      * 
      * @return Form|mixed
      */

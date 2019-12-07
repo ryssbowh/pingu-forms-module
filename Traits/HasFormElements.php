@@ -34,7 +34,7 @@ trait HasFormElements
      * Add a element to this form, but not to any group
      * 
      * @param element $element
-     * @param array  $definition
+     * @param array   $definition
      * 
      * @throws FormFieldException
      * 
@@ -70,7 +70,7 @@ trait HasFormElements
     /**
      * Removes elements from this form
      * 
-     * @param array  $elements
+     * @param array $elements
      * 
      * @return Form
      */
@@ -136,7 +136,7 @@ trait HasFormElements
     /**
      * Does this form has a element called $name
      * 
-     * @param string  $name
+     * @param string $name
      * 
      * @return boolean
      */

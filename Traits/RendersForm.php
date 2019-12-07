@@ -13,7 +13,7 @@ trait RendersForm
     /**
      * print form's opening
      *
-     * @see  https://laravelcollective.com/docs/5.4/html
+     * @see    https://laravelcollective.com/docs/5.4/html
      * @throws FormNotBuiltException
      * @return void
      */
@@ -29,7 +29,7 @@ trait RendersForm
     /**
      * prints form's closing
      *
-     * @see  https://laravelcollective.com/docs/5.4/html
+     * @see    https://laravelcollective.com/docs/5.4/html
      * @return void
      */
     public function renderEnd()

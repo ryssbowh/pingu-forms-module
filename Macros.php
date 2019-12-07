@@ -9,9 +9,9 @@ class Macros extends FormBuilder
     /**
      * Generate a country list
      *
-     * @param $name
-     * @param null $selected
-     * @param array $options
+     * @param  $name
+     * @param  null  $selected
+     * @param  array $options
      * @return \Illuminate\Support\HtmlString
      */
     public function usStates($name, $selected = null, $options = array())

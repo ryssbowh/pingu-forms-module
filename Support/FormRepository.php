@@ -22,7 +22,7 @@ abstract class FormRepository
     /**
      * Create form
      * 
-     * @param array  $action
+     * @param array $action
      * 
      * @return Form
      */
@@ -31,7 +31,7 @@ abstract class FormRepository
     /**
      * Edit form
      * 
-     * @param array  $action
+     * @param array $action
      * 
      * @return Form
      */
@@ -40,7 +40,7 @@ abstract class FormRepository
     /**
      * Delete form
      * 
-     * @param array  $action
+     * @param array $action
      * 
      * @return Form
      */

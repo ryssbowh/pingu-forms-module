@@ -25,7 +25,7 @@ class ItemList
      * Attribute setter
      * 
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      * 
      * @return ItemList
      */
@@ -50,7 +50,7 @@ class ItemList
     /**
      * Does this have an item
      * 
-     * @param string  $key
+     * @param string $key
      * 
      * @return boolean
      */

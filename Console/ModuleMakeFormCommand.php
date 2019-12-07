@@ -45,10 +45,12 @@ class ModuleMakeFormCommand extends GeneratorCommand
     protected function getTemplateContents()
     {
         $module = $this->laravel['modules']->findOrFail($this->getModuleName());
-        $stub = new Stub('/base-form.stub', [
+        $stub = new Stub(
+            '/base-form.stub', [
             'NAMESPACE' => $this->getClassNamespace($module),
             'CLASS'     => $this->getClass(),
-        ]);
+            ]
+        );
         $stub->setBasePath(\Module::find('Forms')->getPath().'/stubs');
         return $stub->render();
     }

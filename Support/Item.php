@@ -5,7 +5,8 @@ namespace Pingu\Forms\Support;
 use Illuminate\Support\Collection;
 
 class Item
-{   
+{
+   
     /**
      * Key (value) for this item
      * 
@@ -44,7 +45,7 @@ class Item
      * Sets/gets an attribute
      * 
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      * 
      * @return Form|mixed
      */

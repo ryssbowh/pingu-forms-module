@@ -1,7 +1,8 @@
 <?php
 namespace Pingu\Forms\Exceptions;
 
-class FormException extends \Exception{
+class FormException extends \Exception
+{
 
     /**
      * @param string $name

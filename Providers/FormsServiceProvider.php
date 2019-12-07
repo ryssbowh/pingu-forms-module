@@ -49,10 +49,12 @@ class FormsServiceProvider extends ModuleServiceProvider
      */
     public function registerFormMacros()
     {
-        $this->app->singleton('form', function ($app) {
-            $form = new Macros($app['html'], $app['url'], $app['view'], $app['session.store']->token());
-            return $form->setSessionStore($app['session.store']);
-        });
+        $this->app->singleton(
+            'form', function ($app) {
+                $form = new Macros($app['html'], $app['url'], $app['view'], $app['session.store']->token());
+                return $form->setSessionStore($app['session.store']);
+            }
+        );
     }
 
     /**
@@ -64,10 +66,13 @@ class FormsServiceProvider extends ModuleServiceProvider
          * url rule that check if the url is an internal get url
          * if not starting with http. route names are also supported
          */
-        \Validator::extend('valid_url', function ($attribute, $value, $parameters, $validator) {
-            if($value and substr($value, 0, 4) != 'http' and !route_exists($value)) return false;
-            return true;
-        });
+        \Validator::extend(
+            'valid_url', function ($attribute, $value, $parameters, $validator) {
+                if($value and substr($value, 0, 4) != 'http' and !route_exists($value)) { return false;
+                }
+                return true;
+            }
+        );
     }
 
     /**

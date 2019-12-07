@@ -26,6 +26,7 @@ class MakeFormCommand extends Command
 
     /**
      * Laravel filesystem
+     *
      * @var Filesystem
      */
     protected $files;
@@ -75,7 +76,7 @@ class MakeFormCommand extends Command
 
     public function makeDirectory($directory)
     {
-        if(!file_exists($directory)){
+        if(!file_exists($directory)) {
             $this->laravel['files']->makeDirectory($directory);
         }
     }

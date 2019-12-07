@@ -3,7 +3,8 @@ namespace Pingu\Forms\Exceptions;
 
 use Pingu\Forms\Support\Form;
 
-class GroupException extends \Exception{
+class GroupException extends \Exception
+{
 
     /**
      * @param string $name

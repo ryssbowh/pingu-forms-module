@@ -85,26 +85,34 @@ abstract class Field extends FormElement
         $this->buildOptions($options);
         $this->buildAttributesFromOptions($this->attributeOptions);
         
-        $this->classes = new ClassBag([
+        $this->classes = new ClassBag(
+            [
             'field'
-        ]);
-        $this->wrapperClasses = new ClassBag([
+            ]
+        );
+        $this->wrapperClasses = new ClassBag(
+            [
             'field-wrapper',
             'form-element',
             'field-wrapper-'.$name,
             'field-wrapper-type-'.$this->getType(),
-        ]);
-        $this->labelClasses = new ClassBag([
+            ]
+        );
+        $this->labelClasses = new ClassBag(
+            [
             'field-label',
             'field-label-'.$name,
-        ]);
-        $this->setViewSuggestions([
+            ]
+        );
+        $this->setViewSuggestions(
+            [
             'forms.field-'.$this->name,
             'forms.field-'.$this->getType(),
             'forms::fields.'.$this->getType(),
             'forms.field',
             'forms::field'
-        ]);
+            ]
+        );
     }
 
     /**
@@ -135,10 +143,12 @@ abstract class Field extends FormElement
     public function setForm(Form $form)
     {
         $this->form = $form;
-        $this->addViewSuggestions([
+        $this->addViewSuggestions(
+            [
             'forms.fields.form-'.$form->getName().'_'.$this->getType(),
             'forms.fields.form-'.$form->getName().'_'.$this->getName(),
-        ]);
+            ]
+        );
     }
 
     /**
