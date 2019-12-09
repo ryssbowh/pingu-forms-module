@@ -23,9 +23,7 @@ class $CLASS$ extends Form
     public function elements(): array
     {
         return [
-            'submit' => [
-                'field' => Submit::class,
-            ]
+            new Submit()
         ];
     }
 

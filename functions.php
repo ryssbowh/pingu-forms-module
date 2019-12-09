@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
  * @param  string $name
  * @return string
  */
-function label(string $name)
+function form_label(string $name)
 {
     return ucfirst(str_replace('-', ' ', strtolower(Str::kebab($name))));
 }

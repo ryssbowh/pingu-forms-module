@@ -78,7 +78,7 @@ abstract class Field extends FormElement
         }
         $this->name = $name;
         if (!isset($options['label'])) {
-            $options['label'] = label($this->name);
+            $options['label'] = form_label($this->name);
         }
         $this->setValue($options['default'] ?? null);
 
