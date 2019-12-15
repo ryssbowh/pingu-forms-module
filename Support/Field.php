@@ -7,12 +7,12 @@ use Pingu\Forms\Support\AttributeBag;
 use Pingu\Forms\Support\Form;
 use Pingu\Forms\Support\Type;
 use Pingu\Forms\Support\Types\Text;
-use Pingu\Forms\Traits\HasAttributes;
+use Pingu\Forms\Traits\HasAttributesFromOptions;
 use Pingu\Forms\Traits\HasOptions;
 
 abstract class Field extends FormElement
 {
-    use RendersWithSuggestions, HasOptions, HasAttributes;
+    use RendersWithSuggestions, HasOptions, HasAttributesFromOptions;
 
     /**
      * @var string
@@ -35,13 +35,6 @@ abstract class Field extends FormElement
     protected $requiredOptions = [];
 
     /**
-     * Options that are html attributes
-     * 
-     * @var array
-     */
-    protected $attributeOptions = ['required'];
-
-    /**
      * @var ClassBag
      */
     public $classes;
@@ -62,6 +55,11 @@ abstract class Field extends FormElement
      * @var int
      */
     protected $index = null;
+
+    /**
+     * @inheritDoc
+     */
+    protected $attributeOptions = ['required'];
     
     /**
      * Constructor
@@ -83,11 +81,12 @@ abstract class Field extends FormElement
         $this->setValue($options['default'] ?? null);
 
         $this->buildOptions($options);
-        $this->buildAttributesFromOptions($this->attributeOptions);
         
         $this->classes = new ClassBag(
             [
-            'field'
+            'field',
+            'field-'.$name,
+            'field-'.$this->getType()
             ]
         );
         $this->wrapperClasses = new ClassBag(
@@ -102,17 +101,36 @@ abstract class Field extends FormElement
             [
             'field-label',
             'field-label-'.$name,
+            'field-label-'.$this->getType(),
             ]
         );
         $this->setViewSuggestions(
             [
             'forms.field-'.$this->name,
             'forms.field-'.$this->getType(),
-            'forms::fields.'.$this->getType(),
-            'forms.field',
-            'forms::field'
+            'forms::fields.'.$this->getType()
             ]
         );
+    }
+
+    public static function options(): string
+    {
+        return FieldOptions::class;
+    }
+
+    public static function machineName(): string
+    {
+        return class_machine_name(static::class);
+    }
+
+    /**
+     * Friendly name for this field
+     * 
+     * @return string
+     */
+    public static function friendlyname()
+    {
+        return friendly_classname(static::class);
     }
 
     /**
@@ -211,11 +229,12 @@ abstract class Field extends FormElement
      */
     public function getViewData(): array
     {
-        $this->attributes->put('class', $this->classes->get(true));
+        $attributes = $this->buildAttributes();
+        $attributes['class'] = $this->classes->get(true);
         return [
             'field' => $this,
             'wrapperClasses' => $this->wrapperClasses->get(true),
-            'attributes' => $this->attributes,
+            'attributes' => $attributes,
             'labelClasses' => $this->labelClasses->get(true),
         ];
     }

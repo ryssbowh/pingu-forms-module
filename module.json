@@ -9,7 +9,9 @@
         "Pingu\\Forms\\Providers\\FormsServiceProvider",
         "Pingu\\Forms\\Providers\\ConsoleServiceProvider"
     ],
-    "aliases": [],
+    "aliases": {
+        "FormField": "Pingu\\Forms\\Facades\\FormField"
+    },
     "files": [
         "functions.php"
     ],

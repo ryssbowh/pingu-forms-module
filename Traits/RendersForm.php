@@ -21,7 +21,10 @@ trait RendersForm
     {
         \FormFacade::considerRequest();
         event(new FormBuilt($this->getName(), $this));
-        $attributes = $this->attributes->toArray();
+        $attributes = array_merge(
+            $this->buildAttributes()->toArray(), 
+            $this->action()
+        );
         $attributes['class'] = $this->classes->get(true);
         echo \FormFacade::open($attributes);
     }

@@ -4,7 +4,7 @@ namespace Pingu\Forms\Traits;
 
 trait HasOptions
 {
-    public $options;
+    protected $options;
 
     /**
      * Build options
@@ -13,7 +13,18 @@ trait HasOptions
      */
     protected function buildOptions(array $options = [])
     {
+        $options = array_merge($this::defaultOptions(), $options);
         $this->options = collect($options);
+    }
+
+    /**
+     * Default options
+     * 
+     * @return array
+     */
+    public static function defaultOptions(): array
+    {
+        return [];
     }
 
     /**

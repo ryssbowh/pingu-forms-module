@@ -4,5 +4,5 @@
     @if($media = $field->getMedia())
         <img src="{{ $media->url('icon') }}"><br/>
     @endif
-    {{ FormFacade::file($field->getName(), $field->attributes->toArray()) }}
+    {{ FormFacade::file($field->getName(), $attributes->toArray()) }}
 @overwrite

@@ -28,7 +28,7 @@ class Select extends Field
     public function __construct(string $name, array $options = [], array $attributes = [])
     {   
         parent::__construct($name, $options, $attributes);
-        $this->attribute('multiple', $this->isMultiple());
+        $this->option('multiple', $this->isMultiple());
         $this->items = $this->buildItems();
     }
 

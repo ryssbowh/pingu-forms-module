@@ -5,17 +5,36 @@ namespace Pingu\Forms\Providers;
 use Illuminate\Database\Eloquent\Factory;
 use Pingu\Core\Support\ModuleServiceProvider;
 use Pingu\Forms\Console\MakeFormCommand;
+use Pingu\Forms\FormField;
 use Pingu\Forms\Macros;
+use Pingu\Forms\Support\Fields\Checkbox;
+use Pingu\Forms\Support\Fields\Checkboxes;
+use Pingu\Forms\Support\Fields\Datetime;
+use Pingu\Forms\Support\Fields\Email;
+use Pingu\Forms\Support\Fields\Hidden;
+use Pingu\Forms\Support\Fields\NumberInput;
+use Pingu\Forms\Support\Fields\Password;
+use Pingu\Forms\Support\Fields\Select;
+use Pingu\Forms\Support\Fields\SelectMedia;
+use Pingu\Forms\Support\Fields\TextInput;
+use Pingu\Forms\Support\Fields\Textarea;
 use Themes;
 
 class FormsServiceProvider extends ModuleServiceProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
+    protected $fields = [
+        TextInput::class,
+        Checkbox::class,
+        Checkboxes::class,
+        Datetime::class,
+        Email::class,
+        Hidden::class,
+        NumberInput::class,
+        Password::class,
+        Select::class,
+        SelectMedia::class,
+        Textarea::class
+    ];
 
     /**
      * Boot the application events.
@@ -41,7 +60,8 @@ class FormsServiceProvider extends ModuleServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton('forms.field', FormField::class);
+        \FormField::registerFields($this->fields);
     }
 
     /**

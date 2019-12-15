@@ -51,7 +51,7 @@ class ModuleMakeFormCommand extends GeneratorCommand
             'CLASS'     => $this->getClass(),
             ]
         );
-        $stub->setBasePath(\Module::find('Forms')->getPath().'/stubs');
+        $stub->setBasePath(\Module::find('Forms')->getPath().'/Console/stubs');
         return $stub->render();
     }
 

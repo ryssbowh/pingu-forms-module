@@ -6,7 +6,6 @@ use Pingu\Forms\Support\Field;
 
 class Email extends Field
 {
-   
     /**
      * @inheritDoc
      */

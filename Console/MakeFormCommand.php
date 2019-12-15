@@ -31,7 +31,7 @@ class MakeFormCommand extends Command
      */
     protected $files;
 
-    protected $stub = __DIR__ . '/../stubs/base-form.stub'; 
+    protected $stub = __DIR__ . '/stubs/base-form.stub'; 
 
     /**
      * Execute the console command.

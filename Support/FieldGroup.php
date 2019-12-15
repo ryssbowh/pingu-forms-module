@@ -58,7 +58,7 @@ class FieldGroup extends FormElement
     public function attribute(string $name, $value)
     {
         foreach ($this->fields as $field) {
-            $field->attribute($name, $value);
+            $field->option($name, $value);
         }
         return $this;
     }

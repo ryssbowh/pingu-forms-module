@@ -8,5 +8,5 @@ class Link extends Field
     /**
      * @inheritDoc
      */
-    protected $required = ['label', 'url'];
+    protected $requiredOptions = ['label', 'url'];
 }

@@ -1,1 +1,1 @@
-<a href="{{ $field->option('url') }}" {!! $attributes->toArray() !!}>{{ $field->option('label') }}</a>
+<a href="{{ $field->option('url') }}" {!! $attributes->toHtml() !!}>{{ $field->option('label') }}</a>

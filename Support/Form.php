@@ -1,13 +1,58 @@
 <?php
 namespace Pingu\Forms\Support;
 
-use Pingu\Forms\Contracts\FormContract;
-use Pingu\Forms\Contracts\HasFieldsContract;
-use Pingu\Forms\Traits\Form as FormTrait;
+use Pingu\Forms\Support\ClassBag;
+use Pingu\Forms\Traits\HasAttributesFromOptions;
+use Pingu\Forms\Traits\HasFormElements;
+use Pingu\Forms\Traits\HasOptions;
+use Pingu\Forms\Traits\RendersForm;
 
 abstract class Form
 {
-    use FormTrait;
+    use RendersForm, HasFormElements, HasOptions, HasAttributesFromOptions;
+
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @var ClassBag
+     */
+    public $classes;
+
+    protected $attributeOptions = ['id', 'files', 'method'];
+
+    public function __construct()
+    {
+        $this->groups = collect();
+        $this->name = $this->makeName($this->name());
+        $options = array_merge(
+            [
+                'method' => $this->method(),
+                'files' => true,
+                'id' => 'form-'.$this->name
+            ], 
+            $this->options()
+        );
+        $this->buildOptions($options);
+        $this->setViewSuggestions(
+            [
+            'forms.form-'.$this->name,
+            'forms.form',
+            'forms::form'
+            ]
+        );
+        $this->classes = new ClassBag(
+            [
+            'form',
+            'form-'.$this->name
+            ]
+        );
+        $this->makeElements($this->elements());
+        $this->makeGroups($this->groups());
+        $this->afterBuilt();
+    }
 
     /**
      * Name of that field. all non alphanumeric character will be removed.
@@ -40,13 +85,138 @@ abstract class Form
     protected abstract function elements(): array;
 
     /**
-     * Attributes for the form
-     * 
-     * @return array
+     * Takes the get parameters of a request and adds them as hidden fields
+     *
+     * @param  ?array $only
+     * @return Pingu\Forms\Support\Form
      */
-    protected function attributes(): array
+    public function considerGet(?array $only = null)
     {
-        return [];
+        if($input = request()->input()) {
+            $input = is_null($only) ? $input : array_intersect_key($input, array_flip($only));
+            foreach ($input as $param => $value) {
+                $this->addHiddenField($param, $value);
+            }
+        }
+    }
+
+    /**
+     * Adds the class 'ajax-form' to this form
+     * 
+     * @return Form
+     */
+    public function isAjax()
+    {
+        $this->classes->add('js-ajax-form');
+        return $this;
+    }
+
+    /**
+     * Removes non-wanted characters from name
+     * 
+     * @param  string $name
+     * @return string
+     */
+    protected function makeName(string $name): string
+    {
+        return preg_replace('/[^A-Za-z0-9\-]/i', '', $name);
+    }
+
+    /**
+     * Name getter
+     * 
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Adds a hidden field to this form
+     * 
+     * @param  string      $name
+     * @param  mixed value
+     * @return Form
+     */
+    public function addHiddenField(string $name, $value)
+    {
+        $this->addField(new Hidden($name, ['default' => $value]));
+        $this->moveElementUp($name);
+        return $this;
+    }
+
+    /**
+     * Adds a submit field to this form 
+     * 
+     * @param  string $label
+     * @param  string $name
+     * @return Form
+     */
+    public function addSubmit(string $label = 'Submit', string $name = '_submit')
+    {
+        $this->addElement(new Submit($name, ['label' => $label]));
+        return $this;
+    }
+
+    /**
+     * Adds a delete button to this form
+     *
+     * @param string $label
+     * @param string $field
+     */
+    public function addDeleteButton(string $url, string $label = "Delete", string $field = '_delete')
+    {
+        $this->addElement(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'delete']));
+        return $this;
+    }
+
+    /**
+     * Adds a back button to this form
+     * 
+     * @param  string      $label
+     * @param  string|null $url 
+     * @param  string      $field
+     * @return Form
+     */
+    public function addBackButton(string $label = "Back", ?string $url = null, string $field = '_back')
+    {
+        if(is_null($url)) {
+            $url = url()->previous();
+        }
+        $this->addElement(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'back']));
+        return $this;
+    }
+
+    /**
+     * Disables a field
+     * 
+     * @param  string $name
+     * @return Form
+     */
+    public function disableField(string $name)
+    {
+        $field = $this->getField($name);
+        $this->addElement(new Hidden($name, ['default' => $field->getValue()]));
+        return $this;
+    }
+
+    /**
+     * moves the action into the attributes Collection
+     * 
+     * @param array $url
+     */
+    protected function makeAction(array $url)
+    {
+        $key = array_keys($url)[0];
+        $this->options->put($key, $url[$key]);
+    }
+
+    /**
+     * Called at the end of constructor
+     */
+    protected function afterBuilt()
+    {
     }
 
     /**
