@@ -31,15 +31,24 @@ class FieldOptions implements Arrayable
     protected $formFieldClass;
 
     /**
+     * Casts for values
+     * supported : bool, int, float
+     * @var array
+     */
+    protected $casts = [];
+
+    /**
      * Constructor
      * 
      * @param array  $values
-     * @param string $formFieldClass
      */
-    public function __construct(array $values, string $formFieldClass)
+    public function __construct(array $values = [])
     {
-        $this->formFieldClass = $formFieldClass;
-        $this->values = array_merge($formFieldClass::defaultOptions(), $values);
+        if ($this->formFieldClass) {
+            $this->values = array_merge($this->formFieldClass::defaultOptions(), $values);
+        } else {
+            $this->values = $values;
+        }
     }
 
     /**
@@ -112,7 +121,7 @@ class FieldOptions implements Arrayable
     {
         $out = '';
         foreach ($this->optionNames as $name) {
-            $out .= '<p>'.$this->label($name).': '.$this->value($name).'</p>';
+            $out .= '<p>'.$this->label($name).': '.$this->friendlyValue($name).'</p>';
         }
         return $out;
     }
@@ -142,6 +151,18 @@ class FieldOptions implements Arrayable
     }
 
     /**
+     * Friendly value for an option name
+     * 
+     * @param string $name 
+     * 
+     * @return mixed
+     */
+    public function friendlyValue(string $name)
+    {
+        return $this->values[$name] ?? null;
+    }
+
+    /**
      * Get the form to edit the options
      * 
      * @param array  $action
@@ -165,7 +186,7 @@ class FieldOptions implements Arrayable
         $messages = $this->getValidationMessages();
         $validator = \Validator::make($values, $rules, $messages);
         $validator->validate();
-        $this->values = $validator->validated();
+        $this->values = $this->castValues($validator->validated());
     }
 
     /**
@@ -175,7 +196,8 @@ class FieldOptions implements Arrayable
     {
         return [
             'values' => $this->values,
-            'description' => $this->friendlyDescription()
+            'description' => $this->friendlyDescription(),
+            'hasOptions' => $this->hasOptions()
         ];
     }
 
@@ -187,5 +209,31 @@ class FieldOptions implements Arrayable
     public function values(): array
     {
         return $this->values;
+    }
+
+    /**
+     * Casts an array of values
+     * 
+     * @param  array  $values
+     * @return array
+     */
+    protected function castValues(array $values): array
+    {
+        foreach ($values as $name => $value) {
+            switch ($this->casts[$name] ?? '') {
+                case 'bool':
+                    $values[$name] = (bool)$value;
+                    break;
+                case 'int':
+                    $values[$name] = (int)$value;
+                    break;
+                case 'float':
+                    $values[$name] = (float)$value;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $values;
     }
 }

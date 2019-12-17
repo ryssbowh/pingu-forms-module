@@ -28,12 +28,25 @@ trait HasOptions
     }
 
     /**
+     * Merge options
+     * 
+     * @param array  $options
+     * 
+     * @return mixed
+     */
+    public function mergeOptions(array $options)
+    {
+        $this->options = $this->options->merge(collect($options));
+        return $this;
+    }
+
+    /**
      * Sets/gets an option
      * 
      * @param string $name
      * @param mixed  $value
      * 
-     * @return Form|mixed
+     * @return mixed
      */
     public function option(string $name, $value = null)
     {

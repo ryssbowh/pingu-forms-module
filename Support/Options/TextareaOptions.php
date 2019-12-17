@@ -4,6 +4,7 @@ namespace Pingu\Forms\Support\Options;
 
 use Pingu\Forms\Support\FieldOptions;
 use Pingu\Forms\Support\Fields\NumberInput;
+use Pingu\Forms\Support\Fields\Textarea;
 
 class TextareaOptions extends FieldOptions
 {
@@ -18,6 +19,11 @@ class TextareaOptions extends FieldOptions
     protected $labels = [
         'rows' => 'Rows'
     ];
+
+    /**
+     * @inheritDoc
+     */
+    protected $formFieldClass = Textarea::class;
 
     /**
      * @inheritDoc

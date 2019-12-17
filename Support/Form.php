@@ -4,12 +4,13 @@ namespace Pingu\Forms\Support;
 use Pingu\Forms\Support\ClassBag;
 use Pingu\Forms\Traits\HasAttributesFromOptions;
 use Pingu\Forms\Traits\HasFormElements;
+use Pingu\Forms\Traits\HasGroups;
 use Pingu\Forms\Traits\HasOptions;
 use Pingu\Forms\Traits\RendersForm;
 
 abstract class Form
 {
-    use RendersForm, HasFormElements, HasOptions, HasAttributesFromOptions;
+    use RendersForm, HasFormElements, HasOptions, HasGroups, HasAttributesFromOptions;
 
     /**
      * @var string
@@ -25,7 +26,6 @@ abstract class Form
 
     public function __construct()
     {
-        $this->groups = collect();
         $this->name = $this->makeName($this->name());
         $options = array_merge(
             [
@@ -130,6 +130,17 @@ abstract class Form
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function fieldsOutsideOfGroups()
+    {
+        $out = [];
+        foreach ($this->elements as $name => $element) {
+            if (!$this->searchFieldGroup($name)) {
+                $out[] = $name;
+            }
+        }
+        return $out;
     }
 
     /**

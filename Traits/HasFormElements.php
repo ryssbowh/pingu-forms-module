@@ -3,16 +3,10 @@
 namespace Pingu\Forms\Traits;
 
 use Pingu\Forms\Exceptions\FormFieldException;
-use Pingu\Forms\Exceptions\FormelementException;
-use Pingu\Forms\Exceptions\GroupException;
 use Pingu\Forms\Support\FormElement;
-use Pingu\Forms\Support\element;
-use Pingu\Forms\Traits\HasGroups;
 
 trait HasFormElements
-{
-    use HasGroups;
-    
+{   
     protected $elements;
 
     /**
@@ -31,7 +25,7 @@ trait HasFormElements
     }
 
     /**
-     * Add a element to this form, but not to any group
+     * Add a element to this form
      * 
      * @param element $element
      * @param array   $definition
@@ -40,29 +34,27 @@ trait HasFormElements
      * 
      * @return Form
      */
-    public function addElement(FormElement $element, $group = null)
+    public function addElement(FormElement $element)
     {
         if ($this->elements->has($element->getName()) === true) {
             throw FormFieldException::alreadyDefined($element->getName(), $this);
         }
         $element->setForm($this);
         $this->elements->put($element->getName(), $element);
-        $this->addToGroup($element->getName(), $group);
         return $this;
     }
 
     /**
-     * Add elements to this form and to a group
+     * Add elements to this form
      * 
      * @param array  $elements
-     * @param string $group
      * 
      * @return Form
      */
-    public function addElements(array $elements, $group = null)
+    public function addElements(array $elements)
     {
         foreach ($elements as $element) {
-            $this->addelement($element, $group);
+            $this->addelement($element);
         }
         return $this;
     }
@@ -91,10 +83,9 @@ trait HasFormElements
      */
     public function removeElement(string $name)
     {
-        $this->elements->forget($name);
-        $group = $this->searchFieldGroup($name);
-        if ($group) {
-            $group->forget($group->search($name));
+        $index = $this->elements->search($name);
+        if (is_int($index)) {
+            $this->elements->forget($index);
         }
         return $this;
     }

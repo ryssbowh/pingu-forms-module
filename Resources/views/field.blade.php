@@ -1,5 +1,6 @@
 <div class="{{ $wrapperClasses }} {{ isset($errors) and $errors->has($field->getName()) ? ' is-invalid' : '' }}">
-	@if($label = $field->option('label'))
+	@if($field->option('showLabel'))
+        <?php $label = $field->option('label'); ?>
 		<label class="{{ $labelClasses }}">{{ $label.($attributes->get('required') ? ' *' : '') }}
 			@if($helper = $field->option('helper'))
 				<div class="helper">{!! $helper !!}</div>

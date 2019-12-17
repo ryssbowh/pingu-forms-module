@@ -15,10 +15,7 @@ class $CLASS$ extends Form
     }
 
     /**
-     * Fields definitions for this form, classes used here
-     * must extend Pingu\Forms\Support\Field
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function elements(): array
     {
@@ -28,9 +25,7 @@ class $CLASS$ extends Form
     }
 
     /**
-     * Method for this form, POST GET DELETE PATCH and PUT are valid
-     * 
-     * @return string
+     * @inheritDoc
      */
     public function method(): string
     {
@@ -38,13 +33,7 @@ class $CLASS$ extends Form
     }
 
     /**
-     * Url for this form, valid values are
-     * ['url' => '/foo.bar']
-     * ['route' => 'login']
-     * ['action' => 'MyController@action']
-     * 
-     * @return array
-     * @see https://github.com/LaravelCollective/docs/blob/5.6/html.md
+     * @inheritDoc
      */
     public function action(): array
     {
@@ -52,11 +41,7 @@ class $CLASS$ extends Form
     }
 
     /**
-     * Name for this form, ideally it would be application unique, 
-     * best to prefix it with the name of the module it's for.
-     * only alphanumeric and hyphens
-     * 
-     * @return string
+     * @inheritDoc
      */
     public function name(): string
     {
@@ -64,9 +49,7 @@ class $CLASS$ extends Form
     }
 
     /**
-     * Various options that you can access in your templates/events
-     
-     * @return array
+     * @inheritDoc
      */
     public function options(): array
     {

@@ -54,12 +54,12 @@ abstract class Field extends FormElement
      * 
      * @var int
      */
-    protected $index = null;
+    protected $index = 0;
 
     /**
      * @inheritDoc
      */
-    protected $attributeOptions = ['required'];
+    protected $attributeOptions = ['required', 'id'];
     
     /**
      * Constructor
@@ -75,9 +75,9 @@ abstract class Field extends FormElement
             }
         }
         $this->name = $name;
-        if (!isset($options['label'])) {
-            $options['label'] = form_label($this->name);
-        }
+        $options['label'] = $options['label'] ?? form_label($this->name);
+        $options['showLabel'] = $options['showLabel'] ?? true;
+
         $this->setValue($options['default'] ?? null);
 
         $this->buildOptions($options);
@@ -106,8 +106,8 @@ abstract class Field extends FormElement
         );
         $this->setViewSuggestions(
             [
-            'forms.field-'.$this->name,
-            'forms.field-'.$this->getType(),
+            'forms.fields.'.$this->getType().'-'.$this->name,
+            'forms.fields.'.$this->getType(),
             'forms::fields.'.$this->getType()
             ]
         );
@@ -141,6 +141,16 @@ abstract class Field extends FormElement
     protected function isMultiple(): bool
     {
         return $this->option('multiple') ?? false;
+    }
+
+    /**
+     * get index
+     * 
+     * @return int
+     */
+    public function getIndex(): int
+    {
+        return $this->index;
     }
 
     /**

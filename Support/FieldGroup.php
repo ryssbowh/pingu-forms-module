@@ -50,15 +50,29 @@ class FieldGroup extends FormElement
     public function setForm(Form $form)
     {
         $this->form = $form;
+        $this->addViewSuggestions(
+            [
+            'forms.field-group-form-'.$form->getName().'_'.$this->name,
+            'forms.field-group-form-'.$form->getName(),
+            ]
+        );
         foreach ($this->fields as $field) {
             $field->setForm($form);
         }
     }
 
-    public function attribute(string $name, $value)
+    public function setOptions(string $name, $value)
     {
         foreach ($this->fields as $field) {
             $field->option($name, $value);
+        }
+        return $this;
+    }
+
+    public function mergeOptions(array $options)
+    {
+        foreach ($this->fields as $field) {
+            $field->mergeOptions($options);
         }
         return $this;
     }

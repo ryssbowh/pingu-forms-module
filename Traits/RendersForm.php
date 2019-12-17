@@ -47,7 +47,11 @@ trait RendersForm
      */
     public function getViewData(): array
     {
-        return ['form' => $this];
+        return [
+            'form' => $this,
+            'groups' => $this->getGroups(),
+            'elements' => $this->getElements()
+        ];
     }
 
 }

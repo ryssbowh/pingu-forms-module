@@ -9,5 +9,5 @@ class Password extends Field
     /**
      * @inheritDoc
      */
-    protected $attributeOptions = ['required', 'maxlength', 'minlength']; 
+    protected $attributeOptions = ['required', 'maxLength', 'minLength', 'id']; 
 }

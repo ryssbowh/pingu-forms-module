@@ -10,8 +10,12 @@
 
 {{ $form->renderStart() }}
 <div class="fields">
-    @foreach($form->getElements() as $element)
-	   {!! $element->render() !!}
-    @endforeach
+    @if($form->hasGroups())
+        @include('forms::groups')
+    @else
+        @foreach($elements as $element)
+            {{ $element->render() }}
+        @endforeach
+    @endif
 </div>
 {{ $form->renderEnd() }}

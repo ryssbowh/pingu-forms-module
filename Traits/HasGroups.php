@@ -11,27 +11,28 @@ use Pingu\Forms\Exceptions\GroupException;
 trait HasGroups
 {
     protected $groups;
-    protected $defaultGroup = '_default';
 
     /**
      * Creates all groups for that form. When this is called fields must already be defined
      * 
-     * @param  array $groups
+     * @param array $groups
+     * 
      * @return Form
      */
     protected function makeGroups(array $groups)
     {
+        $this->groups = collect();
         if ($groups) {
             foreach ($groups as $name => $fields) {
-                $this->moveToGroup($name, $fields);
+                $this->moveToGroup($fields, $name);
             }
         }
         return $this;
     }
 
-    protected function makeDefaultGroup()
+    public function hasGroups(): bool
     {
-        $this->createGroup($this->defaultGroup, $this->getElementNames());
+        return !$this->groups->isEmpty();
     }
 
     /**
@@ -64,8 +65,10 @@ trait HasGroups
      */
     public function getGroups(?array $names = null)
     {
-        if(is_null($names)) { $groups = $this->groups->toArray();
-        } else { $groups = $this->groups->only($names)->toArray();
+        if (is_null($names)) {
+            $groups = $this->groups->toArray();
+        } else {
+            $groups = $this->groups->only($names)->toArray();
         }
         return $groups;
     }
@@ -95,12 +98,10 @@ trait HasGroups
      * @param string      $field
      * @param string|null $groupName
      */
-    public function addToGroup($fields, ?string $groupName = null)
+    public function addToGroup($fields, ?string $groupName)
     {
         $fields = Arr::wrap($fields);
-        if (is_null($groupName)) {
-            $group = $this->getDefaultGroup();
-        } elseif (!$this->hasGroup($groupName)) {
+        if (!$this->hasGroup($groupName)) {
             $group = $this->createGroup($groupName);
         }
         foreach ($fields as $field) {
@@ -119,28 +120,12 @@ trait HasGroups
     public function moveToGroup($fields, string $groupNameTo)
     {
         $fields = Arr::wrap($fields);
-        $groupTo = $this->getGroup($groupNameTo);
+        $groupTo = $this->getGroup($groupNameTo, true);
         foreach ($fields as $field) {
-            $groupFrom = $this->searchFieldGroup($field);
-            if ($groupFrom) {
-                $groupFrom->forget($field);
-            }
+            $this->removeFromGroup($field);
             $groupTo->push($field);
         }
         return $this;
-    }
-
-    /**
-     * Gets or creates the 'default' group
-     *
-     * @return Collection
-     */
-    public function getDefaultGroup()
-    {
-        if (!$this->hasGroup($this->defaultGroup)) {
-            return $this->createGroup($this->defaultGroup);
-        }
-        return $this->groups->get($this->defaultGroup);
     }
 
     /**
@@ -151,8 +136,9 @@ trait HasGroups
      */
     public function searchFieldGroup(string $name)
     {
-        foreach($this->groups as $group){
-            if(is_integer($group->search($name))) { return $group;
+        foreach ($this->groups as $group) {
+            if (is_integer($group->search($name))) { 
+                return $group;
             }
         }
         return false;
@@ -166,8 +152,9 @@ trait HasGroups
      */
     public function searchFieldGroupName(string $name)
     {
-        foreach($this->groups as $groupName => $group){
-            if($group->search($name) !== false) { return $groupName;
+        foreach ($this->groups as $groupName => $group){
+            if ($group->search($name) !== false) { 
+                return $groupName;
             }
         }
         return false;
@@ -179,10 +166,14 @@ trait HasGroups
      * @param  string $name
      * @return Collection
      */
-    public function getGroup(string $name)
+    public function getGroup(string $name, bool $create = false)
     {
         if (!$this->hasGroup($name)) {
-            throw GroupException::notDefined($name, $this);
+            if ($create) {
+                $group = $this->createGroup($name);
+            } else {
+                throw GroupException::notDefined($name, $this);
+            }
         }
         return $this->groups->get($name);
     }
@@ -218,7 +209,8 @@ trait HasGroups
     public function removeFromGroup(string $field)
     {
         if ($group = $this->searchFieldGroup($field)) {
-            $group->forget($field);
+            $index = $group->search($field);
+            $group->forget($index);
         }
         return $this;
     }

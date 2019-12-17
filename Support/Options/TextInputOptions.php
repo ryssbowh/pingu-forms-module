@@ -4,6 +4,7 @@ namespace Pingu\Forms\Support\Options;
 
 use Pingu\Forms\Support\FieldOptions;
 use Pingu\Forms\Support\Fields\NumberInput;
+use Pingu\Forms\Support\Fields\TextInput;
 
 class TextInputOptions extends FieldOptions
 {
@@ -18,6 +19,11 @@ class TextInputOptions extends FieldOptions
     protected $labels = [
         'maxLength' => 'Size'
     ];
+
+    /**
+     * @inheritDoc
+     */
+    protected $formFieldClass = TextInput::class;
 
     /**
      * @inheritDoc
