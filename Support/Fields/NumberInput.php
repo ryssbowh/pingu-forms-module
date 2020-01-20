@@ -9,5 +9,5 @@ class NumberInput extends Field
     /**
      * @inheritDoc
      */
-    protected $attributeOptions = ['required', 'min', 'max', 'id', 'placeholder']; 
+    protected $attributeOptions = ['required', 'disabled', 'min', 'max', 'id', 'placeholder']; 
 }

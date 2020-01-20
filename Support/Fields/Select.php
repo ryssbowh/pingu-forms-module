@@ -25,6 +25,11 @@ class Select extends Field
     /**
      * @inheritDoc
      */
+    protected $attributeOptions = ['required', 'disabled', 'id', 'placeholder', 'multiple']; 
+
+    /**
+     * @inheritDoc
+     */
     public function __construct(string $name, array $options = [], array $attributes = [])
     {   
         parent::__construct($name, $options, $attributes);

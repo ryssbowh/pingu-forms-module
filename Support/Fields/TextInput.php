@@ -10,7 +10,7 @@ class TextInput extends Field
     /**
      * @inheritDoc
      */
-    protected $attributeOptions = ['required', 'maxLength', 'minLength', 'placeholder', 'id'];
+    protected $attributeOptions = ['required', 'disabled', 'maxLength', 'minLength', 'placeholder', 'id'];
 
     /**
      * @inheritDoc

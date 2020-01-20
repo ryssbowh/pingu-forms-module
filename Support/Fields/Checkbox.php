@@ -17,7 +17,7 @@ class Checkbox extends Field
     public static function defaultOptions(): array
     {
         return [
-            'useLabel' => true
+            'useLabel' => false
         ];
     }
 }
