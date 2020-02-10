@@ -134,13 +134,9 @@ abstract class Form
 
     public function fieldsOutsideOfGroups()
     {
-        $out = [];
-        foreach ($this->elements as $name => $element) {
-            if (!$this->searchFieldGroup($name)) {
-                $out[] = $name;
-            }
-        }
-        return $out;
+        $inGroups = $this->allFieldInGroups();
+        $allElements = $this->getElementNames();
+        return array_diff($allElements, $inGroups);
     }
 
     /**

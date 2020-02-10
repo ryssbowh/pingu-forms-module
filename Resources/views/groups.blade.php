@@ -3,8 +3,8 @@
 		@foreach($fields as $name)
 			{{ $form->getElement($name)->render() }}
 		@endforeach
-        @foreach($form->fieldsOutsideOfGroups() as $name)
-            {{ $form->getElement($name)->render() }}
-        @endforeach 
 	</fieldset>
 @endforeach
+@foreach($form->fieldsOutsideOfGroups() as $name)
+    {{ $form->getElement($name)->render() }}
+@endforeach 

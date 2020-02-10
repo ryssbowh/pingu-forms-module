@@ -105,6 +105,9 @@ class FormsServiceProvider extends ModuleServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../Config/config.php', 'forms'
         );
+        $this->publishes([
+            __DIR__.'/../Config/config.php' => config_path('module-forms.php')
+        ], 'config');
     }
 
     /**

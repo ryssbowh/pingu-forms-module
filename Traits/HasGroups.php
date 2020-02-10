@@ -30,6 +30,23 @@ trait HasGroups
         return $this;
     }
 
+    /**
+     * Returns all fields names that are in a group
+     * 
+     * @return array
+     */
+    public function allFieldInGroups()
+    {
+        $out = [];
+        foreach ($this->groups as $name => $fields) {
+            $out = array_merge($fields->all(), $out);
+        }
+        return $out;
+    }
+
+    /**
+     * @return boolean
+     */
     public function hasGroups(): bool
     {
         return !$this->groups->isEmpty();
