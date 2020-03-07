@@ -10,7 +10,6 @@ use Pingu\Forms\Traits\HasOptions;
 
 class FieldGroup extends FormElement
 {
-   
     use RendersWithSuggestions, HasOptions;
 
     protected $fields;
@@ -18,23 +17,26 @@ class FieldGroup extends FormElement
     protected $form;
     public $classes;
     public $labelClasses;
+    protected $cardinality;
 
-    public function __construct(string $name, array $options, array $fields)
+    public function __construct(string $name, array $options, array $fields, int $cardinality = 1)
     {
         $this->name = $name;
         $this->fields = $fields;
+        $this->cardinality = $cardinality;
         $this->buildOptions($options);
         $this->setViewSuggestions(
             [
             'forms.field-group-'.$this->name,
             'forms.field-group',
-            'forms::field-group'
+            $this->getDefaultViewSuggestion()
             ]
         );
         $this->classes = new ClassBag(
             [
             'form-element',
             'field-group',
+            'field-group-'.class_machine_name($this->fields[0]),
             'field-group-'.$name
             ]
         );
@@ -47,6 +49,21 @@ class FieldGroup extends FormElement
         );
     }
 
+    /**
+     * Cardinality getter
+     * 
+     * @return int
+     */
+    public function getCardinality(): int
+    {
+        return $this->cardinality;
+    }
+
+    /**
+     * Set the form for this group
+     * 
+     * @param Form $form
+     */
     public function setForm(Form $form)
     {
         $this->form = $form;
@@ -61,6 +78,12 @@ class FieldGroup extends FormElement
         }
     }
 
+    /**
+     * Set an option for all the fields in this group
+     * 
+     * @param string $name
+     * @param FieldGroup $value
+     */
     public function setOptions(string $name, $value)
     {
         foreach ($this->fields as $field) {
@@ -69,6 +92,12 @@ class FieldGroup extends FormElement
         return $this;
     }
 
+    /**
+     * Merges options for all the fields in this group
+     * 
+     * @param array      $options
+     * @param FieldGroup $value
+     */
     public function mergeOptions(array $options)
     {
         foreach ($this->fields as $field) {
@@ -77,11 +106,21 @@ class FieldGroup extends FormElement
         return $this;
     }
 
+    /**
+     * get the first field in this group
+     * 
+     * @return ?FormElement
+     */
     public function first(): ?FormElement
     {
         return $this->fields[0] ?? null;
     }
 
+    /**
+     * Fields getter 
+     * 
+     * @return array
+     */
     public function getFields()
     {
         return $this->fields;
@@ -92,6 +131,17 @@ class FieldGroup extends FormElement
         return $this->name;
     }
 
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultViewSuggestion(): string
+    {
+        return 'forms::field-group';
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function getViewData(): array
     {
         return [

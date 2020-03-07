@@ -75,6 +75,11 @@ abstract class Field extends FormElement
             }
         }
         $this->name = $name;
+        $this->init($options);
+    }
+
+    protected function init(array $options)
+    {
         $options['label'] = $options['label'] ?? form_label($this->name);
         $options['showLabel'] = $options['showLabel'] ?? true;
 
@@ -85,7 +90,7 @@ abstract class Field extends FormElement
         $this->classes = new ClassBag(
             [
             'field',
-            'field-'.$name,
+            'field-'.$this->name,
             'field-'.$this->getType()
             ]
         );
@@ -93,14 +98,14 @@ abstract class Field extends FormElement
             [
             'field-wrapper',
             'form-element',
-            'field-wrapper-'.$name,
+            'field-wrapper-'.$this->name,
             'field-wrapper-type-'.$this->getType(),
             ]
         );
         $this->labelClasses = new ClassBag(
             [
             'field-label',
-            'field-label-'.$name,
+            'field-label-'.$this->name,
             'field-label-'.$this->getType(),
             ]
         );
@@ -108,7 +113,7 @@ abstract class Field extends FormElement
             [
             'forms.fields.'.$this->getType().'-'.$this->name,
             'forms.fields.'.$this->getType(),
-            'forms::fields.'.$this->getType()
+            $this->getDefaultViewSuggestion()
             ]
         );
     }
@@ -131,6 +136,14 @@ abstract class Field extends FormElement
     public static function friendlyname()
     {
         return friendly_classname(static::class);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultViewSuggestion(): string
+    {
+        return 'forms::fields.'.$this->getType();
     }
 
     /**

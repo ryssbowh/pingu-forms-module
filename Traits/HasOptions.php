@@ -13,7 +13,7 @@ trait HasOptions
      */
     protected function buildOptions(array $options = [])
     {
-        $options = array_merge($this::defaultOptions(), $options);
+        $options = array_merge($this->defaultOptions(), $options);
         $this->options = collect($options);
     }
 

@@ -16,8 +16,8 @@ class Checkbox extends Field
 
     public static function defaultOptions(): array
     {
-        return [
+        return array_merge(Field::defaultOptions(), [
             'useLabel' => false
-        ];
+        ]);
     }
 }

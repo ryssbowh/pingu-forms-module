@@ -1,6 +1,7 @@
 <?php
 namespace Pingu\Forms\Support\Fields;
 
+use Pingu\Forms\Support\Field;
 use Pingu\Forms\Support\Options\TextareaOptions;
 
 class Textarea extends TextInput
@@ -15,8 +16,8 @@ class Textarea extends TextInput
 
     public static function defaultOptions(): array
     {
-        return [
+        return array_merge(Field::defaultOptions(), [
             'rows' => 5
-        ];
+        ]);
     }
 }

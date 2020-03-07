@@ -6,6 +6,7 @@ use Pingu\Forms\Support\AttributeBag;
 
 trait HasAttributesFromOptions
 {
+    protected $attributes = [];
     /**
      * Build the field attributes
      * 
@@ -13,6 +14,20 @@ trait HasAttributesFromOptions
      */
     protected function buildAttributes(): AttributeBag
     {
-        return new AttributeBag($this->options->only($this->attributeOptions ?? [])->all());
+        $attributes = array_merge(
+            $this->options->only($this->getAttributesOptions())->all(),
+            $this->attributes
+        );
+        return new AttributeBag($attributes);
+    }
+
+    protected function getAttributesOptions()
+    {
+        return $this->attributeOptions;
+    }
+
+    public function attribute($name, $value)
+    {
+        $this->attributes[$name] = $value;
     }
 }

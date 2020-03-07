@@ -22,4 +22,11 @@ abstract class FormElement
      * @param Form $form
      */
     abstract public function setForm(Form $form);
+
+    /**
+     * Default views for that element
+     * 
+     * @return string
+     */
+    abstract protected function getDefaultViewSuggestion(): string;
 }

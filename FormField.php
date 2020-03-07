@@ -4,6 +4,7 @@ namespace Pingu\Forms;
 
 use Illuminate\Support\Arr;
 use Pingu\Field\Contracts\FieldContract;
+use Pingu\Forms\Exceptions\FormWidgetsException;
 
 class FormField
 {
@@ -19,8 +20,14 @@ class FormField
         });
     }
 
-    public function registerFields(array $fields)
+    /**
+     * Registers form fields classes
+     * 
+     * @param  string|array $fields
+     */
+    public function registerFields($fields)
     {
+        $fields = Arr::wrap($fields);
         foreach ($fields as $field) {
             $this->registerField($field);
         }
@@ -50,13 +57,16 @@ class FormField
 
     public function defaultWidget(string $field)
     {
+        if (!isset($this->widgets[$field][0])) {
+            throw FormWidgetsException::nothingAvailable($field);
+        }
         return $this->widgets[$field][0] ?? null;
     }
 
     public function availableWidgets(FieldContract $field)
     {
         if (!isset($this->widgets[get_class($field)])) {
-            return [];
+            throw FormWidgetsException::nothingAvailable(get_class($field));
         }
         $out = [];
         foreach ($this->widgets[get_class($field)] as $name) {

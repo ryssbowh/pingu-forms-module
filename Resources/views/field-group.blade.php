@@ -6,8 +6,8 @@
                 <div class="helper">{!! $helper !!}</div>
             @endif
 		</label>
-        @foreach($fields as $field)
-            {!! $field !!}
-        @endforeach
 	@endif
+    @foreach($fields as $field)
+        {!! $field !!}
+    @endforeach
 </div>

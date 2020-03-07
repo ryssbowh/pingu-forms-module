@@ -1,7 +1,9 @@
 @foreach($groups as $name => $fields)
 	<fieldset class="form-group form-group-{{ $name }}">
 		@foreach($fields as $name)
-			{{ $form->getElement($name)->render() }}
+            @if($form->hasElement($name))
+                {{ $form->getElement($name)->render() }}
+            @endif
 		@endforeach
 	</fieldset>
 @endforeach

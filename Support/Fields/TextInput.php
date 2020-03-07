@@ -17,9 +17,9 @@ class TextInput extends Field
      */
     public static function defaultOptions(): array
     {
-        return [
+        return array_merge(Field::defaultOptions(),[
             'maxLength' => 255
-        ];
+        ]);
     }
 
     /**

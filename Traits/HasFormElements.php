@@ -83,9 +83,8 @@ trait HasFormElements
      */
     public function removeElement(string $name)
     {
-        $index = $this->elements->search($name);
-        if (is_int($index)) {
-            $this->elements->forget($index);
+        if ($this->elements->has($name)) {
+            $this->elements->forget($name);
         }
         return $this;
     }
