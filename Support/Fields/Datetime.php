@@ -6,12 +6,24 @@ use Pingu\Forms\Support\Field;
 class Datetime extends Field
 {
     /**
-     * @inheritDoc
-     */   
-    public function __construct(string $name, array $options = [], array $attributes = [])
+     * @var array
+     */
+    protected $requiredOptions = ['format'];
+
+    protected function init(array $options)
     {
-        $options['format'] = $options['format'] ?? 'YYYY-MM-DD HH:mm:ss';
-        parent::__construct($name, $options, $attributes);
+        $options['format'] = convertPhpToJsMomentFormat($options['format']);
+        parent::init($options);
     }
 
+    protected function getDefaultClasses()
+    {
+        return [
+            'field',
+            'field-'.$this->name,
+            'field-'.$this->getType(),
+            'form-control', 
+            'datetimepicker-input'
+        ];
+    }
 }

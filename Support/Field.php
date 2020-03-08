@@ -20,6 +20,11 @@ abstract class Field extends FormElement
     protected $name;
 
     /**
+     * @var string
+     */
+    protected $htmlName;
+
+    /**
      * @var Form
      */
     protected $form;
@@ -87,28 +92,9 @@ abstract class Field extends FormElement
 
         $this->buildOptions($options);
         
-        $this->classes = new ClassBag(
-            [
-            'field',
-            'field-'.$this->name,
-            'field-'.$this->getType()
-            ]
-        );
-        $this->wrapperClasses = new ClassBag(
-            [
-            'field-wrapper',
-            'form-element',
-            'field-wrapper-'.$this->name,
-            'field-wrapper-type-'.$this->getType(),
-            ]
-        );
-        $this->labelClasses = new ClassBag(
-            [
-            'field-label',
-            'field-label-'.$this->name,
-            'field-label-'.$this->getType(),
-            ]
-        );
+        $this->classes = new ClassBag($this->getDefaultClasses());
+        $this->wrapperClasses = new ClassBag($this->getDefaultWrapperClasses());
+        $this->labelClasses = new ClassBag($this->getDefaultLabelClasses());
         $this->setViewSuggestions(
             [
             'forms.fields.'.$this->getType().'-'.$this->name,
@@ -136,6 +122,34 @@ abstract class Field extends FormElement
     public static function friendlyname()
     {
         return friendly_classname(static::class);
+    }
+
+    protected function getDefaultClasses()
+    {
+        return [
+            'field',
+            'field-'.$this->name,
+            'field-'.$this->getType()
+        ];
+    }
+
+    protected function getDefaultWrapperClasses()
+    {
+        return [
+            'field-wrapper',
+            'form-element',
+            'field-wrapper-'.$this->name,
+            'field-wrapper-type-'.$this->getType(),
+        ];
+    }
+
+    protected function getDefaultLabelClasses()
+    {
+        return [
+            'field-label',
+            'field-label-'.$this->name,
+            'field-label-'.$this->getType(),
+        ];
     }
 
     /**
@@ -219,7 +233,17 @@ abstract class Field extends FormElement
      */
     public function getHtmlName()
     {
-        return $this->name . ($this->isMultiple() ? '['.$this->index.']' : '');
+        return $this->htmlName ?? $this->name . ($this->isMultiple() ? '['.$this->index.']' : '');
+    }
+
+    /**
+     * Html Name setter
+     * @param string $name
+     */
+    public function setHtmlName(string $name)
+    {
+        $this->htmlName = $name;
+        return $this;
     }
 
     /**

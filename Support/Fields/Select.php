@@ -27,22 +27,10 @@ class Select extends Field
      */
     protected $attributeOptions = ['required', 'disabled', 'id', 'placeholder', 'multiple']; 
 
-    /**
-     * @inheritDoc
-     */
-    public function __construct(string $name, array $options = [], array $attributes = [])
-    {   
-        parent::__construct($name, $options, $attributes);
-        $this->option('multiple', $this->isMultiple());
-        $this->items = $this->buildItems();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getHtmlName()
+    protected function init(array $options)
     {
-        return $this->name . ($this->isMultiple() ? '[]' : '');
+        parent::init($options);
+        $this->items = $this->buildItems();
     }
 
     /**

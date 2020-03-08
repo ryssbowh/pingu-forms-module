@@ -9,8 +9,8 @@ class AttributeBag extends Collection
     public function toHtml()
     {
         $out = ' ';
-        foreach ($this->attributes as $name => $value) {
-            $out .= $name.'="'.$value.'"';
+        foreach ($this->items as $name => $value) {
+            $out .= $name.'="'.$value.'" ';
         }
         return $out;
     }
