@@ -10,6 +10,11 @@ class FormField
 {
     protected $widgets = [];
 
+    /**
+     * Registers a form field (and its options class) into laravel container
+     * 
+     * @param string $field
+     */
     public function registerField(string $field)
     {
         app()->bind('forms.fields.'.$field::machineName(), function () use ($field) {
@@ -33,11 +38,25 @@ class FormField
         }
     }
 
+    /**
+     * registered field class getter
+     * 
+     * @param string $name
+     * 
+     * @return string
+     */
     public function getRegisteredField(string $name)
     {
         return app()['forms.fields.'.$name];
     }
 
+    /**
+     * registered field options class getter
+     * 
+     * @param string $field
+     * 
+     * @return string
+     */
     public function getRegisteredOptions(string $field)
     {
         if (class_exists($field)) {
@@ -46,6 +65,12 @@ class FormField
         return app()['forms.fields.'.$field.'.options'];
     }
 
+    /**
+     * Registers widgets (form fields) for a field
+     * 
+     * @param string $field
+     * @param string|array $widgets
+     */
     public function registerWidgets(string $field, $widgets)
     {
         $widgets = Arr::wrap($widgets);
@@ -55,6 +80,14 @@ class FormField
         $this->widgets[$field] = array_merge($this->widgets[$field] ?? [], $widgets);
     }
 
+    /**
+     * Get default widget (form field) for a field
+     * 
+     * @param string $field
+     * @throws FormWidgetsException
+     * 
+     * @return string
+     */
     public function defaultWidget(string $field)
     {
         if (!isset($this->widgets[$field][0])) {
@@ -63,6 +96,13 @@ class FormField
         return $this->widgets[$field][0] ?? null;
     }
 
+    /**
+     * Get available widgets (form fields) for a field
+     * @param FieldContract $field
+     * @throws FormWidgetsException
+     * 
+     * @return array
+     */
     public function availableWidgets(FieldContract $field)
     {
         if (!isset($this->widgets[get_class($field)])) {
