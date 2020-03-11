@@ -46,7 +46,7 @@ class FormsServiceProvider extends ModuleServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerFactories();
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'forms');
+        $this->loadModuleViewsFrom(__DIR__ . '/../Resources/views', 'forms');
         // $this->registerFormMacros();
         $this->registerRules();        
 

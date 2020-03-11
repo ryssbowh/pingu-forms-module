@@ -157,7 +157,7 @@ abstract class Field extends FormElement
      */
     protected function getDefaultViewSuggestion(): string
     {
-        return 'forms::fields.'.$this->getType();
+        return 'forms@fields.'.$this->getType();
     }
 
     /**

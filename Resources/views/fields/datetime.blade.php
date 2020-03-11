@@ -1,4 +1,4 @@
-@extends('forms::field')
+@extends('forms@field')
 
 @section('inner')
 	<div id="{{ $attributes->get('id') }}" class="input-group date" data-target-input="nearest" data-format="{{ $field->option('format') }}">

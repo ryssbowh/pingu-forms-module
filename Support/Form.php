@@ -40,7 +40,7 @@ abstract class Form
             [
             'forms.form-'.$this->name,
             'forms.form',
-            'forms::form'
+            'forms@form'
             ]
         );
         $this->classes = new ClassBag(

@@ -136,7 +136,7 @@ class FieldGroup extends FormElement
      */
     protected function getDefaultViewSuggestion(): string
     {
-        return 'forms::field-group';
+        return 'forms@field-group';
     }
 
     /**
