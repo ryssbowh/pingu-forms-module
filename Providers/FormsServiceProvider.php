@@ -106,8 +106,8 @@ class FormsServiceProvider extends ModuleServiceProvider
             __DIR__.'/../Config/config.php', 'forms'
         );
         $this->publishes([
-            __DIR__.'/../Config/config.php' => config_path('module-forms.php')
-        ], 'config');
+            __DIR__.'/../Config/config.php' => config_path('forms.php')
+        ], 'forms-config');
     }
 
     /**
