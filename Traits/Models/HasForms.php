@@ -2,12 +2,11 @@
 namespace Pingu\Forms\Traits\Models;
 
 use Collective\Html\Eloquent\FormAccessible;
+use Pingu\Forms\Contracts\FormRepositoryContract;
 use Pingu\Forms\Support\BaseForms;
-use Pingu\Forms\Support\FormRepository;
 
 trait HasForms
 {
-
     use FormAccessible;
 
     /**
@@ -15,7 +14,7 @@ trait HasForms
      * 
      * @return FormRepository
      */
-    public function forms(): FormRepository
+    public function forms(): FormRepositoryContract
     {
         return new BaseForms($this);
     }

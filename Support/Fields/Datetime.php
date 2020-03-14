@@ -16,7 +16,10 @@ class Datetime extends Field
         parent::init($options);
     }
 
-    protected function getDefaultClasses()
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultClasses(): array
     {
         return [
             'field',

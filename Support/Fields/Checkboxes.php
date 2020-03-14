@@ -6,11 +6,4 @@ use Pingu\Forms\Support\ItemList;
 
 class Checkboxes extends Select
 {
-    /**
-     * @inheritDoc
-     */
-    public function isMultiple(): bool
-    {
-        return true;
-    }
 }

@@ -36,19 +36,8 @@ abstract class Form
             $this->options()
         );
         $this->buildOptions($options);
-        $this->setViewSuggestions(
-            [
-            'forms.form-'.$this->name,
-            'forms.form',
-            'forms@form'
-            ]
-        );
-        $this->classes = new ClassBag(
-            [
-            'form',
-            'form-'.$this->name
-            ]
-        );
+        $this->setViewSuggestions($this->defaultViewSuggestions());
+        $this->classes = new ClassBag($this->defaultClasses());
         $this->makeElements($this->elements());
         $this->makeGroups($this->groups());
         $this->afterBuilt();
@@ -206,6 +195,33 @@ abstract class Form
         $field = $this->getField($name);
         $this->addElement(new Hidden($name, ['default' => $field->getValue()]));
         return $this;
+    }
+
+    /**
+     * default view suggestions
+     * 
+     * @return array
+     */
+    protected function defaultViewSuggestions(): array
+    {
+        return [
+            'forms.form-'.$this->name,
+            'forms.form',
+            'forms@form'
+        ];
+    }
+
+    /**
+     * Default classes
+     * 
+     * @return array
+     */
+    protected function defaultClasses(): array
+    {
+        return [
+        'form',
+        'form-'.$this->name
+        ];
     }
 
     /**

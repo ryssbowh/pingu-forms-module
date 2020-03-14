@@ -8,9 +8,11 @@ class Submit extends Field
     /**
      * @inheritDoc
      */
-    public function __construct(string $name = '_submit', array $options = [], array $attributes = [])
+    protected function getDefaultOptions(): array
     {
-        $options['label'] = $options['label'] ?? 'Submit';
-        parent::__construct($name, $options, $attributes);
+        return [
+            'showLabel' => false,
+            'label' => 'Submit'
+        ];
     }
 }

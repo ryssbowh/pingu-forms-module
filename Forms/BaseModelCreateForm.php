@@ -69,6 +69,6 @@ class BaseModelCreateForm extends Form
      */
     public function name(): string
     {
-        return 'create-'.class_machine_name($this->model);
+        return 'create-model-'.class_machine_name($this->model);
     }
 }

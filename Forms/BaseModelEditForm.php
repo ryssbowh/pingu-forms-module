@@ -27,6 +27,6 @@ class BaseModelEditForm extends BaseModelCreateForm
      */
     public function name(): string
     {
-        return 'edit-'.class_machine_name($this->model);
+        return 'edit-model-'.class_machine_name($this->model);
     }
 }

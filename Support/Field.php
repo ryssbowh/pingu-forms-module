@@ -55,13 +55,6 @@ abstract class Field extends FormElement
     public $labelClasses;
 
     /**
-     * Index of this field in its group
-     * 
-     * @var int
-     */
-    protected $index = 0;
-
-    /**
      * @inheritDoc
      */
     protected $attributeOptions = ['required', 'id'];
@@ -85,12 +78,9 @@ abstract class Field extends FormElement
 
     protected function init(array $options)
     {
-        $options['label'] = $options['label'] ?? form_label($this->name);
-        $options['showLabel'] = $options['showLabel'] ?? true;
-
         $this->setValue($options['default'] ?? null);
 
-        $this->buildOptions($options);
+        $this->buildOptions(array_merge($this->getDefaultOptions(), $options));
         
         $this->classes = new ClassBag($this->getDefaultClasses());
         $this->wrapperClasses = new ClassBag($this->getDefaultWrapperClasses());
@@ -104,11 +94,21 @@ abstract class Field extends FormElement
         );
     }
 
+    /**
+     * Get the field option class
+     * 
+     * @return string
+     */
     public static function options(): string
     {
         return FieldOptions::class;
     }
 
+    /**
+     * Machine name getter
+     * 
+     * @return string
+     */
     public static function machineName(): string
     {
         return class_machine_name(static::class);
@@ -124,7 +124,12 @@ abstract class Field extends FormElement
         return friendly_classname(static::class);
     }
 
-    protected function getDefaultClasses()
+    /**
+     * Default classes for this field
+     * 
+     * @return array
+     */
+    protected function getDefaultClasses(): array
     {
         return [
             'field',
@@ -133,7 +138,12 @@ abstract class Field extends FormElement
         ];
     }
 
-    protected function getDefaultWrapperClasses()
+    /**
+     * Default classes for this field's wrapper
+     * 
+     * @return array
+     */
+    protected function getDefaultWrapperClasses(): array
     {
         return [
             'field-wrapper',
@@ -143,7 +153,12 @@ abstract class Field extends FormElement
         ];
     }
 
-    protected function getDefaultLabelClasses()
+    /**
+     * Default classes for this field's label
+     * 
+     * @return array
+     */
+    protected function getDefaultLabelClasses(): array
     {
         return [
             'field-label',
@@ -153,41 +168,24 @@ abstract class Field extends FormElement
     }
 
     /**
+     * Field default options
+     * 
+     * @return array
+     */
+    protected function getDefaultOptions(): array
+    {
+        return [
+            'showLabel' => true,
+            'label' => form_label($this->name)
+        ];
+    }
+
+    /**
      * @inheritDoc
      */
     protected function getDefaultViewSuggestion(): string
     {
         return 'forms@fields.'.$this->getType();
-    }
-
-    /**
-     * Is this field mutiple
-     * 
-     * @return boolean
-     */
-    protected function isMultiple(): bool
-    {
-        return $this->option('multiple') ?? false;
-    }
-
-    /**
-     * get index
-     * 
-     * @return int
-     */
-    public function getIndex(): int
-    {
-        return $this->index;
-    }
-
-    /**
-     * Set the index
-     * 
-     * @param int $index
-     */
-    public function setIndex(int $index)
-    {
-        $this->index = $index;
     }
 
     /**
@@ -233,17 +231,7 @@ abstract class Field extends FormElement
      */
     public function getHtmlName()
     {
-        return $this->htmlName ?? $this->name . ($this->isMultiple() ? '['.$this->index.']' : '');
-    }
-
-    /**
-     * Html Name setter
-     * @param string $name
-     */
-    public function setHtmlName(string $name)
-    {
-        $this->htmlName = $name;
-        return $this;
+        return $this->option('htmlName') ?? $this->name . ($this->option('multiple') ? '['.$this->option('index').']' : '');
     }
 
     /**

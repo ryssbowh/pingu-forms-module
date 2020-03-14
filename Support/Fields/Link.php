@@ -9,4 +9,14 @@ class Link extends Field
      * @inheritDoc
      */
     protected $requiredOptions = ['label', 'url'];
+
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultOptions(): array
+    {
+        return [
+            'showLabel' => false
+        ];
+    }
 }

@@ -2,13 +2,25 @@
 
 namespace Pingu\Forms\Support;
 
+use Pingu\Core\Entities\BaseModel;
+use Pingu\Forms\Contracts\FormRepositoryContract;
 use Pingu\Forms\Forms\BaseModelCreateForm;
 use Pingu\Forms\Forms\BaseModelDeleteForm;
 use Pingu\Forms\Forms\BaseModelEditForm;
 use Pingu\Forms\Support\Form;
 
-class BaseForms extends FormRepository
-{
+class BaseForms implements FormRepositoryContract
+{   
+    /**
+     * @var BaseModel
+     */
+    protected $model;
+
+    public function __construct(BaseModel $model)
+    {
+        $this->model = $model;
+    }
+
     /**
      * @inheritDoc
      */
