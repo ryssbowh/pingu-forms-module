@@ -32,7 +32,6 @@ class FormsServiceProvider extends ModuleServiceProvider
         NumberInput::class,
         Password::class,
         Select::class,
-        SelectMedia::class,
         Textarea::class
     ];
 

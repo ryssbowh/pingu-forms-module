@@ -25,7 +25,7 @@ class Select extends Field
     /**
      * @inheritDoc
      */
-    protected $attributeOptions = ['required', 'disabled', 'id', 'placeholder', 'multiple']; 
+    protected $attributeOptions = ['data-placeholder', 'required', 'disabled', 'id', 'placeholder', 'multiple']; 
 
     protected function init(array $options)
     {

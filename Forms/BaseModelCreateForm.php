@@ -30,7 +30,7 @@ class BaseModelCreateForm extends Form
      */
     public function elements(): array
     {
-        $fields = $this->model->fields()->toFormElements();
+        $fields = $this->model->fields()->toFormElements($this->model);
         $fields['_submit'] = new Submit('_submit');
         return $fields;
     }

@@ -152,8 +152,11 @@ class FieldGroup extends FormElement
         ];
     }
 
-    public function setValue(array $values)
+    public function setValue(?array $values)
     {
+        if (is_null($values)) {
+            return $this;
+        }
         foreach ($this->fields as $id => $field) {
             $field->setValue($values[$id] ?? null);
         }

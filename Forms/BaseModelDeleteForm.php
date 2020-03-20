@@ -36,6 +36,6 @@ class BaseModelDeleteForm extends BaseModelCreateForm
      */
     public function name(): string
     {
-        return 'delete-'.class_machine_name($this->model);
+        return 'delete-model-'.class_machine_name($this->model);
     }
 }
