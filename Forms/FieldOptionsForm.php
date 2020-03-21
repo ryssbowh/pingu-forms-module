@@ -31,7 +31,7 @@ class FieldOptionsForm extends Form
     public function elements(): array
     {
         $fields = $this->fieldOptions->toFormElements();
-        $fields [] =new Submit('_submit');
+        $fields [] = new Submit('_submit');
         return $fields;
     }
 

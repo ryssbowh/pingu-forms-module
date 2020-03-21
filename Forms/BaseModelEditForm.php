@@ -7,7 +7,8 @@ use Pingu\Forms\Support\Fields\Submit;
 
 class BaseModelEditForm extends BaseModelCreateForm
 {
-
+    protected $updating = true;
+    
     /**
      * Method for this form, POST GET DELETE PATCH and PUT are valid
      * 

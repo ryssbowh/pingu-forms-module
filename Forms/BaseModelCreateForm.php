@@ -11,6 +11,7 @@ class BaseModelCreateForm extends Form
 {
     protected $action;
     protected $model;
+    protected $updating = false;
 
     /**
      * Bring variables in your form through the constructor :
@@ -30,7 +31,7 @@ class BaseModelCreateForm extends Form
      */
     public function elements(): array
     {
-        $fields = $this->model->fields()->toFormElements($this->model);
+        $fields = $this->model->fields()->toFormElements($this->model, $this->updating);
         $fields['_submit'] = new Submit('_submit');
         return $fields;
     }

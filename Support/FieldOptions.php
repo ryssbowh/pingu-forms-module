@@ -26,11 +26,6 @@ class FieldOptions implements Arrayable
     protected $values = [];
 
     /**
-     * @var string
-     */
-    protected $formFieldClass;
-
-    /**
      * Casts for values
      * supported : bool, int, float
      * @var array
@@ -44,11 +39,7 @@ class FieldOptions implements Arrayable
      */
     public function __construct(array $values = [])
     {
-        if ($this->formFieldClass) {
-            $this->values = array_merge($this->formFieldClass::defaultOptions(), $values);
-        } else {
-            $this->values = $values;
-        }
+        $this->values = $values;
     }
 
     /**
@@ -100,16 +91,6 @@ class FieldOptions implements Arrayable
     public function hasOptions(): bool
     {
         return !empty($this->optionNames);
-    }
-
-    /**
-     * Form field class getter
-     * 
-     * @return string
-     */
-    public function formFieldClass(): string
-    {
-        return $this->formFieldClass;
     }
 
     /**
@@ -195,7 +176,7 @@ class FieldOptions implements Arrayable
     public function toArray(): array
     {
         return [
-            'values' => $this->values,
+            'values' => $this->castFormValues($this->values),
             'description' => $this->friendlyDescription(),
             'hasOptions' => $this->hasOptions()
         ];
@@ -212,12 +193,22 @@ class FieldOptions implements Arrayable
     }
 
     /**
+     * Values getter for a form
+     * 
+     * @return array
+     */
+    public function formValues(): array
+    {
+        return $this->castFormValues($this->values);
+    }
+
+    /**
      * Casts an array of values
      * 
      * @param  array  $values
      * @return array
      */
-    protected function castValues(array $values): array
+    public function castValues(array $values): array
     {
         foreach ($values as $name => $value) {
             switch ($this->casts[$name] ?? '') {
@@ -229,6 +220,27 @@ class FieldOptions implements Arrayable
                     break;
                 case 'float':
                     $values[$name] = (float)$value;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $values;
+    }
+
+    /**
+     * Casts an array of values for a form
+     * 
+     * @param array $values
+     * 
+     * @return array
+     */
+    protected function castFormValues(array $values): array
+    {
+        foreach ($values as $name => $value) {
+            switch ($this->casts[$name] ?? '') {
+                case 'bool':
+                    $values[$name] = (int)$value;
                     break;
                 default:
                     break;
