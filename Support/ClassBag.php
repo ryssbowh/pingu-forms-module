@@ -83,4 +83,16 @@ class ClassBag
         $this->classes = $classes;
         return $this;
     }
+
+    /**
+     * Does this have a class
+     * 
+     * @param string  $name
+     * 
+     * @return boolean 
+     */
+    public function has(string $name)
+    {
+        return in_array($name, $this->classes);
+    }
 }

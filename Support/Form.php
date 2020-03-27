@@ -22,7 +22,7 @@ abstract class Form
      */
     public $classes;
 
-    protected $attributeOptions = ['id', 'files', 'method'];
+    protected $attributeOptions = ['id', 'files', 'method', 'autocomplete'];
 
     public function __construct()
     {
