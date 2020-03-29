@@ -1,7 +1,7 @@
 <?php
+
 namespace Pingu\Forms\Exceptions;
 
-use Pingu\Field\Contracts\HasFields;
 use Pingu\Forms\Support\Form;
 
 class FormFieldException extends \Exception
