@@ -1,16 +1,21 @@
 <?php
+
 namespace Pingu\Forms\Support;
 
+use Pingu\Core\Contracts\RenderableContract;
+use Pingu\Core\Contracts\RendererContract;
+use Pingu\Core\Traits\RendersWithRenderer;
+use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Support\ClassBag;
+use Pingu\Forms\Support\FormRenderer;
 use Pingu\Forms\Traits\HasAttributesFromOptions;
 use Pingu\Forms\Traits\HasFormElements;
 use Pingu\Forms\Traits\HasGroups;
 use Pingu\Forms\Traits\HasOptions;
-use Pingu\Forms\Traits\RendersForm;
 
-abstract class Form
+abstract class Form implements RenderableContract
 {
-    use RendersForm, HasFormElements, HasOptions, HasGroups, HasAttributesFromOptions;
+    use HasFormElements, HasOptions, HasGroups, HasAttributesFromOptions, RendersWithRenderer;
 
     /**
      * @var string
@@ -36,11 +41,11 @@ abstract class Form
             $this->options()
         );
         $this->buildOptions($options);
-        $this->setViewSuggestions($this->defaultViewSuggestions());
         $this->classes = new ClassBag($this->defaultClasses());
         $this->makeElements($this->elements());
         $this->makeGroups($this->groups());
         $this->afterBuilt();
+        event(new FormBuilt($this->getName(), $this));
     }
 
     /**
@@ -73,6 +78,11 @@ abstract class Form
      */
     protected abstract function elements(): array;
 
+    public function getRenderer(): RendererContract
+    {
+        return new FormRenderer($this);
+    }
+
     /**
      * Takes the get parameters of a request and adds them as hidden fields
      *
@@ -87,17 +97,6 @@ abstract class Form
                 $this->addHiddenField($param, $value);
             }
         }
-    }
-
-    /**
-     * Adds the class 'ajax-form' to this form
-     * 
-     * @return Form
-     */
-    public function isAjax()
-    {
-        $this->classes->add('js-ajax-form');
-        return $this;
     }
 
     /**
@@ -195,20 +194,6 @@ abstract class Form
         $field = $this->getField($name);
         $this->addElement(new Hidden($name, ['default' => $field->getValue()]));
         return $this;
-    }
-
-    /**
-     * default view suggestions
-     * 
-     * @return array
-     */
-    protected function defaultViewSuggestions(): array
-    {
-        return [
-            'forms.form-'.$this->name,
-            'forms.form',
-            'forms@form'
-        ];
     }
 
     /**

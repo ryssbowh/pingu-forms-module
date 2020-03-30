@@ -5,6 +5,10 @@ use Pingu\Forms\Support\Field;
 
 class Submit extends Field
 {
+    public function __construct(string $name = '_submit', array $options = [])
+    {
+        parent::__construct($name, $options);
+    }
     /**
      * @inheritDoc
      */

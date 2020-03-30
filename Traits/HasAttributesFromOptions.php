@@ -12,7 +12,7 @@ trait HasAttributesFromOptions
      * 
      * @return AttributeBag
      */
-    protected function buildAttributes(): AttributeBag
+    public function buildAttributes(): AttributeBag
     {
         $attributes = array_merge(
             $this->options->only($this->getAttributesOptions())->all(),
@@ -23,7 +23,7 @@ trait HasAttributesFromOptions
 
     protected function getAttributesOptions()
     {
-        return $this->attributeOptions;
+        return $this->attributeOptions ?? [];
     }
 
     public function attribute($name, $value)
