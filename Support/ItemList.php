@@ -12,13 +12,7 @@ class ItemList
     {   
         $this->items = collect();
 
-        foreach ($list as $key => $value) {
-            $item = new Item($key, $value);
-            if ($fieldName) {
-                $item->setId($fieldName);
-            }
-            $this->items->put($key, $item);
-        }
+        $this->addItems($list, $fieldName);
     }
 
     /**
@@ -29,7 +23,7 @@ class ItemList
      * 
      * @return ItemList
      */
-    public function attribute(string $name, $value)
+    public function attribute(string $name, $value): ItemList
     {
         foreach ($this->items as $item) {
             $item->attribute($name, $value);
@@ -42,7 +36,7 @@ class ItemList
      * 
      * @return bool
      */
-    public function empty()
+    public function empty(): bool
     {
         return sizeof($this->items) == 0;
     }
@@ -54,7 +48,7 @@ class ItemList
      * 
      * @return boolean
      */
-    public function hasItem(string $key)
+    public function hasItem(string $key): bool
     {
         return $this->items->has($key);
     }
@@ -66,7 +60,7 @@ class ItemList
      * 
      * @return Item
      */
-    public function getItem(string $key)
+    public function getItem(string $key): Item
     {
         if ($this->hasItem($key)) {
             return $this->items->get($key);
@@ -79,12 +73,48 @@ class ItemList
      * 
      * @return Collection
      */
-    public function getItems()
+    public function getItems(): Collection
     {
         return $this->items;
     }
 
-    public function toArray()
+    /**
+     * Add one item to the list
+     * 
+     * @param mixed       $key
+     * @param string      $label
+     * @param string|null $id
+     *
+     * @return ItemList
+     */
+    public function addItem($key, string $label, string $id = null): ItemList
+    {
+        $this->items->put($key, new Item($key, $label, $id));
+        return $this;
+    }
+
+    /**
+     * Add items to the list
+     * 
+     * @param array  $items
+     * @param string $id
+     *
+     * @return ItemList
+     */
+    public function addItems(array $items, string $id): ItemList
+    {
+        foreach ($items as $key => $label) {
+            $this->addItem($key, $label, $id);
+        }
+        return $this;
+    }
+
+    /**
+     * Renders to array
+     * 
+     * @return array
+     */
+    public function toArray(): array
     {
         $out = [];
         foreach ($this->items as $item) {

@@ -1,10 +1,13 @@
 <?php
+
 namespace Pingu\Forms\Support;
 
-use Pingu\Core\Traits\RendersWithSuggestions;
+use Pingu\Core\Contracts\RendererContract;
+use Pingu\Core\Traits\RendersWithRenderer;
 use Pingu\Forms\Exceptions\FormFieldException;
 use Pingu\Forms\Support\AttributeBag;
 use Pingu\Forms\Support\Form;
+use Pingu\Forms\Support\Renderers\FormFieldRenderer;
 use Pingu\Forms\Support\Type;
 use Pingu\Forms\Support\Types\Text;
 use Pingu\Forms\Traits\HasAttributesFromOptions;
@@ -12,7 +15,7 @@ use Pingu\Forms\Traits\HasOptions;
 
 abstract class Field extends FormElement
 {
-    use RendersWithSuggestions, HasOptions, HasAttributesFromOptions;
+    use HasOptions, HasAttributesFromOptions, RendersWithRenderer;
 
     /**
      * @var string
@@ -85,13 +88,16 @@ abstract class Field extends FormElement
         $this->classes = new ClassBag($this->getDefaultClasses());
         $this->wrapperClasses = new ClassBag($this->getDefaultWrapperClasses());
         $this->labelClasses = new ClassBag($this->getDefaultLabelClasses());
-        $this->setViewSuggestions(
-            [
-            'forms.fields.'.$this->getType().'-'.$this->name,
-            'forms.fields.'.$this->getType(),
-            $this->getDefaultViewSuggestion()
-            ]
-        );
+    }
+
+    /**
+     * Class to render this field
+     * 
+     * @return RendererContract
+     */
+    public function getRenderer(): RendererContract
+    {
+        return new FormFieldRenderer($this);
     }
 
     /**
@@ -112,16 +118,6 @@ abstract class Field extends FormElement
     public static function machineName(): string
     {
         return class_machine_name(static::class);
-    }
-
-    /**
-     * Friendly name for this field
-     * 
-     * @return string
-     */
-    public static function friendlyname()
-    {
-        return friendly_classname(static::class);
     }
 
     /**
@@ -183,25 +179,17 @@ abstract class Field extends FormElement
     /**
      * @inheritDoc
      */
-    protected function getDefaultViewSuggestion(): string
-    {
-        return 'forms@fields.'.$this->getType();
-    }
-
-    /**
-     * Sets the form for that field
-     * 
-     * @param Form $form
-     */
     public function setForm(Form $form)
     {
         $this->form = $form;
-        $this->addViewSuggestions(
-            [
-            'forms.fields.form-'.$form->getName().'_'.$this->getType(),
-            'forms.fields.form-'.$form->getName().'_'.$this->getName(),
-            ]
-        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getForm(): Form
+    {
+        return $this->form;
     }
 
     /**
@@ -258,19 +246,10 @@ abstract class Field extends FormElement
     }
 
     /**
-     * Get view data
-     * 
-     * @return array
+     * @inheritDoc
      */
-    public function getViewData(): array
+    public function getDefaultViewName(): string
     {
-        $attributes = $this->buildAttributes();
-        $attributes['class'] = $this->classes->get(true);
-        return [
-            'field' => $this,
-            'wrapperClasses' => $this->wrapperClasses->get(true),
-            'attributes' => $attributes,
-            'labelClasses' => $this->labelClasses->get(true),
-        ];
+        return 'forms@fields.'.$this->getType();
     }
 }

@@ -8,9 +8,9 @@
     </div>
 @endif
 
-{{ $form->renderStart() }}
+{{ \FormFacade::open($attributes) }}
 <div class="fields">
-    @if($form->hasGroups())
+    @if($hasGroups)
         @include('forms@groups')
     @else
         @foreach($elements as $element)
@@ -18,4 +18,4 @@
         @endforeach
     @endif
 </div>
-{{ $form->renderEnd() }}
+{{ \FormFacade::close() }}

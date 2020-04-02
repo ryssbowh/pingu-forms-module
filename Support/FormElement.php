@@ -2,12 +2,16 @@
 
 namespace Pingu\Forms\Support;
 
+use Pingu\Core\Traits\RendersWithRenderer;
+
 abstract class FormElement
 {
+    use RendersWithRenderer;
+    
     /**
      * Name for this element
      * 
-     * @return [string
+     * @return string
      */
     abstract public function getName(): string;
 
@@ -24,9 +28,16 @@ abstract class FormElement
     abstract public function setForm(Form $form);
 
     /**
-     * Default views for that element
+     * Form getter
+     * 
+     * @param Form $form
+     */
+    abstract public function getForm(): Form;
+
+    /**
+     * View name to render this element
      * 
      * @return string
      */
-    abstract protected function getDefaultViewSuggestion(): string;
+    abstract public function getDefaultViewName(): string;
 }

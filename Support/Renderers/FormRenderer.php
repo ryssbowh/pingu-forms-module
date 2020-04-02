@@ -1,8 +1,9 @@
-<?php 
+<?php
 
-namespace Pingu\Forms\Support;
+namespace Pingu\Forms\Support\Renderers;
 
 use Pingu\Core\Support\Renderer;
+use Pingu\Forms\Support\Form;
 
 class FormRenderer extends Renderer
 {
@@ -16,7 +17,15 @@ class FormRenderer extends Renderer
      */
     public function identifier(): string
     {
-        return 'renderForm';
+        return 'form';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function objectIdentifier(): string
+    {
+        return $this->object->getName();
     }
 
     /**
@@ -43,7 +52,7 @@ class FormRenderer extends Renderer
     /**
      * @inheritDoc
      */
-    protected function getFinalData()
+    protected function getFinalData(): array
     {
         $data = $this->getData();
         $attributes = array_merge(
@@ -61,8 +70,8 @@ class FormRenderer extends Renderer
     public function getDefaultViews(): array
     {
         return [
-            'forms.form-'.$this->object->getName(),
-            'forms.form',
+            'forms.forms.form_'.$this->object->getName(),
+            'forms.forms.form',
             'forms@form'
         ];
     }

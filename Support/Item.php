@@ -34,11 +34,12 @@ class Item
      * @param string $key
      * @param string $label
      */
-    public function __construct(string $key, string $label)
+    public function __construct(string $key, string $label, string $id = null)
     {   
         $this->attributes = collect();
         $this->key = $key;
         $this->label = $label;
+        $this->setId($id);
     }
 
     /**
@@ -97,6 +98,9 @@ class Item
      */
     public function setId(string $fieldName): Item
     {
+        if (!$fieldName) {
+            return $this;
+        }
         $this->attribute('id', 'field-'.$fieldName.'-'.$this->getKey());
         return $this;
     }

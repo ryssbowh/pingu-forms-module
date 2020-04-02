@@ -7,7 +7,7 @@ use Pingu\Core\Contracts\RendererContract;
 use Pingu\Core\Traits\RendersWithRenderer;
 use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Support\ClassBag;
-use Pingu\Forms\Support\FormRenderer;
+use Pingu\Forms\Support\Renderers\FormRenderer;
 use Pingu\Forms\Traits\HasAttributesFromOptions;
 use Pingu\Forms\Traits\HasFormElements;
 use Pingu\Forms\Traits\HasGroups;
@@ -69,7 +69,7 @@ abstract class Form implements RenderableContract
      * @see    https://github.com/LaravelCollective/docs/blob/5.6/html.md#opening-a-form
      * @return array
      */
-    protected abstract function action(): array;
+    public abstract function action(): array;
 
     /**
      * Fields definitions
@@ -78,6 +78,11 @@ abstract class Form implements RenderableContract
      */
     protected abstract function elements(): array;
 
+    /**
+     * Class to render this form
+     * 
+     * @return RendererContract
+     */
     public function getRenderer(): RendererContract
     {
         return new FormRenderer($this);
@@ -91,7 +96,7 @@ abstract class Form implements RenderableContract
      */
     public function considerGet(?array $only = null)
     {
-        if($input = request()->input()) {
+        if ($input = request()->input()) {
             $input = is_null($only) ? $input : array_intersect_key($input, array_flip($only));
             foreach ($input as $param => $value) {
                 $this->addHiddenField($param, $value);
@@ -120,6 +125,11 @@ abstract class Form implements RenderableContract
         return $this->name;
     }
 
+    /**
+     * All fields that are not in a group
+     * 
+     * @return array
+     */
     public function fieldsOutsideOfGroups()
     {
         $inGroups = $this->allFieldInGroups();
@@ -176,7 +186,7 @@ abstract class Form implements RenderableContract
      */
     public function addBackButton(string $label = "Back", ?string $url = null, string $field = '_back')
     {
-        if(is_null($url)) {
+        if (is_null($url)) {
             $url = url()->previous();
         }
         $this->addElement(new Link($field, ['label' => $label, 'url' => $url], ['class' => 'back']));
@@ -204,8 +214,8 @@ abstract class Form implements RenderableContract
     protected function defaultClasses(): array
     {
         return [
-        'form',
-        'form-'.$this->name
+            'form',
+            'form-'.$this->name
         ];
     }
 

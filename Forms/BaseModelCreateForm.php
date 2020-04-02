@@ -70,6 +70,6 @@ class BaseModelCreateForm extends Form
      */
     public function name(): string
     {
-        return 'create-model-'.class_machine_name($this->model);
+        return 'create-model-'.Str::kebab(class_basename($this->model));
     }
 }

@@ -2,15 +2,17 @@
 
 namespace Pingu\Forms\Support;
 
-use Pingu\Core\Traits\RendersWithSuggestions;
+use Pingu\Core\Contracts\RendererContract;
+use Pingu\Core\Traits\RendersWithRenderer;
 use Pingu\Forms\Support\ClassBag;
 use Pingu\Forms\Support\Form;
 use Pingu\Forms\Support\FormElement;
+use Pingu\Forms\Support\Renderers\FieldGroupRenderer;
 use Pingu\Forms\Traits\HasOptions;
 
 class FieldGroup extends FormElement
 {
-    use RendersWithSuggestions, HasOptions;
+    use HasOptions, RendersWithRenderer;
 
     protected $fields;
     protected $name;
@@ -25,13 +27,6 @@ class FieldGroup extends FormElement
         $this->fields = $fields;
         $this->cardinality = $cardinality;
         $this->buildOptions($options);
-        $this->setViewSuggestions(
-            [
-            'forms.field-group-'.$this->name,
-            'forms.field-group',
-            $this->getDefaultViewSuggestion()
-            ]
-        );
         $this->classes = new ClassBag(
             [
             'form-element',
@@ -50,6 +45,14 @@ class FieldGroup extends FormElement
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getRenderer(): RendererContract
+    {
+        return new FieldGroupRenderer($this);
+    }
+
+    /**
      * Cardinality getter
      * 
      * @return int
@@ -60,22 +63,22 @@ class FieldGroup extends FormElement
     }
 
     /**
-     * Set the form for this group
-     * 
-     * @param Form $form
+     * @inheritDoc
      */
     public function setForm(Form $form)
     {
         $this->form = $form;
-        $this->addViewSuggestions(
-            [
-            'forms.field-group-form-'.$form->getName().'_'.$this->name,
-            'forms.field-group-form-'.$form->getName(),
-            ]
-        );
         foreach ($this->fields as $field) {
             $field->setForm($form);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getForm(): Form
+    {
+        return $this->form;
     }
 
     /**
@@ -126,6 +129,11 @@ class FieldGroup extends FormElement
         return $this->fields;
     }
 
+    /**
+     * Name getter
+     * 
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
@@ -134,22 +142,9 @@ class FieldGroup extends FormElement
     /**
      * @inheritDoc
      */
-    protected function getDefaultViewSuggestion(): string
+    public function getDefaultViewName(): string
     {
         return 'forms@field-group';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function getViewData(): array
-    {
-        return [
-            'classes' => $this->classes->get(true),
-            'labelClasses' => $this->labelClasses->get(true),
-            'fields' => $this->fields,
-            'group' => $this
-        ];
     }
 
     public function setValue(?array $values)

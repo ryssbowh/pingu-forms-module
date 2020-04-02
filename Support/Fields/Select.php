@@ -63,16 +63,4 @@ class Select extends Field
     {
         return $this->items;
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function getViewData(): array
-    {
-        $array = array_merge(
-            parent::getViewData(),
-            ['items' => $this->items->toArray()]
-        );
-        return $array;
-    }
 }

@@ -28,6 +28,6 @@ class BaseModelEditForm extends BaseModelCreateForm
      */
     public function name(): string
     {
-        return 'edit-model-'.class_machine_name($this->model);
+        return 'edit-model-'.Str::kebab(class_basename($this->model));
     }
 }
