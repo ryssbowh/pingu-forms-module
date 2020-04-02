@@ -34,7 +34,7 @@ class FormFieldRenderer extends Renderer
      */
     public function getHookData(): array
     {
-        return [$this->object, $this];
+        return [$this->object, $this->getForm(), $this];
     }
 
     /**

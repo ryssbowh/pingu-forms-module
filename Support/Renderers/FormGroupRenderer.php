@@ -3,12 +3,12 @@
 namespace Pingu\Forms\Support\Renderers;
 
 use Pingu\Core\Support\Renderer;
-use Pingu\Forms\Support\FieldGroup;
 use Pingu\Forms\Support\Form;
+use Pingu\Forms\Support\FormGroup;
 
-class FieldGroupRenderer extends Renderer
+class FormGroupRenderer extends Renderer
 {
-    public function __construct(FieldGroup $group)
+    public function __construct(FormGroup $group)
     {
         parent::__construct($group);
     }
@@ -18,7 +18,7 @@ class FieldGroupRenderer extends Renderer
      */
     public function identifier(): string
     {
-        return 'formFieldGroup';
+        return 'formGroup';
     }
 
     /**
@@ -43,7 +43,7 @@ class FieldGroupRenderer extends Renderer
     public function getDefaultData(): array
     {
         return [
-            'form' => $this->getForm(),
+            'form' => $this->object->getForm(),
         ];
     }
 
@@ -56,7 +56,8 @@ class FieldGroupRenderer extends Renderer
             'classes' => $this->object->classes->get(true),
             'labelClasses' => $this->object->labelClasses->get(true),
             'fields' => $this->object->getFields(),
-            'group' => $this->object
+            'group' => $this->object,
+            'form' => $this->getForm()
         ];
     }
 
@@ -67,9 +68,9 @@ class FieldGroupRenderer extends Renderer
     {
         $form = $this->getForm()->getName();
         return [
-            'forms.field-groups.field-group_'.$form.'_'.$this->object->getName(),
-            'forms.field-groups.field-group_'.$form,
-            'forms.field-groups.field-group',
+            'forms.form-groups.form-group_'.$form.'_'.$this->object->getName(),
+            'forms.form-groups.form-group_'.$form,
+            'forms.form-groups.form-group',
             $this->object->getDefaultViewName()
         ];
     }

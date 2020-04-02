@@ -38,8 +38,8 @@ class FieldGroup extends FormElement
         $this->labelClasses = new ClassBag(
             [
             'form-element-label',
-            'form-group-label',
-            'form-group-label-'.$name
+            'field-group-label',
+            'field-group-label-'.$name
             ]
         );
     }
