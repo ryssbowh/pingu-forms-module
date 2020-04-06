@@ -71,6 +71,16 @@ class ClassBag
     }
 
     /**
+     * Classes to html format
+     * 
+     * @return string
+     */
+    public function toHtml(): string
+    {
+        return $this->get(true);
+    }
+
+    /**
      * Set classes
      * 
      * @param string|array $classes

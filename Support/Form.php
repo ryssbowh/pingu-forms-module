@@ -6,42 +6,25 @@ use Pingu\Core\Contracts\RenderableContract;
 use Pingu\Core\Contracts\RendererContract;
 use Pingu\Core\Traits\RendersWithRenderer;
 use Pingu\Forms\Events\FormBuilt;
+use Pingu\Forms\Renderers\FormRenderer;
 use Pingu\Forms\Support\ClassBag;
-use Pingu\Forms\Support\Renderers\FormRenderer;
-use Pingu\Forms\Traits\HasAttributesFromOptions;
 use Pingu\Forms\Traits\HasFormElements;
 use Pingu\Forms\Traits\HasGroups;
 use Pingu\Forms\Traits\HasOptions;
 
 abstract class Form implements RenderableContract
 {
-    use HasFormElements, HasOptions, HasGroups, HasAttributesFromOptions, RendersWithRenderer;
+    use HasFormElements, HasOptions, HasGroups, RendersWithRenderer;
 
     /**
      * @var string
      */
-    protected $name;
-
-    /**
-     * @var ClassBag
-     */
-    public $classes;
-
-    protected $attributeOptions = ['id', 'files', 'method', 'autocomplete'];
+    private $name;
 
     public function __construct()
     {
         $this->name = $this->makeName($this->name());
-        $options = array_merge(
-            [
-                'method' => $this->method(),
-                'files' => true,
-                'id' => 'form-'.$this->name
-            ], 
-            $this->options()
-        );
-        $this->buildOptions($options);
-        $this->classes = new ClassBag($this->defaultClasses());
+        $this->buildOptions($this->options());
         $this->makeElements($this->elements());
         $this->makeGroups($this->groups());
         $this->afterBuilt();
@@ -61,7 +44,7 @@ abstract class Form implements RenderableContract
      * 
      * @return string
      */
-    protected abstract function method(): string;
+    public abstract function method(): string;
 
     /**
      * Url for that form, can be an url, an action or a route
@@ -79,13 +62,55 @@ abstract class Form implements RenderableContract
     protected abstract function elements(): array;
 
     /**
-     * Class to render this form
+     * Are files accepted
      * 
-     * @return RendererContract
+     * @return bool
+     */
+    public function acceptsFiles(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Does the form autocomplete. 'on' or 'off'
+     * 
+     * @return string
+     */
+    public function autocompletes(): string
+    {
+        return 'on';
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getRenderer(): RendererContract
     {
         return new FormRenderer($this);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getViewKey(): string
+    {
+        return \Str::kebab($this->getName());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function systemView(): string
+    {
+        return 'form@form';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewIdentifier(): string
+    {
+        return 'form';
     }
 
     /**
@@ -204,30 +229,6 @@ abstract class Form implements RenderableContract
         $field = $this->getField($name);
         $this->addElement(new Hidden($name, ['default' => $field->getValue()]));
         return $this;
-    }
-
-    /**
-     * Default classes
-     * 
-     * @return array
-     */
-    protected function defaultClasses(): array
-    {
-        return [
-            'form',
-            'form-'.$this->name
-        ];
-    }
-
-    /**
-     * moves the action into the attributes Collection
-     * 
-     * @param array $url
-     */
-    protected function makeAction(array $url)
-    {
-        $key = array_keys($url)[0];
-        $this->options->put($key, $url[$key]);
     }
 
     /**

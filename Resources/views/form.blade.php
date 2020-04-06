@@ -8,7 +8,7 @@
     </div>
 @endif
 
-{{ \FormFacade::open($attributes) }}
+{{ \FormFacade::open($attributes->all()) }}
 <div class="fields">
     @if($hasGroups)
         @foreach($groups as $group)

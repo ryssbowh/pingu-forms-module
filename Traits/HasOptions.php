@@ -56,4 +56,16 @@ trait HasOptions
         }
         return $this->options->get($name);
     }
+
+    /**
+     * Is an option set
+     * 
+     * @param string $name
+     * 
+     * @return boolean
+     */
+    public function hasOption(string $name)
+    {
+        return $this->options->has($name);
+    }
 }

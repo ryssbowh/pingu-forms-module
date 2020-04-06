@@ -4,10 +4,10 @@ namespace Pingu\Forms\Support;
 
 use Pingu\Core\Contracts\RendererContract;
 use Pingu\Core\Traits\RendersWithRenderer;
+use Pingu\Forms\Renderers\FieldGroupRenderer;
 use Pingu\Forms\Support\ClassBag;
 use Pingu\Forms\Support\Form;
 use Pingu\Forms\Support\FormElement;
-use Pingu\Forms\Support\Renderers\FieldGroupRenderer;
 use Pingu\Forms\Traits\HasOptions;
 
 class FieldGroup extends FormElement
@@ -17,8 +17,6 @@ class FieldGroup extends FormElement
     protected $fields;
     protected $name;
     protected $form;
-    public $classes;
-    public $labelClasses;
     protected $cardinality;
 
     public function __construct(string $name, array $options, array $fields, int $cardinality = 1)
@@ -27,21 +25,6 @@ class FieldGroup extends FormElement
         $this->fields = $fields;
         $this->cardinality = $cardinality;
         $this->buildOptions($options);
-        $this->classes = new ClassBag(
-            [
-            'form-element',
-            'field-group',
-            'field-group-'.class_machine_name($this->fields[0]),
-            'field-group-'.$name
-            ]
-        );
-        $this->labelClasses = new ClassBag(
-            [
-            'form-element-label',
-            'field-group-label',
-            'field-group-label-'.$name
-            ]
-        );
     }
 
     /**
@@ -50,6 +33,27 @@ class FieldGroup extends FormElement
     public function getRenderer(): RendererContract
     {
         return new FieldGroupRenderer($this);
+    }
+
+    public function viewIdentifier(): string
+    {
+        return 'field-group';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function systemView(): string
+    {
+        return 'forms@field-group';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getViewKey(): string
+    {
+        return \Str::kebab($this->getName());
     }
 
     /**
@@ -140,13 +144,12 @@ class FieldGroup extends FormElement
     }
 
     /**
-     * @inheritDoc
+     * Set values for all the fields
+     * 
+     * @param array $values
+     *
+     * @return FieldGroup
      */
-    public function getDefaultViewName(): string
-    {
-        return 'forms@field-group';
-    }
-
     public function setValue(?array $values)
     {
         if (is_null($values)) {

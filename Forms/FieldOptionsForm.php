@@ -3,6 +3,7 @@
 namespace Pingu\Forms\Forms;
 
 use Pingu\Forms\Support\FieldOptions;
+use Pingu\Forms\Support\Fields\Hidden;
 use Pingu\Forms\Support\Fields\NumberInput;
 use Pingu\Forms\Support\Fields\Submit;
 use Pingu\Forms\Support\Form;
@@ -13,7 +14,7 @@ class FieldOptionsForm extends Form
     protected $fieldOptions;
 
     /**
-     * Bring variables in your form through the constructor :
+     * @inheritDoc
      */
     public function __construct(array $action, FieldOptions $options)
     {
@@ -23,26 +24,29 @@ class FieldOptionsForm extends Form
     }
 
     /**
-     * Fields definitions for this form, classes used here
-     * must extend Pingu\Forms\Support\Field
-     * 
-     * @return array
+     * @inheritDoc
      */
     public function elements(): array
     {
         $fields = $this->fieldOptions->toFormElements();
-        $fields [] = new Submit('_submit');
+        $fields[] = new Submit('_submit');
         return $fields;
     }
 
     /**
-     * Method for this form, POST GET DELETE PATCH and PUT are valid
-     * 
-     * @return string
+     * @inheritDoc
      */
     public function method(): string
     {
         return 'POST';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function autocompletes(): string
+    {
+        return 'off';
     }
 
     /**
@@ -58,11 +62,6 @@ class FieldOptionsForm extends Form
     public function action(): array
     {
         return $this->action;
-    }
-
-    public function afterBuilt()
-    {
-        // dump($this);
     }
 
     /**

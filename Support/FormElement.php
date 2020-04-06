@@ -2,9 +2,10 @@
 
 namespace Pingu\Forms\Support;
 
+use Pingu\Core\Contracts\RenderableContract;
 use Pingu\Core\Traits\RendersWithRenderer;
 
-abstract class FormElement
+abstract class FormElement implements RenderableContract
 {
     use RendersWithRenderer;
     
@@ -14,11 +15,6 @@ abstract class FormElement
      * @return string
      */
     abstract public function getName(): string;
-
-    /**
-     * Renders this element
-     */
-    abstract public function render();
 
     /**
      * Set this element's form
@@ -33,11 +29,4 @@ abstract class FormElement
      * @param Form $form
      */
     abstract public function getForm(): Form;
-
-    /**
-     * View name to render this element
-     * 
-     * @return string
-     */
-    abstract public function getDefaultViewName(): string;
 }

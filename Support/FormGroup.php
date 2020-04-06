@@ -4,8 +4,8 @@ namespace Pingu\Forms\Support;
 
 use Pingu\Core\Contracts\RendererContract;
 use Pingu\Core\Traits\RendersWithRenderer;
+use Pingu\Forms\Renderers\FormGroupRenderer;
 use Pingu\Forms\Support\ClassBag;
-use Pingu\Forms\Support\Renderers\FormGroupRenderer;
 use Pingu\Forms\Traits\HasOptions;
 
 class FormGroup extends FormElement
@@ -15,8 +15,6 @@ class FormGroup extends FormElement
     protected $fields;
     protected $name;
     protected $form;
-    public $classes;
-    public $labelClasses;
 
     public function __construct(string $name, array $fields, Form $form, array $options = [])
     {
@@ -24,20 +22,30 @@ class FormGroup extends FormElement
         $this->fields = $fields;
         $this->buildOptions($options);
         $this->setForm($form);
-        $this->classes = new ClassBag(
-            [
-            'form-element',
-            'form-group',
-            'form-group-'.$this->name
-            ]
-        );
-        $this->labelClasses = new ClassBag(
-            [
-            'form-element-label',
-            'form-group-label',
-            'form-group-label-'.$this->name
-            ]
-        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function viewIdentifier(): string
+    {
+        return 'form-group';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getViewKey(): string
+    {
+        return \Str::kebab($this->getName());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function systemView(): string
+    {
+        return 'forms@form-group';
     }
 
     /**
@@ -244,13 +252,5 @@ class FormGroup extends FormElement
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getDefaultViewName(): string
-    {
-        return 'forms@form-group';
     }
 }
