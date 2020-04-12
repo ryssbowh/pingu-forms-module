@@ -106,10 +106,14 @@ class FormFieldRenderer extends ObjectRenderer
      */
     protected function getAttributes(): AttributeBag
     {
-        return new AttributeBag([
-            'required' => $this->object->option('required'),
-            'id' => $this->object->option('id')
-        ]);
+        $attributes = [];
+        foreach ($this->object->getAttributeOptions() as $name) {
+            $option = $this->object->option($name);
+            if (!is_null($option)) {
+                $attributes[$name] = $option;
+            }
+        }
+        return new AttributeBag($attributes);
     }
 
     /**

@@ -25,8 +25,14 @@ class Select extends Field
     /**
      * @inheritDoc
      */
-    protected $attributeOptions = ['data-placeholder', 'required', 'disabled', 'id', 'placeholder', 'multiple']; 
+    public function getAttributeOptions(): array
+    {
+        return array_merge(parent::getAttributeOptions(), ['placeholder', 'multiple']);
+    }
 
+    /**
+     * @inheritDoc
+     */
     protected function init(array $options)
     {
         parent::init($options);

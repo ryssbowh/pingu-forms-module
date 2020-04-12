@@ -2,8 +2,14 @@
 
 namespace Pingu\Forms\Traits;
 
+use Illuminate\Support\Collection;
+use Pingu\Forms\Support\Field;
+
 trait HasOptions
 {
+    /**
+     * @var Collection
+     */
     protected $options;
 
     /**

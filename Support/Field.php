@@ -59,11 +59,24 @@ abstract class Field extends FormElement
         $this->init($options);
     }
 
+    /**
+     * Called after constructor
+     * 
+     * @param array  $options
+     */
     protected function init(array $options)
     {
         $this->setValue($options['default'] ?? null);
 
         $this->buildOptions(array_merge($this->getDefaultOptions(), $options));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAttributeOptions(): array
+    {
+        return ['id', 'required', 'disabled']; 
     }
 
     /**
@@ -184,7 +197,7 @@ abstract class Field extends FormElement
      * 
      * @param mixed
      * 
-     * @return Form
+     * @return Field
      */
     public function setValue($value)
     {

@@ -9,5 +9,8 @@ class Password extends Field
     /**
      * @inheritDoc
      */
-    protected $attributeOptions = ['required', 'disabled', 'placeholder', 'maxLength', 'minLength', 'id']; 
+    public function getAttributeOptions(): array
+    {
+        return array_merge(parent::getAttributeOptions(), ['maxLength', 'minLength']);
+    }
 }

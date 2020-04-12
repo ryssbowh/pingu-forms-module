@@ -9,5 +9,8 @@ class NumberInput extends Field
     /**
      * @inheritDoc
      */
-    protected $attributeOptions = ['required', 'disabled', 'min', 'max', 'id', 'placeholder']; 
+    public function getAttributeOptions(): array
+    {
+        return array_merge(parent::getAttributeOptions(), ['min', 'max', 'placeholder']);
+    }
 }

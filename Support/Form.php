@@ -102,7 +102,7 @@ abstract class Form implements RenderableContract
      */
     public function systemView(): string
     {
-        return 'form@form';
+        return 'forms@form';
     }
 
     /**

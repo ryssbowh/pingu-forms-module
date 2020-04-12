@@ -10,7 +10,10 @@ class TextInput extends Field
     /**
      * @inheritDoc
      */
-    protected $attributeOptions = ['required', 'disabled', 'maxLength', 'minLength', 'placeholder', 'id'];
+    public function getAttributeOptions(): array
+    {
+        return array_merge(parent::getAttributeOptions(), ['maxLength', 'minLength', 'placeholder']);
+    }
 
     /**
      * @inheritDoc

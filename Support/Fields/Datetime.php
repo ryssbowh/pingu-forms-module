@@ -15,18 +15,4 @@ class Datetime extends Field
         $options['format'] = convertPhpToJsMomentFormat($options['format']);
         parent::init($options);
     }
-
-    // /**
-    //  * @inheritDoc
-    //  */
-    // protected function getDefaultClasses(): array
-    // {
-    //     return [
-    //         'field',
-    //         'field-'.$this->name,
-    //         'field-'.$this->getType(),
-    //         'form-control', 
-    //         'datetimepicker-input'
-    //     ];
-    // }
 }
