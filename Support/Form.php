@@ -2,12 +2,16 @@
 
 namespace Pingu\Forms\Support;
 
+use Illuminate\Support\Collection;
 use Pingu\Core\Contracts\RenderableContract;
 use Pingu\Core\Contracts\RendererContract;
 use Pingu\Core\Traits\RendersWithRenderer;
+use Pingu\Field\Contracts\FieldContextContract;
+use Pingu\Field\Contracts\HasFieldsContract;
 use Pingu\Forms\Events\FormBuilt;
 use Pingu\Forms\Renderers\FormRenderer;
 use Pingu\Forms\Support\ClassBag;
+use Pingu\Forms\Support\Fields\Hidden;
 use Pingu\Forms\Traits\HasFormElements;
 use Pingu\Forms\Traits\HasGroups;
 use Pingu\Forms\Traits\HasOptions;
@@ -171,8 +175,7 @@ abstract class Form implements RenderableContract
      */
     public function addHiddenField(string $name, $value)
     {
-        $this->addField(new Hidden($name, ['default' => $value]));
-        $this->moveElementUp($name);
+        $this->addElement(new Hidden($name, ['default' => $value]));
         return $this;
     }
 

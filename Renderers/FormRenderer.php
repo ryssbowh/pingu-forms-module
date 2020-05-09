@@ -47,10 +47,7 @@ class FormRenderer extends ObjectRenderer
         return collect([
             'attributes' => $this->getAttributes(),
             'classes' => $this->getDefaultClasses(),
-            'form' => $this->object,
-            'groups' => $this->object->getGroups(),
-            'elements' => $this->object->getElements(),
-            'hasGroups' => $this->object->hasGroups(),
+            'form' => $this->object
         ]);
     }
 

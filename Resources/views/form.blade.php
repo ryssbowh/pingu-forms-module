@@ -10,15 +10,15 @@
 
 {{ \FormFacade::open($attributes->all()) }}
 <div class="fields">
-    @if($hasGroups)
-        @foreach($groups as $group)
+    @if($form->hasGroups())
+        @foreach($form->getGroups() as $group)
             {!! $group->render() !!}
         @endforeach
         @foreach($form->fieldsOutsideOfGroups() as $name)
             {!! $form->getElement($name)->render() !!}
         @endforeach 
     @else
-        @foreach($elements as $element)
+        @foreach($form->getElements() as $element)
             {!! $element->render() !!}
         @endforeach
     @endif

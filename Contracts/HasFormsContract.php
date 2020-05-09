@@ -11,5 +11,5 @@ interface HasFormsContract
      * 
      * @return EntityFormRepositoryContract
      */
-    public function forms(): FormRepositoryContract;
+    public static function forms(): FormRepositoryContract;
 }

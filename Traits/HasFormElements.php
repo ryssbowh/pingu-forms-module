@@ -2,11 +2,15 @@
 
 namespace Pingu\Forms\Traits;
 
+use Illuminate\Support\Collection;
 use Pingu\Forms\Exceptions\FormFieldException;
 use Pingu\Forms\Support\FormElement;
 
 trait HasFormElements
 {   
+    /**
+     * @var Collection
+     */
     protected $elements;
 
     /**
@@ -111,14 +115,14 @@ trait HasFormElements
      * 
      * @param array|null $names
      * 
-     * @return array
+     * @return Collection
      */
-    public function getElements(?array $names = null)
+    public function getElements(?array $names = null): Collection
     {
         if (is_null($names)) {
-            $elements = $this->elements->toArray();
+            $elements = $this->elements;
         } else {
-            $elements = $this->elements->only($names)->toArray();
+            $elements = $this->elements->only($names);
         }
         return $elements;
     }

@@ -9,28 +9,37 @@ interface FormRepositoryContract
     /**
      * Create form
      * 
-     * @param array $action
+     * @param array $args
      * 
      * @return Form
      */
-    public function create(array $action): Form;
+    public function create(array $args): Form;
 
     /**
      * Edit form
      * 
-     * @param array $action
+     * @param array $args
      * 
      * @return Form
      */
-    public function edit(array $action): Form;
+    public function edit(array $args): Form;
 
     /**
      * Delete form
      * 
-     * @param array $action
+     * @param array $args
      * 
      * @return Form
      */
-    public function delete(array $action): Form;
+    public function delete(array $args): Form;
+
+    /**
+     * Filter Form
+     *
+     * @param array $args
+     * 
+     * @return Form
+     */
+    public function filter(array $args): Form;
 
 }
